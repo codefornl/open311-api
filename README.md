@@ -41,7 +41,7 @@ Create a file called `config.json`
 
 ### Run the Application
 
-To start the applicatie in "development mode":
+To start the application in "development mode":
 
     npm start
 
