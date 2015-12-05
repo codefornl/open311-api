@@ -1,13 +1,13 @@
 # Build status
 
-[![Circle CI](https://circleci.com/gh/codeforeindhoven/buurtpreventie-api.svg?style=svg)](https://circleci.com/gh/codeforeindhoven/buurtpreventie-api)
-[![David](https://david-dm.org/codeforeindhoven/buurtpreventie-api.svg)](https://david-dm.org/codeforeindhoven/buurtpreventie-api)
+[![Circle CI](https://circleci.com/gh/codeforeindhoven/open311-api.svg?style=svg)](https://circleci.com/gh/codeforeindhoven/open311-api)
+[![David](https://david-dm.org/codeforeindhoven/open311-api.svg)](https://david-dm.org/codeforeindhoven/open311-api)
 
 # About
 
 Uses:
 
-Node.js, Express, MySQL, Sequelize.
+Node.js, Express, Sequelize.
 
 ## Requirements
 
@@ -24,8 +24,8 @@ Node.js, Express, MySQL, Sequelize.
 
 From a console or terminal:
 
-    git clone git@github.com:codeforeindhoven/buurtpreventie-api.git
-    cd buurtpreventie-api
+    git clone git@github.com:codeforeindhoven/open311-api.git
+    cd open311-api
     npm install .
 
 *Note:* Check that `npm install .` doesn't generate errors. The installation
@@ -51,6 +51,6 @@ To start the application in "production mode":
 
 Or, using forever:
 
-    NODE_ENV=production /usr/bin/forever start -c "npm start" /path/to/buurpreventie-api/
+    NODE_ENV=production /usr/bin/forever start -c "npm start" /path/to/open311-api/
 
 Point your browser to [http://localhost:3000](http://localhost:3000) to check if the application is running.
