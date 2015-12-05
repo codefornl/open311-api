@@ -4,7 +4,9 @@ var util = require('../helpers/util.js');
 var json2xml = require('json2xml');
 var objectAssign = require('object-assign');
 var router = express.Router();
+
 var getDiscovery = function(req, res) {
+  var format = req.params.format || 'json';
   switch (req.params.format) {
     case 'xml':
       res.set('Content-Type', 'text/xml');

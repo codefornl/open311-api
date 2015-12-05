@@ -21,7 +21,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test/ --timeout 30000 --reporter dot --bail --check-leaks test/"
+    "test": "mocha test/ --timeout 30000 --reporter dot --bail test/"
   },
   "repository": {
     "type": "git",
