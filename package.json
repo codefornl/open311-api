@@ -1,0 +1,48 @@
+{
+  "name": "open311-api",
+  "description": "node version of the open311 api",
+  "version": "0.0.1",
+  "license": "GPL-3.0+",
+  "author": {
+    "name": "Milo van der Linden",
+    "email": "milo.vd.linden@eindhoven.nl",
+    "url": "http://www.eindhoven.nl"
+  },
+  "contributors": [
+    {
+      "name": "Marcel Goethals",
+      "email": "m.goethals@eindhoven.nl"
+    },
+    {
+      "name": "Bas Biezemans",
+      "email": "bas.biezemans@eindhoven.nl"
+    }
+  ],
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha test/ --timeout 30000 --reporter dot --bail --check-leaks test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/codeforeindhoven/open311-api.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "compression": "^1.4.3",
+    "errorhandler": "^1.4.2",
+    "express": "4.13.3",
+    "json2xml": "^0.1.2",
+    "jsonwebtoken": "^5.4.1",
+    "mysql": "^2.9.0",
+    "object-assign": "^4.0.1",
+    "request": "*",
+    "sequelize": "^3.13.0",
+    "sqlite3": "^3.1.1"
+  },
+  "devDependencies": {
+    "mocha": "2.3.2",
+    "expect": "^1.10.0",
+    "mocha-junit-reporter": "^1.5.0"
+  }
+}
