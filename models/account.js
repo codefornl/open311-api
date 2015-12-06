@@ -11,7 +11,7 @@
       email: DataTypes.STRING,
       phone: DataTypes.STRING,
       token: DataTypes.STRING,
-      roles: DataTypes.STRING
+      role: DataTypes.STRING
     });
     return account;
   };

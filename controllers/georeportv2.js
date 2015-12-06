@@ -145,7 +145,7 @@ var postServiceRequest = function(req, res) {
    */
 
 };
-router.route('/api/jurisdiction.:format').post(util.ensureAuthorized).post(postJurisdiction);
+router.route('/api/jurisdiction.:format').post(util.ensureAdmin).post(postJurisdiction);
 router.route('/api/services.:format').get(getServiceList);
 router.route('/api/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/discovery.:format').get(getDiscovery);
