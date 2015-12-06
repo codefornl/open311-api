@@ -30,6 +30,12 @@ describe('Open311-api', function() {
       assert.equal('eindhoven.nl', open311.jurisdiction);
       done();
     });
+    it('POST /api/jurisdiction.json', function(done){
+      request(server.app).post('/api/jurisdiction.json')
+        .set('authorization', 'token TestMeIAmAToken')
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .expect(200, done);
+    });
     it('GET /', function(done) {
       // See that we get a status 200 on retrieving the Index
       request(server.app).get('/')

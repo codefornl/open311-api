@@ -3,16 +3,30 @@ String.prototype.toProperCase = function () {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 };
-
+var models = require('../models');
 // See http://code.tutsplus.com/tutorials/token-based-authentication-with-angularjs-nodejs--cms-22543 for details. Needs more work!
 var ensureAuthorized = function(req, res, next) {
     var bearerToken;
+    console.log(req.headers);
     var bearerHeader = req.headers.authorization;
     if (bearerHeader) {
         var bearer = bearerHeader.split(" ");
         bearerToken = bearer[1];
+        console.log(bearerToken);
         req.token = bearerToken;
-        next();
+        models.account.findOne({
+          token: req.token
+        }).then(function(err, user) {
+          if (err) {
+            res.status(403).json({type: 'forbidden', message: 'Sorry, cannot let you in'});
+          } else {
+            if (user) {
+              next();
+            } else {
+              res.status(403).json({type: 'forbidden', message: 'User not found'});
+            }
+          }
+        });
     } else {
       if(req.query.token) {
         console.log('Entered the loophole!');

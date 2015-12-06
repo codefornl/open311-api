@@ -9,7 +9,9 @@
       first_name: DataTypes.STRING,
       last_name: DataTypes.STRING,
       email: DataTypes.STRING,
-      phone: DataTypes.STRING
+      phone: DataTypes.STRING,
+      token: DataTypes.STRING,
+      roles: DataTypes.STRING
     });
     return account;
   };
