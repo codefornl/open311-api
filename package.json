@@ -21,7 +21,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test/ --timeout 30000 --reporter dot --bail test/"
+    "test": "mocha test/ --timeout 30000 --reporter spec --bail test/"
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "expect": "1.13.0",
+    "open311": "git://github.com/codeforeindhoven/node-open311.git",
     "mocha": "2.3.4",
     "mocha-junit-reporter": "1.9.1",
     "supertest": "^1.1.0"
