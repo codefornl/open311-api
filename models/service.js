@@ -4,15 +4,15 @@
 (function() {
   'use strict';
   module.exports = function(sequelize, DataTypes) {
-    var Service = sequelize.define("Service", {
+    var service = sequelize.define("service", {
       service_code: DataTypes.STRING,
       service_name: DataTypes.STRING,
       description: DataTypes.TEXT,
-      metadata: DataTypes.BOOLEAN,
-      type: DataTypes.STRING,
+      metadata: DataTypes.BOOLEAN, //true,false
+      type: DataTypes.STRING, //realtime,batch,blackbox
       keywords: DataTypes.TEXT,
       group: DataTypes.STRING
     });
-    return Service;
+    return service;
   };
 }());
