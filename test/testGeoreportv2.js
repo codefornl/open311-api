@@ -35,25 +35,27 @@ describe('Open311-api', function() {
       assert.equal('eindhoven.nl', open311.jurisdiction);
       done();
     });
-    it('POST /api/jurisdiction.json', function(done){
+    it('Post to jurisdiction as regular user should fail', function(done){
       request(server.app).post('/api/jurisdiction.json')
         .set('authorization', 'token usertoken')
+        .send({ jurisdiction_id: 'eindhoven.nl'})
         .expect('Content-Type', 'application/json; charset=utf-8')
         .expect(403, done);
     });
-    it('POST /api/jurisdiction.json', function(done){
+    it('Post to jurisdiction as administrator should succeed', function(done){
       request(server.app).post('/api/jurisdiction.json')
         .set('authorization', 'token admintoken')
+        .send({ jurisdiction_id: 'eindhoven.nl'})
         .expect('Content-Type', 'application/json; charset=utf-8')
         .expect(200, done);
     });
-    it('GET /', function(done) {
+    it('Main url should return page not found', function(done) {
       // See that we get a status 200 on retrieving the Index
       request(server.app).get('/')
         .expect(404, done);
     });
 
-    it('GET /api/services.json', function(done) {
+    it('Get Services should pass', function(done) {
       // See that we get a status 200 on retrieving the Index
       request(server.app).get('/api/services.json')
         .expect('Content-Type', 'application/json; charset=utf-8')

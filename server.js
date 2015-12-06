@@ -53,7 +53,7 @@ if ('production' == env) {
 }
 
 function start() {
-  if ('test' == env || 'development' == env) {
+  if ('development' == env) {
     console.log('Running in ' + env + ' mode');
     require('./models').sequelize.sync({
         force: true,
@@ -70,7 +70,7 @@ function start() {
           console.log("Sync failed:", err);
         }
       });
-  } else if ('production' == env) {
+  } else if ('production' == env || 'test' == env) {
     console.log('Running in production mode');
     app.listen(app.get('port'), function() {
       console.log("Express server listening on port %d in %s mode", app.get('port'), app.settings.env);

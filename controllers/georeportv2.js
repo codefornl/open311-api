@@ -119,7 +119,12 @@ var getServiceDefinition = function(req, res) {
 
 };
 var postJurisdiction = function(req, res) {
-  res.json({});
+  console.log(req.params);
+  models.jurisdiction.findOrCreate({where: {jurisdiction_id: req.body.jurisdiction_id}}).then(function(jurisdiction, created) {
+    res.json({
+      created: created
+    });
+  });
 };
 var postServiceRequest = function(req, res) {
   if (req.params.jurisdiction_id) {

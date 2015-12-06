@@ -7,7 +7,6 @@ var models = require('../models');
 // See http://code.tutsplus.com/tutorials/token-based-authentication-with-angularjs-nodejs--cms-22543 for details. Needs more work!
 var ensureAuthorized = function(req, res, next) {
   var bearerToken;
-  console.log(req.headers);
   var bearerHeader = req.headers.authorization;
   if (bearerHeader) {
     var bearer = bearerHeader.split(" ");
@@ -61,7 +60,6 @@ var ensureAdmin = function(req, res, next) {
       }
     }).then(function(result) {
       if (result) {
-        //console.log(result);
         next();
       } else {
         res.status(403).json({
