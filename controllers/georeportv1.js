@@ -180,7 +180,7 @@ var postServiceRequest = function(req, res) {
 
 };
 
-router.route('/api/v2/services.:format').get(getServiceList);
-router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
-router.route('/api/v2/request.:format').post(postServiceRequest);
+router.route('/api/v1/services.:format').get(getServiceList);
+router.route('/api/v1/services/:service_code.:format').get(getServiceDefinition);
+router.route('/api/v1/request.:format').post(postServiceRequest);
 module.exports = router;
