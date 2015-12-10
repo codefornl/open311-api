@@ -1,6 +1,6 @@
 # Build status
 
-[![Circle CI](https://circleci.com/gh/codeforeindhoven/open311-api.svg?style=svg)](https://circleci.com/gh/codeforeindhoven/open311-api)
+[![Circle CI](https://circleci.com/gh/CodeForEindhoven/open311-api.svg?style=svg)](https://circleci.com/gh/CodeForEindhoven/open311-api)
 [![David](https://david-dm.org/codeforeindhoven/open311-api.svg)](https://david-dm.org/codeforeindhoven/open311-api)
 
 # About
