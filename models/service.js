@@ -12,6 +12,13 @@
       type: DataTypes.STRING, //realtime,batch,blackbox
       keywords: DataTypes.TEXT,
       group: DataTypes.STRING
+    }, {
+      classMethods: {
+        associate: function(models) {
+          service.belongsTo(models.jurisdiction);
+          service.hasMany(models.service_attribute);
+        }
+      }
     });
     return service;
   };

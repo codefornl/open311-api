@@ -58,5 +58,8 @@ var getDiscovery = function(req, res) {
 };
 
 router.route('/').get(getDiscovery);
+router.route('/api/v2/').get(function(req, res) {
+  res.redirect('/api/v2/discovery.xml');
+});
 router.route('/api/v2/discovery.:format').get(getDiscovery);
 module.exports = router;

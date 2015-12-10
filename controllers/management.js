@@ -29,7 +29,8 @@ var postDiscovery = function(req, res) {
 var postJurisdiction = function(req, res) {
   models.jurisdiction.findOrCreate({
     where: {
-      jurisdiction_id: req.body.jurisdiction_id
+      jurisdiction_id: req.body.jurisdiction_id,
+      is_default: req.body.is_default || false
     }
   }).then(function(jurisdiction, created) {
     res.json({
@@ -39,12 +40,30 @@ var postJurisdiction = function(req, res) {
 };
 
 var postService = function(req, res) {
-  models.service.create(req.body).then(function(service, created) {
-    res.json({
-      created: created
+  var whereClause = {
+    where: {
+      is_default: true
+    }
+  };
+  if (req.query.jurisdiction_id) {
+    whereClause = {
+      where: {
+        jurisdiction_id: req.query.jurisdiction_id
+      }
+    };
+  }
+  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
+    req.body.jurisdictionId = jurisdiction.id;
+    models.service.create(req.body).then(function(service){
+      res.json({
+        created: service.id
+      });
+
     });
+
   });
 };
+
 router.route('/api/service').post(util.ensureAdmin).post(postService);
 router.route('/api/jurisdiction').post(util.ensureAdmin).post(postJurisdiction);
 router.route('/api/discovery').post(util.ensureAdmin).post(postDiscovery);

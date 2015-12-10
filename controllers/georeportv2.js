@@ -6,105 +6,48 @@ var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
 
-var getDiscovery = function(req, res) {
-  var now = new Date();
-  var format = req.params.format || 'xml';
-  // Construct the url, can be overridden from the endpoint model
-  models.discovery.findOne({
-    attributes: ['changeset', 'contact', 'key_service'],
-    include: {
-      model: models.endpoint,
-      attributes: ['specification', 'url', 'changeset', 'type']
-    }
-  }).then(function(result) {
-    //var fullUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/api/';
-    ///var keyUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/signup/';
-    result = result.toJSON();
-    switch (format) {
-      case 'json':
-        var jsonFormats = [
-          'text/xml',
-          'application/json'
-        ];
-        for (var y in result.endpoints) {
-          result.endpoints[y].formats = jsonFormats;
-        }
-        res.json(result);
-        break;
-
-      default:
-        var xmlResult = result;
-        var xmlEndpoints = [];
-        var xmlFormats = [{
-          format: 'text/xml'
-        }, {
-          format: 'application/json'
-        }];
-        for (var x in xmlResult.endpoints) {
-          xmlResult.endpoints[x].formats = xmlFormats;
-          xmlEndpoints.push({
-            endpoint: xmlResult.endpoints[x]
-          });
-        }
-        xmlResult.endpoints = xmlEndpoints;
-        res.set('Content-Type', 'text/xml');
-        res.send(json2xml({
-          discovery: xmlResult
-        }, {
-          header: true
-        }));
-    }
-  });
-};
-
 var getServiceList = function(req, res) {
-  if (req.query.jurisdiction_id) {
-
-  }
-  var skeleton = {
-    services: [{
-      "service_code": "HGW1",
-      "service_name": "Huiselijk geweld",
-      "description": "Vermoeden van huiselijk geweld. Zal worden voorgelegd aan hulpverleners.",
-      "metadata": true,
-      "type": "realtime",
-      "keywords": "geweld, huiselijk, relationeel, overlast",
-      "group": "overlast"
-    }, {
-      "service_code": "ZVL1",
-      "metadata": true,
-      "type": "realtime",
-      "keywords": "vuil, rommel, smerig",
-      "group": "omgeving",
-      "service_name": "Zwerfvuil",
-      "description": "Constatering van vervuiling in de openbare ruimte"
-    }, {
-      "service_code": "FPV1",
-      "metadata": true,
-      "type": "realtime",
-      "keywords": "parkeren, auto, stoep",
-      "group": "omgeving",
-      "service_name": "Foutief geparkeerde auto",
-      "description": "Constatering van onjuist geplaatste voertuigen"
-    }]
+  var format = req.params.format || 'xml';
+  var whereClause = {
+    where: {
+      is_default: true
+    }
   };
-  switch (req.params.format) {
-    case 'xml':
-      res.set('Content-Type', 'text/xml');
-      res.send(json2xml(skeleton, {
-        header: true
-      }));
-      break;
-    default:
-      res.json(skeleton.services);
+  if (req.query.jurisdiction_id) {
+    whereClause = {
+      where: {
+        jurisdiction_id: req.query.jurisdiction_id
+      }
+    };
   }
-  /**
-   * The numbers represent the HTTP status code returned for each error type:
-   * 404 - jurisdiction_id provided was not found (specify in error response)
-   * 400 - jurisdiction_id was not provided (specify in error response)
-   * 400 - General service error (Anything that fails during service list processing. The client will need to notify us)
-   */
-
+  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
+    models.service.findAll({
+      where: {
+        jurisdictionId: jurisdiction.id
+      },
+      attributes: ['service_code', 'service_name', 'description', 'metadata', 'type', 'keywords', 'group']
+    }).then(function(results) {
+      switch (format) {
+        case 'json':
+          res.json(results);
+          break;
+        default:
+          var xmlResult = results;
+          var xmlServices = [];
+          for (var x in xmlResult) {
+            xmlServices.push({
+              service: xmlResult[x].dataValues
+            });
+          }
+          //console.log(xmlServices);
+          //xmlResult.services = xmlServices;
+          res.set('Content-Type', 'text/xml');
+          res.send(json2xml({services: xmlServices}, {
+            header: true
+          }));
+      }
+    });
+  });
 };
 
 var getServiceDefinition = function(req, res) {
@@ -179,7 +122,7 @@ var postServiceRequest = function(req, res) {
    */
 
 };
-
+router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/request.:format').post(postServiceRequest);

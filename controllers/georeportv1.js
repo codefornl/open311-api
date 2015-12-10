@@ -6,57 +6,6 @@ var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
 
-var getDiscovery = function(req, res) {
-  var now = new Date();
-  var format = req.params.format || 'xml';
-  // Construct the url, can be overridden from the endpoint model
-  models.discovery.findOne({
-    attributes: ['changeset', 'contact', 'key_service'],
-    include: {
-      model: models.endpoint,
-      attributes: ['specification', 'url', 'changeset', 'type']
-    }
-  }).then(function(result) {
-    //var fullUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/api/';
-    ///var keyUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/signup/';
-    result = result.toJSON();
-    switch (format) {
-      case 'json':
-        var jsonFormats = [
-          'text/xml',
-          'application/json'
-        ];
-        for (var y in result.endpoints) {
-          result.endpoints[y].formats = jsonFormats;
-        }
-        res.json(result);
-        break;
-
-      default:
-        var xmlResult = result;
-        var xmlEndpoints = [];
-        var xmlFormats = [{
-          format: 'text/xml'
-        }, {
-          format: 'application/json'
-        }];
-        for (var x in xmlResult.endpoints) {
-          xmlResult.endpoints[x].formats = xmlFormats;
-          xmlEndpoints.push({
-            endpoint: xmlResult.endpoints[x]
-          });
-        }
-        xmlResult.endpoints = xmlEndpoints;
-        res.set('Content-Type', 'text/xml');
-        res.send(json2xml({
-          discovery: xmlResult
-        }, {
-          header: true
-        }));
-    }
-  });
-};
-
 var getServiceList = function(req, res) {
   if (req.query.jurisdiction_id) {
 
