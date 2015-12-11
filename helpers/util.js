@@ -1,10 +1,22 @@
+/**
+ * Helper function to propercase a string by
+ * Starting with a capital and lowercasing the
+ * rest.
+ */
 String.prototype.toProperCase = function() {
   return this.replace(/\w\S*/g, function(txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 };
+
 var models = require('../models');
-// See http://code.tutsplus.com/tutorials/token-based-authentication-with-angularjs-nodejs--cms-22543 for details. Needs more work!
+
+/**
+ * Middleware function to check if a request contains the right credentials to be
+ * Authenticated. This function needs more work.
+ * See http://code.tutsplus.com/tutorials/token-based-authentication-with-angularjs-nodejs--cms-22543
+ * for a possible implementation.
+ */
 var ensureAuthorized = function(req, res, next) {
   var bearerToken;
   var bearerHeader = req.headers.authorization;
@@ -33,19 +45,18 @@ var ensureAuthorized = function(req, res, next) {
       }
     });
   } else {
-    if (req.query.token) {
-      console.log('Entered the loophole!');
-      req.token = req.query.token;
-      next();
-    } else {
-      res.status(403).json({
-        type: 'forbidden',
-        message: 'Sorry, cannot let you in'
-      });
-    }
+    res.status(403).json({
+      type: 'forbidden',
+      message: 'Sorry, cannot let you in'
+    });
   }
 };
 
+/**
+ * Middleware to check if request contains the
+ * credentials for a user that has adminstrative rights.
+ * Needs more work.
+ */
 var ensureAdmin = function(req, res, next) {
   var bearerToken;
   var bearerHeader = req.headers.authorization;
@@ -70,16 +81,10 @@ var ensureAdmin = function(req, res, next) {
 
     });
   } else {
-    if (req.query.token) {
-      console.log('Entered the loophole!');
-      req.token = req.query.token;
-      next();
-    } else {
-      res.status(403).json({
-        type: 'forbidden',
-        message: 'Sorry, cannot let you in'
-      });
-    }
+    res.status(403).json({
+      type: 'forbidden',
+      message: 'Sorry, cannot let you in'
+    });
   }
 };
 

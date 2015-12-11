@@ -9,6 +9,7 @@
       contact: DataTypes.TEXT,
       changeset: {
         type: DataTypes.DATE,
+        allowNull: false,
         defaultValue: new Date()
       }
     }, {

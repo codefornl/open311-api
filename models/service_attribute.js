@@ -6,10 +6,18 @@
   module.exports = function(sequelize, DataTypes) {
     var service_attribute = sequelize.define("service_attribute", {
       variable: DataTypes.BOOLEAN,
-      code: DataTypes.STRING,
-      datatype: DataTypes.STRING, //string, number, datetime,text,singlevaluelist, multivaluelist
+      code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+      },
+      datatype: DataTypes.ENUM('string', 'number', 'datetime', 'text', 'singlevaluelist', 'multivaluelist'),
       required: DataTypes.BOOLEAN,
-      datatype_description: DataTypes.TEXT,
+      datatype_description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: ''
+      },
       order: DataTypes.INTEGER,
       description: DataTypes.TEXT
     }, {

@@ -54,17 +54,76 @@ var postService = function(req, res) {
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
     req.body.jurisdictionId = jurisdiction.id;
-    models.service.create(req.body).then(function(service){
+    models.service.create(req.body).then(function(service) {
       res.json({
         created: service.id
       });
-
     });
-
   });
 };
 
+var postServiceAttributes = function(req, res) {
+  if (req.params.service_code) {
+    whereClause = {
+      where: {
+        service_code: req.params.service_code
+      }
+    };
+    models.service.findOne(whereClause).then(function(service) {
+      req.body.serviceId = service.id;
+      models.service_attribute.create(req.body).then(function(service_attribute) {
+        res.json({
+          created: service_attribute.code
+        });
+      });
+    });
+  } else {
+    res.status(404).json({
+
+    });
+  }
+};
+
+var postServiceAttributeValues = function(req, res) {
+  if (req.params.attribute_code) {
+    whereClause = {
+      where: {
+        code: req.params.attribute_code
+      }
+    };
+    models.service_attribute.findOne(whereClause).then(function(service_attribute) {
+      //console.log(service_attribute);
+      //req.body.service_attributeId = service_attribute.id;
+      //check to see if the values match the given type
+      var _values = []; //req.body.endpoints;
+      if (Array.isArray(req.body)) {
+        _values = req.body;
+        for (var x in req.body) {
+          _values[x].serviceAttributeId = service_attribute.id;
+        }
+      } else {
+        req.body.serviceAttributeId = service_attribute.id;
+        _values.push(req.body);
+      }
+      models.service_attribute_value.bulkCreate(_values, {
+        returning: true
+      }).then(function(result) {
+        res.json({
+          created: result
+        });
+      });
+    });
+  } else {
+    res.status(404).json({
+
+    });
+  }
+};
+
 router.route('/api/service').post(util.ensureAdmin).post(postService);
+router.route('/api/service').post(util.ensureAdmin).post(postService);
+router.route('/api/service/:service_code/attribute').post(util.ensureAdmin).post(postServiceAttributes);
+router.route('/api/service/:attribute_code/values').post(util.ensureAdmin).post(postServiceAttributeValues);
 router.route('/api/jurisdiction').post(util.ensureAdmin).post(postJurisdiction);
 router.route('/api/discovery').post(util.ensureAdmin).post(postDiscovery);
 module.exports = router;
