@@ -41,7 +41,7 @@
     "sqlite3": "^3.1.1"
   },
   "devDependencies": {
-    "expect": "1.13.0",
+    "expect": "1.13.1",
     "open311": "git://github.com/codeforeindhoven/node-open311.git",
     "mocha": "2.3.4",
     "mocha-junit-reporter": "1.9.1",
