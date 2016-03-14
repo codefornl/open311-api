@@ -1,0 +1,215 @@
+body {
+    background: #F0F0F0;
+    font-family: "Myriad Pro";
+    font-size: 12pt;
+    margin: 0px;
+}
+
+#menu {
+    background: #FFFFFF;
+    margin-bottom: 20px;
+    border-bottom: solid 1px #C9C9C9;
+    padding: 20px;
+    height: 30px;
+}
+
+
+.center {
+    width: 960px;
+    margin: auto;
+}
+
+#title{
+    font-size: 24pt;
+    color: #FFB000;
+    float: left;
+}
+
+.menu_item {
+    float: right;
+}
+
+.meun_item::after{
+    clear: both;
+}
+
+
+#content {
+    width: 500px;
+    margin: auto;
+}
+
+/*request*/
+.request {
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px #C9C9C9;
+    margin-bottom: 40px;
+    padding: 0px;
+    color: #494949;
+}
+
+.request > p {
+    padding: 0px;
+    margin: 0px
+}
+
+.request > .type {
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-bottom: 0px;
+    float: left;
+    color: #125688;
+}
+
+.request > .time {
+    margin-top: 25px;
+    margin-right: 25px;
+    float: right;
+    color: #999999;
+}
+
+.request > .loc {
+    margin-left: 25px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    clear: both;
+    font-size: 10pt;
+    color: #999999;
+}
+
+.request > .img {
+    width: 100%;
+    height: 500px;
+    background: #666666;
+    margin: 0px;
+    object-fit: cover;
+}
+
+.request > .separator {
+    height: 1px;
+    width: 100%;
+    border-bottom: 1px solid  #C9C9C9;
+}
+
+.request > .description {
+    margin-left: 25px;
+    margin-top: 20px;
+    color: #000000;
+}
+
+.request > .status {
+    margin-left: 25px;
+    margin-bottom: 20px;
+    font-size: 10pt;
+    color: #999999;
+}
+
+/*form*/
+.form {
+    /*background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px #C9C9C9;*/
+    margin-bottom: 40px;
+    padding: 25px;
+    padding-top: 0px;
+    color: #494949;
+}
+
+.hint {
+    min-height: 11pt;
+    font-size: 10pt;
+    color: #AA0000;
+    padding: 3px;
+}
+
+.form > hr {
+    border: none;
+    height: 1px;
+    color: #C9C9C9; /* old IE */
+    background-color: #C9C9C9; /* Modern Browsers */
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.label {
+    font-size: 11pt;
+    margin-top: 10px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input {
+    font-family: "Myriad Pro";
+    font-size: 13pt;
+    border-radius: 4px;
+    border: solid 1px #C9C9C9;/*#B0B0B0*/
+    background-color: #FFFFFF;
+    padding: 10px;
+    padding-bottom: 7px;
+    width: 425px;
+}
+
+textarea {
+    resize: vertical;
+    height: 60px;
+}
+
+select {
+    width: 450px!important;
+}
+
+.media-box {
+    border-radius: 4px;
+    border: dashed 1px #B0B0B0;
+    padding: 100px;
+    text-align: center;
+    color: #125688;
+    background: #FFFFFF;
+}
+
+.media-box.image {
+    border: solid 1px #B0B0B0;
+    background: #FFFFFF;
+    padding: 0px;
+    padding-bottom: 25px;
+}
+
+.media-box > img {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.media-box > .button {
+    border-radius: 4px;
+    border: solid 1px #125688;
+    padding: 10px;
+    padding-top: 12px;
+    display: inline;
+    cursor: pointer;
+}
+
+.media-box > .of {
+    color: #C9C9C9;
+    margin-top: 28px;
+    margin-bottom: 28px;
+}
+
+.fa {
+    font-size: 10pt;
+    margin-right: 4px;
+}
+
+.fa.after{
+    font-size: 10pt;
+    margin-left: -25px;
+}
+
+.fa-check {
+    color: #00AA00;
+}
+
+.fa-times {
+    color: #AA0000;
+}
