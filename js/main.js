@@ -10,27 +10,26 @@ var RequestList = {
 };
 
 var Request = {
-    controller: function(data){
-        this.time = moment(data.requested_datetime).fromNow();
-        this.statusicon = (data.status=="closed") ? m("i", {class:"fa fa-check"}) : m("i", {class:"fa fa-bell-o"});
-        this.image = (data.media_url !== undefined ) ? m("img", {class: "img", src: data.media_url}) : m("div", {class: "separator"});
-    },
-
     view: function(ctrl, data) {
+        var time = moment(data.requested_datetime).fromNow();
+        var statusicon = (data.status=="closed") ? m("i", {class:"fa fa-check"}) : m("i", {class:"fa fa-bell-o"});
+        //var image = (data.media_url !== undefined ) ? m("img", {class: "img", src: data.media_url}) : m("div", {class: "separator"});
+        var image = m("div", {class: "img", style: "background-image:url("+data.media_url+")"});
+
         return m("div", {class: "request"}, [
             m("p", {class: "type"}, data.service_name),
             m("p", {class: "time"}, [
                 m("i", {class:"fa fa-clock-o"}),
-                m("span", ctrl.time)
+                m("span", time)
             ]),
             m("p", {class: "loc"}, [
                 m("i", {class:"fa fa-map-marker"}),
                 m("span", data.address)
             ]),
-            ctrl.image,
+            image,
             m("p", {class: "description"}, data.description),
             m("p", {class: "status"}, [
-                ctrl.statusicon,
+                statusicon,
                 m("span", data.status)
             ])
         ]);
