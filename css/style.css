@@ -5,24 +5,23 @@ body {
     margin: 0px;
 }
 
-#menu {
+#topbar {
     background: #FFFFFF;
     margin-bottom: 20px;
     border-bottom: solid 1px #C9C9C9;
-    padding: 20px;
-    height: 30px;
+    height: 70px;
 }
 
-
-.center {
-    width: 960px;
-    margin: auto;
-}
-
-#title{
+#title {
     font-size: 24pt;
     color: #FFB000;
     float: left;
+    line-height: 70px;
+}
+
+#menu {
+    float: right;
+    line-height: 70px;
 }
 
 .menu_item {
@@ -38,11 +37,21 @@ body {
     #content {
         padding: 10px;
     }
+    .center {
+        width: 100%;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 }
 
 @media only screen and (min-width: 500px) {
     #content {
         width: 500px;
+        margin: auto;
+    }
+
+    .center {
+        width: 960px;
         margin: auto;
     }
 }

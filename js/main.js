@@ -14,7 +14,7 @@ var Request = {
         var time = moment(data.requested_datetime).fromNow();
         var statusicon = (data.status=="closed") ? m("i", {class:"fa fa-check"}) : m("i", {class:"fa fa-bell-o"});
         //var image = (data.media_url !== undefined ) ? m("img", {class: "img", src: data.media_url}) : m("div", {class: "separator"});
-        var image = m("div", {class: "img", style: "background-image:url("+data.media_url+")"});
+        var image = (data.media_url !== undefined ) ? m("div", {class: "img", style: "background-image:url("+data.media_url+")"}) : m("div", {class: "separator"});
 
         return m("div", {class: "request"}, [
             m("p", {class: "type"}, data.service_name),
