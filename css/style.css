@@ -10,6 +10,7 @@ body {
     margin-bottom: 20px;
     border-bottom: solid 1px #C9C9C9;
     height: 70px;
+    padding-top: 5px;
 }
 
 #title {
@@ -34,17 +35,25 @@ body {
 
 
 @media only screen and (max-width: 500px) {
-    #content {
-        padding: 10px;
-    }
     .center {
         width: 100%;
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-left: 20px;
     }
 }
 
 @media only screen and (min-width: 500px) {
+    #content {
+        width: 500px;
+        margin: auto;
+    }
+
+    .center {
+        width: 100%;
+        margin-left: 20px;
+    }
+}
+
+@media only screen and (min-width: 960px) {
     #content {
         width: 500px;
         margin: auto;

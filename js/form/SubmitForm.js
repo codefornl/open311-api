@@ -27,6 +27,10 @@ var SubmitForm = {
 
             m.component(DescriptionInput),
             m.component(MediaInput),
+
+            m("hr"),
+
+            m("button", {class: "submit"}, "Opsturen")
         ]);
     }
 };

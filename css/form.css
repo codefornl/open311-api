@@ -53,6 +53,10 @@ textarea {
     height: 60px;
 }
 
+button {
+    padding: 10px;
+}
+
 .media-box {
     border-radius: 4px;
     border: dashed 1px #B0B0B0;
@@ -74,6 +78,11 @@ textarea {
     width: 100%;
     border-radius: 4px;
     margin-bottom: 20px;
+}
+
+.submit {
+    margin-bottom: 50px;
+    float: right;
 }
 
 .fa {
