@@ -6,11 +6,12 @@ var open311 = (function(){
     var requests = m.prop([]);
     function loadRequests(){
         m.request({method: "GET", url: apiEndpoint+"requests.json"})
+            //sort by date
             .then(function(list){
                 return list.sort(function(a,b){
                     a = new Date(a.requested_datetime);
                     b = new Date(b.requested_datetime);
-                    return (a < b);
+                    return (b - a);
                 });
             })
             .then(requests);
