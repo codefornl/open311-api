@@ -1,12 +1,55 @@
 var open311 = (function(){
 
     var apiEndpoint = "http://eindhoven.meldloket.nl/crm/open311/v2/";
+    var api_key = "56f3b3b5f3348";
 
-    function getRequests(){
-        return m.request({method: "GET", dataType: "jsonp", url: apiEndpoint+"requests.json"});
+    var requests = m.prop([]);
+    function loadRequests(){
+        m.request({method: "GET", url: apiEndpoint+"requests.json"})
+            .then(function(list){
+                return list.sort(function(a,b){
+                    a = new Date(a.requested_datetime);
+                    b = new Date(b.requested_datetime);
+                    return (a < b);
+                });
+            })
+            .then(requests);
+    }
+
+    var lat = m.prop("");
+    var long = m.prop("");
+    var description = m.prop("");
+    var media = m.prop();
+
+    function postRequest(){
+        var formData = new FormData();
+
+        formData.append("api_key", api_key);
+        formData.append("service_code", "1");
+
+        formData.append("lat", "51.42017745971680");
+        formData.append("long", "5.47374010086060");
+
+        formData.append("description", description());
+        formData.append("media", media());
+
+        m.request({
+            method: "POST",
+            url: apiEndpoint+"requests.json",
+            data: formData,
+            serialize: function(value) {return value;} //simply pass the FormData object intact to the underlying XMLHttpRequest, instead of JSON.stringify'ing it
+        });
     }
 
     return {
-        getRequests: getRequests
+        requests: requests,
+        loadRequests: loadRequests,
+
+        lat: lat,
+        long: long,
+        description: description,
+        media: media,
+
+        postRequest: postRequest
     };
 })();

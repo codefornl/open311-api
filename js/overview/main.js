@@ -1,6 +1,7 @@
 var RequestList = {
     controller: function(){
-        this.requests = open311.getRequests();
+        open311.loadRequests();
+        this.requests = open311.requests;
     },
     view: function(ctrl){
         return ctrl.requests().map(function(data){

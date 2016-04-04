@@ -1,21 +1,3 @@
-var FormModel = (function() {
-    //form values
-    var name = m.prop();
-    var email = m.prop();
-    var description = m.prop();
-    var media = m.prop();
-    var service = m.prop();
-
-    return {
-        name: name,
-        email: email,
-        description: description,
-        media: media,
-        service: service
-    };
-})();
-
-
 var SubmitForm = {
     view: function(){
         return m("div",{class: "form"},[
@@ -25,12 +7,12 @@ var SubmitForm = {
 
             m("hr"),
 
-            m.component(DescriptionInput),
-            m.component(MediaInput),
+            m.component(DescriptionInput, open311.description),
+            m.component(MediaInput, open311.media),
 
             m("hr"),
 
-            m("button", {class: "submit"}, "Opsturen")
+            m("button", {class: "submit", onclick: open311.postRequest}, "Opsturen")
         ]);
     }
 };

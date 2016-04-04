@@ -1,7 +1,7 @@
 var MediaInput = {
-    controller: function(){
+    controller: function(file){
         this.picture = false;
-        this.file = undefined;
+        this.file = file;
 
         this.getFile = function(e){
 
@@ -14,7 +14,7 @@ var MediaInput = {
                 var reader = new FileReader();
 
                 reader.onload = function(e) {
-                    this.file = e.target.result;
+                    this.file(e.target.result);
                     m.redraw();
                 }.bind(this);
 
@@ -31,9 +31,9 @@ var MediaInput = {
         return m("div", [
             m.component(InputLabel, {name: "Foto", icon: "camera"}),
             function(){
-                if(ctrl.file !== undefined){
+                if(ctrl.file() !== undefined){
                     return m("div", {class:"media-box image"}, [
-                        m("img", {src: ctrl.file}),
+                        m("img", {src: ctrl.file()}),
                         m("button", {onclick: ctrl.getFile.bind(ctrl)}, "Andere Foto")
                     ]);
                 } else {
