@@ -2,8 +2,8 @@ var SubmitForm = {
     view: function(){
         return m("div",{class: "form"},[
             m("h1", "Melding maken"),
-            m.component(NameTextInput),
-            m.component(EmailTextInput),
+            m.component(NameTextInput, open311.first_name),
+            m.component(EmailTextInput, open311.email),
 
             m("hr"),
 

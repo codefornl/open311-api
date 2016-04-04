@@ -1,5 +1,5 @@
 var NameTextInput = {
-    view: function(){
+    view: function(ctrl,first_name){
         return m.component(TextInput, {
             name: "Naam",
             semanticName: "name",
@@ -10,7 +10,8 @@ var NameTextInput = {
                 } else {
                     return {valid: false, hint: "Vul voor én achternaam in."};
                 }
-            }
+            },
+            value: first_name
         });
     }
 };

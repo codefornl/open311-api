@@ -17,6 +17,8 @@ var open311 = (function(){
             .then(requests);
     }
 
+    var first_name = m.prop("");
+    var email = m.prop("");
     var lat = m.prop("");
     var long = m.prop("");
     var description = m.prop("");
@@ -27,6 +29,9 @@ var open311 = (function(){
 
         formData.append("api_key", api_key);
         formData.append("service_code", "1");
+
+        formData.append("email", email);
+        formData.append("first_name", name);
 
         formData.append("lat", "51.42017745971680");
         formData.append("long", "5.47374010086060");
@@ -46,6 +51,8 @@ var open311 = (function(){
         requests: requests,
         loadRequests: loadRequests,
 
+        first_name: first_name,
+        email: email,
         lat: lat,
         long: long,
         description: description,
