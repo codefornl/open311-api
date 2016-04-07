@@ -5,13 +5,12 @@ var MediaInput = {
         this.dataUrl = "";
 
         this.getFile = function(e){
-
             var input = document.createElement("input");
 
             input.setAttribute("type", "file");
             input.setAttribute("accept", "image/*");
 
-            input.onchange = function(){
+            input.addEventListener("change", function(){
                 var reader = new FileReader();
                 this.file(input.files[0]);
 
@@ -21,7 +20,12 @@ var MediaInput = {
                 }.bind(this);
 
                 reader.readAsDataURL(input.files[0]);
-            }.bind(this);
+            }.bind(this), false);
+
+            //make it work in internet explorer
+            input.setAttribute("class", "file");
+            document.body.appendChild(input);
+
             input.click();
         };
 

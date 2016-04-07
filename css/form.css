@@ -77,6 +77,10 @@ button {
     margin-bottom: 20px;
 }
 
+.file {
+    display: none;
+}
+
 .submit {
     margin-bottom: 50px;
     float: right;

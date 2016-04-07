@@ -17,7 +17,6 @@ var TextInput = {
         this.icon = args.icon;
         this.validate = args.validate;
         this.value = args.value;
-        console.log(this.value());
 
         this.isValid = {
             valid: undefined,
