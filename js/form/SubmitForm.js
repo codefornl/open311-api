@@ -9,6 +9,7 @@ var SubmitForm = {
 
             m.component(DescriptionInput, open311.description),
             m.component(MediaInput, open311.media),
+            m.component(ServiceSelector, open311.serviceList, open311.loadServiceList),
 
             m("hr"),
 

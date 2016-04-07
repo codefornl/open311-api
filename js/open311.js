@@ -47,6 +47,11 @@ var open311 = (function(){
         });
     }
 
+    var serviceList = m.prop([]);
+    function loadServiceList() {
+        m.request({method: "GET", url: apiEndpoint+"services.json"}).then(serviceList);
+    }
+
     return {
         requests: requests,
         loadRequests: loadRequests,
@@ -57,7 +62,9 @@ var open311 = (function(){
         long: long,
         description: description,
         media: media,
+        postRequest: postRequest,
 
-        postRequest: postRequest
+        serviceList: serviceList,
+        loadServiceList: loadServiceList
     };
 })();
