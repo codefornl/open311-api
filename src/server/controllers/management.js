@@ -121,7 +121,6 @@ var postServiceAttributeValues = function(req, res) {
 };
 
 router.route('/api/service').post(util.ensureAdmin).post(postService);
-router.route('/api/service').post(util.ensureAdmin).post(postService);
 router.route('/api/service/:service_code/attribute').post(util.ensureAdmin).post(postServiceAttributes);
 router.route('/api/service/:attribute_code/values').post(util.ensureAdmin).post(postServiceAttributeValues);
 router.route('/api/jurisdiction').post(util.ensureAdmin).post(postJurisdiction);

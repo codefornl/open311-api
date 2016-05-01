@@ -19,7 +19,14 @@ var getDiscovery = function(req, res) {
   }).then(function(result) {
     //var fullUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/api/';
     ///var keyUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/signup/';
-    result = result.toJSON();
+    if (result) {
+      result = result.toJSON();
+    } else {
+      result = {
+        "endpoints": []
+      };
+    }
+    console.log("Result:" + result);
     switch (format) {
       case 'json':
         var jsonFormats = [
@@ -57,7 +64,7 @@ var getDiscovery = function(req, res) {
   });
 };
 
-router.route('/').get(getDiscovery);
+router.route('/api/').get(getDiscovery);
 router.route('/api/v2/').get(function(req, res) {
   res.redirect('/api/v2/discovery.xml');
 });

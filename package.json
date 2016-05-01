@@ -20,31 +20,17 @@
   ],
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "test": "NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/"
+    "start": "NODE_ENV=development ./node_modules/.bin/gulp build && ./node_modules/.bin/gulp install_npm && ./node_modules/.bin/gulp run",
+    "test": "NODE_ENV=test mocha src/server/test/ --timeout 30000 --reporter spec --bail src/server/test/"
   },
   "repository": {
     "type": "git",
     "url": "http://github.com/codeforeindhoven/open311-api.git"
   },
   "dependencies": {
-    "body-parser": "^1.13.3",
-    "compression": "^1.4.3",
-    "errorhandler": "^1.4.2",
-    "express": "4.13.3",
-    "json2xml": "^0.1.2",
-    "jsonwebtoken": "^5.4.1",
-    "mysql": "^2.9.0",
-    "object-assign": "^4.0.1",
-    "request": "*",
-    "sequelize": "^3.13.0",
-    "sqlite3": "^3.1.1"
-  },
-  "devDependencies": {
-    "expect": "1.13.1",
-    "open311": "git://github.com/codeforeindhoven/node-open311.git",
-    "mocha": "2.3.4",
-    "mocha-junit-reporter": "1.9.1",
-    "supertest": "^1.1.0"
+    "gulp": "~3.9.1",
+    "gulp-include": "~2.1.0",
+    "gulp-install": "~0.6.0",
+    "gulp-less": "~3.0.5"
   }
 }

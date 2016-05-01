@@ -15,8 +15,7 @@
       required: DataTypes.BOOLEAN,
       datatype_description: {
         type: DataTypes.TEXT,
-        allowNull: false,
-        defaultValue: ''
+        allowNull: false
       },
       order: DataTypes.INTEGER,
       description: DataTypes.TEXT

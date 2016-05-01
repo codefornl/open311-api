@@ -53,10 +53,10 @@ if ('production' == env) {
 }
 
 function start() {
-  if ('development' == env) {
+  if ('development_foo' == env) {
     console.log('Running in ' + env + ' mode');
     require('./models').sequelize.sync({
-        force: true,
+        force: false,
         logging: console.log
       })
       .then(function(err) {
@@ -70,7 +70,7 @@ function start() {
           console.log("Sync failed:", err);
         }
       });
-  } else if ('production' == env || 'test' == env) {
+  } else if ('production' == env || 'test' == env || 'development' == env) {
     console.log('Running in ' + env + ' mode');
     app.listen(app.get('port'), function() {
       console.log("Express server listening on port %d in %s mode", app.get('port'), app.settings.env);
