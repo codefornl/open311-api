@@ -150,6 +150,38 @@ var getServiceDefinition = function(req, res) {
   });
 };
 
+/**
+ * Open311 - GET Service Requests
+ * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
+ */
+var getServiceRequests = function(req, res) {
+  var format = req.params.format || 'xml';
+  models.request.findAll().then(function(results) {
+    switch (format) {
+      case 'json':
+        res.json(results);
+        break;
+      default:
+      var xmlResult = results;
+      var xmlServiceRequests = [];
+      for (var x in xmlResult) {
+        xmlServiceRequests.push(xmlResult[x].dataValues);
+      }
+      var final = js2xmlparser("service_requests", xmlServiceRequests, {
+        arrayMap: {
+          service_requests: "request"
+        }
+      });
+      res.set('Content-Type', 'text/xml');
+      res.send(final);
+    }
+  });
+};
+
+/**
+ * Open311 - POST Service Request
+ * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
+ */
 var postServiceRequest = function(req, res) {
   if (req.params.jurisdiction_id) {
     console.log(req.query);
@@ -177,5 +209,8 @@ var postServiceRequest = function(req, res) {
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
+router.route('/api/v2/requests.:format').get(getServiceRequests);
+
 router.route('/api/v2/request.:format').post(postServiceRequest);
+
 module.exports = router;

@@ -12,7 +12,7 @@
   } else {
       config = require(__dirname + '/../config.json')[env];
   }
-  console.log(config);
+
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
   var db = {};
   fs
@@ -26,7 +26,6 @@
     });
   Object.keys(db).forEach(function(modelName) {
     if ("associate" in db[modelName]) {
-      console.log("associating " + modelName);
       db[modelName].associate(db);
     }
   });
