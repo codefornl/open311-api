@@ -1,0 +1,70 @@
+/*request*/
+.request {
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px #C9C9C9;
+    margin-bottom: 40px;
+    padding: 0px;
+    color: #494949;
+}
+
+.request > p {
+    padding: 0px;
+    margin: 0px
+}
+
+.request > .type {
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-bottom: 0px;
+    float: left;
+    color: #125688;
+}
+
+.request > .time {
+    margin-top: 25px;
+    margin-right: 25px;
+    float: right;
+    color: #999999;
+}
+
+.request > .loc {
+    margin-left: 25px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    clear: both;
+    font-size: 10pt;
+    color: #999999;
+}
+
+.request > .img {
+    width: 100%;
+    padding-bottom: 100%;
+    background: #666666;
+    margin: 0px;
+    background-size: cover;
+}
+
+.request > .separator {
+    height: 1px;
+    width: 100%;
+    border-bottom: 1px solid  #C9C9C9;
+}
+
+.request > .description {
+    margin-left: 25px;
+    margin-top: 20px;
+    color: #000000;
+}
+
+.request > .status {
+    margin-left: 25px;
+    margin-bottom: 20px;
+    font-size: 10pt;
+    color: #999999;
+}
+
+.fa {
+    font-size: 10pt;
+    margin-right: 4px;
+}
