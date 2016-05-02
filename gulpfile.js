@@ -61,11 +61,15 @@ gulp.task('install_npm',function(){
 gulp.task('client', ['js', 'less', 'html', 'static']);
 //concatenate all js files into one
 gulp.task('js', function(){
-    return gulp.src(dirs.clientsrc+'/js/App.js')
-        .pipe(include())
-            .on('error', console.log)
+    return gulp.src(dirs.clientsrc+'/js/**/*.js')
         .pipe(gulp.dest(dirs.clientbuild+'/js'));
 });
+// gulp.task('js', function(){
+//     return gulp.src(dirs.clientsrc+'/js/App.js')
+//         .pipe(include())
+//             .on('error', console.log)
+//         .pipe(gulp.dest(dirs.clientbuild+'/js'));
+// });
 
 //compile Less files to Css
 gulp.task('less', function () {

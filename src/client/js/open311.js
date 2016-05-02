@@ -1,6 +1,6 @@
 var open311 = (function(){
 
-    var apiEndpoint = "http://eindhoven.meldloket.nl/crm/open311/v2/";
+    var apiEndpoint = "api/v2/";
     var api_key = "56f3b3b5f3348";
 
     var requests = m.prop([]);

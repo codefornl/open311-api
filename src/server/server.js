@@ -23,6 +23,7 @@ var express = require('express'),
 
 var env = process.env.NODE_ENV || 'development';
 var app = express();
+app.use(express.static(__dirname+ '/public'));
 app.set('port', process.env.PORT || 3000);
 app.use(compress());
 app.use(bodyParser.urlencoded({
