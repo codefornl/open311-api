@@ -1,8 +1,8 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
-var json2xml = require('json2xml');
 var js2xmlparser = require("js2xmlparser");
+var moment = require('moment');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
@@ -57,7 +57,7 @@ var getServiceList = function(req, res) {
         if(results[i].dataValues.customFields){
           results[i].dataValues.metadata = true;
         } else {
-          results[i].dataValues.metadata = true;
+          results[i].dataValues.metadata = false;
         }
         delete results[i].dataValues.service_group;
         delete results[i].dataValues.customFields;
@@ -78,9 +78,6 @@ var getServiceList = function(req, res) {
               services: "service"
             }
           });
-          //var final = json2xml({services: xmlServices}, {header: true});
-          //console.log(xmlServices);
-          //xmlResult.services = xmlServices;
           res.set('Content-Type', 'text/xml');
           res.send(final);
       }
@@ -142,7 +139,6 @@ var getServiceDefinition = function(req, res) {
               attributes: "attribute"
             }
           });
-          //var final = json2xml({services: xmlServices}, {header: true});
           res.set('Content-Type', 'text/xml');
           res.send(final);
       }
@@ -156,7 +152,69 @@ var getServiceDefinition = function(req, res) {
  */
 var getServiceRequests = function(req, res) {
   var format = req.params.format || 'xml';
-  models.request.findAll().then(function(results) {
+  var options = {
+    attributes: [
+      ['id', 'service_request_id'],
+      ['category_id', 'service_code'],
+      'status',
+      ['location', 'address'],
+      ['latitude', 'lat'],
+      ['longitude', 'long'],
+      ['enteredDate', 'requested_datetime'],
+      ['lastModified', 'updated_datetime']
+    ],
+    include: [{
+      model: models.service,
+      attributes: ['service_name']
+    },{
+      model: models.issue,
+      attributes: ['description'],
+      include: [{
+        model: models.media
+      }]
+    },{
+      model: models.person,
+      attributes: ['firstname', 'middlename', 'lastname'],
+      include: [{
+        model: models.department,
+        attributes: ['name']
+      }]
+    }
+    ],
+    order: [
+      ['enteredDate', 'DESC']
+    ]
+  };
+  models.request.findAll(options).then(function(results) {
+    for(var i in results){
+
+      results[i].dataValues.requested_datetime = moment(results[i].dataValues.requested_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
+      results[i].dataValues.updated_datetime = moment(results[i].dataValues.updated_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
+
+      if(results[i].dataValues.person.department){
+        results[i].dataValues.agency_responsible = results[i].dataValues.person.department.name;
+      }
+      delete results[i].dataValues.person;
+
+      results[i].dataValues.service_name = results[i].dataValues.service.service_name;
+      delete results[i].dataValues.service;
+
+      for (var l in results[i].dataValues.issues){
+        results[i].dataValues.description = results[i].dataValues.issues[l].description;
+        for (var m in results[i].dataValues.issues[l].media){
+          var port = req.app.settings.port || cfg.port;
+          var callingUrl = req.protocol +
+            '://' +
+            req.hostname +
+            ( port == 80 || port == 443 ? '' : ':' + port ) + '/media/';
+          results[i].dataValues.media_url = callingUrl + moment(results[i].dataValues.issues[l].media[m].uploaded).format('YYYY/M/D') +
+            "/" +
+            results[i].dataValues.issues[l].media[m].internalFilename;
+        }
+      }
+      delete results[i].dataValues.issues;
+
+    }
     switch (format) {
       case 'json':
         res.json(results);
@@ -189,11 +247,7 @@ var postServiceRequest = function(req, res) {
   switch (req.params.format) {
     case 'xml':
       res.set('Content-Type', 'text/xml');
-      res.send(json2xml({
-        service_requests: ''
-      }, {
-        header: true
-      }));
+      res.send(js2xmlparser("service_requests", ''));
       break;
     default:
       res.json({});

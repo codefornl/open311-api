@@ -17,7 +17,7 @@
       classMethods: {
         associate: function(models) {
           service.belongsTo(models.service_group,{foreignKey: 'categoryGroup_id'});
-          //service.hasMany(models.service_attribute);
+          service.hasMany(models.request,{foreignKey: 'category_id'});
         }
       }
     });

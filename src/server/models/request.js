@@ -5,6 +5,7 @@
   'use strict';
   module.exports = function(sequelize, DataTypes) {
     var request = sequelize.define("request", {
+      status: DataTypes.STRING,
       latitude: DataTypes.FLOAT,
       longitude: DataTypes.FLOAT,
       location: DataTypes.STRING,
@@ -19,6 +20,8 @@
       classMethods: {
         associate: function(models) {
           request.belongsTo(models.service,{foreignKey: 'category_id'});
+          request.hasMany(models.issue,{foreignKey: 'ticket_id'});
+          request.belongsTo(models.person,{foreignKey: 'assignedPerson_id'});
         }
       }
     });

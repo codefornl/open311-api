@@ -35,6 +35,7 @@
     "js2xmlparser": "^1.0.0",
     "json2xml": "^0.1.2",
     "jsonwebtoken": "^5.4.1",
+    "moment": "^2.13.0",
     "mysql": "^2.9.0",
     "object-assign": "^4.0.1",
     "request": "*",
