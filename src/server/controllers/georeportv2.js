@@ -241,9 +241,7 @@ var getServiceRequests = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
-  if (req.params.jurisdiction_id) {
-    console.log(req.query);
-  }
+  console.log(req);
   switch (req.params.format) {
     case 'xml':
       res.set('Content-Type', 'text/xml');
@@ -264,7 +262,7 @@ router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
-
+router.route('/api/v2/requests.:format').post(postServiceRequest);
 router.route('/api/v2/request.:format').post(postServiceRequest);
 
 module.exports = router;

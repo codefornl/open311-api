@@ -22,10 +22,9 @@ gulp.task('build', ['client', 'server']);
 
 //automagically re-build and run
 gulp.task('develop', function() {
-    gulp.start('build');
-    gulp.start('run');
-    gulp.watch(dirs.serversrc+'/**/*', ['copy_server', 'run']);
-    gulp.watch(dirs.clientsrc+'/**/*', ['client']);
+    gulp.start(['build','run']);
+    gulp.watch(dirs.serversrc + '/**/*', ['server', 'run']);
+    gulp.watch(dirs.clientsrc + '/**/*', ['client']);
 });
 
 //run node, if it's already running
