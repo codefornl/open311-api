@@ -27,8 +27,9 @@ From a console or terminal:
     git clone git@github.com:codeforeindhoven/open311-api.git
     cd open311-api
     npm install .
+    npm run build
 
-*Note:* Check that `npm install .` doesn't generate errors. The installation
+*Note:* Check that `npm run build` doesn't generate errors. The installation
  process will tell you what components are missing (f.i. mysql)
 
 Create a file called `config.json`
