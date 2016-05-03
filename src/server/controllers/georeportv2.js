@@ -6,6 +6,8 @@ var moment = require('moment');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
+var multer  = require('multer');
+var upload = multer({ dest: 'media/tmp/' });
 
 /**
  * Open311 - GET Service List
@@ -42,12 +44,15 @@ var getServiceList = function(req, res) {
 
     models.service.findAll(options).then(function(results) {
       for(var i in results){
-        results[i].dataValues.group = results[i].dataValues.service_group.name;
+        if(results[i].dataValues.service_group){
+          results[i].dataValues.group = results[i].dataValues.service_group.name;
+        }
 
         if(results[i].dataValues.keywords) {
-          var keywords = results[i].dataValues.keywords.replace(", ", ",");
-          keywords = keywords.replace(",", " ");
-          results[i].dataValues.keywords = keywords.split(' ');
+          results[i].dataValues.keywords = results[i].dataValues.keywords
+            .replace(/, /g, ',')
+            .replace(/,/g, ' ')
+            .split(' ');
           if(format === 'xml'){
             results[i].dataValues.keywords = results[i].dataValues.keywords.join(', ');
           }
@@ -241,7 +246,8 @@ var getServiceRequests = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
-  console.log(req);
+  console.log(req.file);
+  console.log(req.body);
   switch (req.params.format) {
     case 'xml':
       res.set('Content-Type', 'text/xml');
@@ -262,7 +268,7 @@ router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
-router.route('/api/v2/requests.:format').post(postServiceRequest);
+router.route('/api/v2/requests.:format').post(upload.single('media'), postServiceRequest);
 router.route('/api/v2/request.:format').post(postServiceRequest);
 
 module.exports = router;

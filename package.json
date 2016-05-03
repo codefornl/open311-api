@@ -20,8 +20,10 @@
   ],
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development ./node_modules/.bin/gulp build && ./node_modules/.bin/gulp install_npm && ./node_modules/.bin/gulp run",
-    "test": "NODE_ENV=test mocha src/server/test/ --timeout 30000 --reporter spec --bail src/server/test/"
+    "start": "cd build && npm start",
+    "test": "cd build && NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/",
+    "build": "./node_modules/.bin/gulp build"
+
   },
   "repository": {
     "type": "git",

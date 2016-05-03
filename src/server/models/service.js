@@ -9,6 +9,7 @@
         "type": DataTypes.STRING,
         "field": "name"
       },
+      customFIelds: DataTypes.TEXT,
       description: DataTypes.TEXT,
       keywords: DataTypes.TEXT
     }, {
@@ -16,6 +17,7 @@
       timestamps: false,
       classMethods: {
         associate: function(models) {
+          service.belongsTo(models.jurisdiction);
           service.belongsTo(models.service_group,{foreignKey: 'categoryGroup_id'});
           service.hasMany(models.request,{foreignKey: 'category_id'});
         }

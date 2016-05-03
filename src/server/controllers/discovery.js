@@ -26,7 +26,6 @@ var getDiscovery = function(req, res) {
         "endpoints": []
       };
     }
-    console.log("Result:" + result);
     switch (format) {
       case 'json':
         var jsonFormats = [

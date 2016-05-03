@@ -25,12 +25,12 @@ describe('testing Georeport v2', function() {
     done();
   });
 
-  it('Main url should return discovery.xml', function(done) {
-    // See that we get a status 200 on retrieving the Index
-    request(server.app).get('/')
-      .expect('Content-Type', 'text/xml; charset=utf-8')
-      .expect(200, done);
-  });
+  // it('Main url should return discovery.xml', function(done) {
+  //   // See that we get a status 200 on retrieving the Index
+  //   request(server.app).get('/api/v2')
+  //     .expect('Content-Type', 'text/xml; charset=utf-8')
+  //     .expect(200, done);
+  // });
 
   it('Get Services as json should pass', function(done) {
     // See that we get a status 200 on retrieving the Index

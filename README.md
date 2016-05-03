@@ -1,7 +1,7 @@
 # Build status
 
 [![Travis](https://travis-ci.org/CodeForEindhoven/open311-api.svg?branch=master)](https://travis-ci.org/CodeForEindhoven/open311-api)
-[![David](https://david-dm.org/codeforeindhoven/open311-api.svg)](https://david-dm.org/codeforeindhoven/open311-api)
+[![David](https://david-dm.org/codeforeindhoven/open311-api.svg?path=src/server)](https://david-dm.org/codeforeindhoven/open311-api?path=src/server)
 
 # About
 

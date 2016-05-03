@@ -66,7 +66,7 @@ var postServiceAttributes = function(req, res) {
   if (req.params.service_code) {
     whereClause = {
       where: {
-        service_code: req.params.service_code
+        id: req.params.service_code
       }
     };
     models.service.findOne(whereClause).then(function(service) {

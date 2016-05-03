@@ -20,7 +20,7 @@
   ],
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development node index.js",
+    "start": "NODE_ENV=test node index.js",
     "test": "NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/"
   },
   "repository": {
@@ -36,6 +36,7 @@
     "json2xml": "^0.1.2",
     "jsonwebtoken": "^5.4.1",
     "moment": "^2.13.0",
+    "multer": "^1.1.0",
     "mysql": "^2.9.0",
     "object-assign": "^4.0.1",
     "request": "*",
@@ -43,10 +44,10 @@
     "sqlite3": "^3.1.1"
   },
   "devDependencies": {
-    "expect": "1.13.1",
+    "expect": "1.19.0",
     "open311": "git://github.com/codeforeindhoven/node-open311.git",
-    "mocha": "2.3.4",
-    "mocha-junit-reporter": "1.9.1",
+    "mocha": "2.4.5",
+    "mocha-junit-reporter": "1.11.1",
     "supertest": "^1.1.0"
   }
 }
