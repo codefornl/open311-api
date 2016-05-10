@@ -1,15 +1,18 @@
 {
   "development": {
     "dialect": "sqlite",
-    "storage": "./db.development.sqlite"
+    "storage": "./db.development.sqlite",
+    "email": "change this"
   },
   "test": {
     "dialect": "sqlite",
     "storage": "./db.test.sqlite",
-    "logging": false
+    "logging": false,
+    "email": "change this"
   },
   "production": {
     "dialect": "sqlite",
-    "storage": "./db.production.sqlite"
+    "storage": "./db.production.sqlite",
+    "email": "change this"
   }
 }

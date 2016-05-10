@@ -20,7 +20,7 @@
   ],
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=test node index.js",
+    "start": "node index.js",
     "test": "NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/"
   },
   "repository": {

@@ -1,66 +1,57 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
-var json2xml = require('json2xml');
+var js2xmlparser = require("js2xmlparser");
+var moment = require('moment');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
 
 var getDiscovery = function(req, res) {
-  var now = new Date();
   var format = req.params.format || 'xml';
-  // Construct the url, can be overridden from the endpoint model
-  models.discovery.findOne({
-    attributes: ['changeset', 'contact', 'key_service'],
-    include: {
-      model: models.endpoint,
-      attributes: ['specification', 'url', 'changeset', 'type']
-    }
-  }).then(function(result) {
-    //var fullUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/api/';
-    ///var keyUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/signup/';
-    if (result) {
-      result = result.toJSON();
-    } else {
-      result = {
-        "endpoints": []
-      };
-    }
-    switch (format) {
-      case 'json':
-        var jsonFormats = [
-          'text/xml',
-          'application/json'
-        ];
-        for (var y in result.endpoints) {
-          result.endpoints[y].formats = jsonFormats;
-        }
-        res.json(result);
-        break;
+  var port = req.app.settings.port || cfg.port;
+  var url = req.protocol +
+    '://' +
+    req.hostname +
+    ( port == 80 || port == 443 ? '' : ':' + port ) + '/api/v2/';
+  var keyservice = req.protocol +
+    '://' +
+    req.hostname +
+    ( port == 80 || port == 443 ? '' : ':' + port ) + '/key.html';
+  var discovery = {
+    "changeset": moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+    "contact": "You can email " + util.getConfig('email') + " for assistance",
+    "key_service": "You can request a key at: " + keyservice,
+    "endpoints":[{
+      "specification": "http://wiki.open311.org/GeoReport_v2</specification",
+      "url": url,
+      "type": env,
+      "changeset": moment().format('YYYY-MM-DDTHH:mm:ssZ')
+    }]
+  };
+  var jsonFormats = [
+    'text/xml',
+    'application/json'
+  ];
 
-      default:
-        var xmlResult = result;
-        var xmlEndpoints = [];
-        var xmlFormats = [{
-          format: 'text/xml'
-        }, {
-          format: 'application/json'
-        }];
-        for (var x in xmlResult.endpoints) {
-          xmlResult.endpoints[x].formats = xmlFormats;
-          xmlEndpoints.push({
-            endpoint: xmlResult.endpoints[x]
-          });
+  for (var y in discovery.endpoints) {
+    discovery.endpoints[y].formats = jsonFormats;
+  }
+
+  switch (format) {
+    case 'json':
+      res.json(discovery);
+      break;
+
+    default:
+      res.set('Content-Type', 'text/xml');
+      res.send(js2xmlparser("discovery", discovery,{
+        arrayMap: {
+          endpoints: "endpoint",
+          formats: "format"
         }
-        xmlResult.endpoints = xmlEndpoints;
-        res.set('Content-Type', 'text/xml');
-        res.send(json2xml({
-          discovery: xmlResult
-        }, {
-          header: true
-        }));
-    }
-  });
+      }));
+  }
 };
 
 router.route('/api/').get(getDiscovery);

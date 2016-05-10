@@ -106,7 +106,19 @@ var removeNulls = function(data) {
   }
   return data;
 };
-
+var getConfig = function(key) {
+  var fs = require("fs");
+  var config;
+  var env = process.env.NODE_ENV || "development";
+  if (!fs.existsSync(__dirname + '/../config.json')) {
+    console.log('Warning, no config.json present. Falling back to config.default.json');
+    config = require(__dirname + '/../config.default.json')[env];
+  } else {
+    config = require(__dirname + '/../config.json')[env];
+  }
+  return config[key];
+};
+exports.getConfig = getConfig;
 exports.removeNulls = removeNulls;
 exports.ensureAuthorized = ensureAuthorized;
 exports.ensureAdmin = ensureAdmin;

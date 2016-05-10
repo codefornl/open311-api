@@ -55,29 +55,9 @@ if ('production' == env) {
 }
 
 function start() {
-  if ('development_foo' == env) {
-    console.log('Running in ' + env + ' mode');
-    require('./models').sequelize.sync({
-        force: false,
-        logging: console.log
-      })
-      .then(function(err) {
-        console.log("Sync succesful");
-        app.listen(app.get('port'), function() {
-          console.log("Express server listening on port %d in %s mode", app.get('port'), app.settings.env);
-        });
-      })
-      .then(function(err) {
-        if (err) {
-          console.log("Sync failed:", err);
-        }
-      });
-  } else if ('production' == env || 'test' == env || 'development' == env) {
-    console.log('Running in ' + env + ' mode');
-    app.listen(app.get('port'), function() {
-      console.log("Express server listening on port %d in %s mode", app.get('port'), app.settings.env);
-    });
-  }
+  app.listen(app.get('port'), function() {
+    console.log("Express server listening on port %d in %s mode", app.get('port'), app.settings.env);
+  });
 }
 exports.start = start;
 exports.app = app;

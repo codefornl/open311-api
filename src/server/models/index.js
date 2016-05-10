@@ -4,7 +4,6 @@
   var path = require("path");
   var Sequelize = require("sequelize");
   var env = process.env.NODE_ENV || "development";
-  console.log('models say: env=' + env);
   var config;
   if (!fs.existsSync(__dirname + '/../config.json')) {
       console.log('Warning, no config.json present. Falling back to config.default.json');
@@ -13,7 +12,6 @@
   } else {
       config = require(__dirname + '/../config.json')[env];
   }
-
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
   var db = {};
   fs

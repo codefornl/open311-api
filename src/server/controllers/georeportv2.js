@@ -138,7 +138,7 @@ var getServiceDefinition = function(req, res) {
           break;
         default:
           var xmlResult = results.dataValues;
-          var final = js2xmlparser("service_definition", xmlResult,{
+          var final = js2xmlparser("service_definition", xmlResult ,{
             arrayMap: {
               values: "value",
               attributes: "attribute"
