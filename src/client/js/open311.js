@@ -1,11 +1,11 @@
-var open311 = (function(){
+var open311 = (function() {
   var apiEndpoint = "api/v2/";
   var api_key = "56f3b3b5f3348";
   var title = "Meldloket";
 
   var requests = m.prop([]);
   function loadRequests(){
-    m.request({method: "GET", url: apiEndpoint+"requests.json"})
+    m.request({method: "GET", url: apiEndpoint + "requests.json"})
     .then(function(list){
       //sort by date
       return list.sort(function(a,b){
@@ -19,24 +19,25 @@ var open311 = (function(){
 
   var first_name = m.prop("");
   var email = m.prop("");
-  var lat = m.prop("");
-  var long = m.prop("");
+  var service_code = m.prop(-1);
+  var lat = m.prop(0);
+  var long = m.prop(0);
   var description = m.prop("");
   var media = m.prop();
 
   function postRequest(){
     var formData = new FormData();
     formData.append("api_key", api_key);
-    formData.append("service_code", "1");
+    formData.append("service_code", service_code());
     formData.append("email", email());
     formData.append("first_name", first_name());
-    formData.append("lat", "51.42017745971680");
-    formData.append("long", "5.47374010086060");
+    formData.append("lat", lat());
+    formData.append("long", long());
     formData.append("description", description());
     formData.append("media", media());
     m.request({
       method: "POST",
-      url: apiEndpoint+"requests.json",
+      url: apiEndpoint + "requests.json",
       data: formData,
       serialize: function(value) {return value;} //simply pass the FormData object intact to the underlying XMLHttpRequest, instead of JSON.stringify'ing it
     });
@@ -51,6 +52,7 @@ var open311 = (function(){
     requests: requests,
     loadRequests: loadRequests,
     first_name: first_name,
+    service_code: service_code,
     email: email,
     lat: lat,
     long: long,

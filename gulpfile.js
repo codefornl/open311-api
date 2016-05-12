@@ -1,7 +1,11 @@
-var gulp = require('gulp');
-var less = require('gulp-less');
-var include = require("gulp-include");
-var install = require("gulp-install");
+var gulp = require('gulp'),
+  less = require('gulp-less'),
+  include = require("gulp-include"),
+  install = require("gulp-install"),
+  gp_concat = require('gulp-concat'),
+  gp_rename = require('gulp-rename'),
+  gp_uglify = require('gulp-uglify'),
+  gp_sourcemaps = require('gulp-sourcemaps');
 
 var spawn = require('child_process').spawn;
 var path = require('path');
@@ -59,20 +63,28 @@ gulp.task('install_npm',function(){
 /* Build client */
 gulp.task('client', ['js', 'less', 'html', 'static']);
 //concatenate all js files into one
-gulp.task('js', function(){
-    return gulp.src(dirs.clientsrc+'/js/**/*.js')
-        .pipe(gulp.dest(dirs.clientbuild+'/js'));
-});
 // gulp.task('js', function(){
-//     return gulp.src(dirs.clientsrc+'/js/App.js')
-//         .pipe(include())
-//             .on('error', console.log)
+//     return gulp.src(dirs.clientsrc+'/js/**/*.js')
 //         .pipe(gulp.dest(dirs.clientbuild+'/js'));
 // });
+gulp.task('js', function(){
+  return gulp.src([
+      dirs.clientsrc+'/js/open311.js',
+      dirs.clientsrc+'/js/form/*.js',
+      dirs.clientsrc+'/js/overview/*.js'
+    ])
+    //.pipe(gp_sourcemaps.init())
+    .pipe(gp_concat('open311.js'))
+    .pipe(gulp.dest(dirs.clientbuild+'/js'))
+    .pipe(gp_rename('open311.min.js'))
+    .pipe(gp_uglify())
+    .pipe(gp_sourcemaps.write('./'))
+    .pipe(gulp.dest(dirs.clientbuild+'/js'));
+});
 
 //compile Less files to Css
 gulp.task('less', function () {
-    return gulp.src(dirs.clientsrc+'/style/style.less')
+    return gulp.src(dirs.clientsrc + '/style/style.less')
         .pipe(less({
             paths: [ path.join(__dirname, 'less', 'includes') ]
         }))

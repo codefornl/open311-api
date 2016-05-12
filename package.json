@@ -23,7 +23,6 @@
     "start": "cd build && npm start",
     "test": "cd build && NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/",
     "build": "./node_modules/.bin/gulp build"
-
   },
   "repository": {
     "type": "git",
@@ -34,5 +33,11 @@
     "gulp-include": "~2.1.0",
     "gulp-install": "~0.6.0",
     "gulp-less": "~3.0.5"
+  },
+  "devDependencies": {
+    "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.3"
   }
 }
