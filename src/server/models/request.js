@@ -20,8 +20,10 @@
       classMethods: {
         associate: function(models) {
           request.belongsTo(models.service,{foreignKey: 'category_id'});
+          request.belongsTo(models.application,{foreignKey: 'client_id'});
           request.hasMany(models.issue,{foreignKey: 'ticket_id'});
           request.belongsTo(models.person,{foreignKey: 'assignedPerson_id'});
+          request.belongsTo(models.person,{foreignKey: 'enteredByPerson_id'});
         }
       }
     });

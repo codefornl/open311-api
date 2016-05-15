@@ -196,13 +196,17 @@ var getServiceRequests = function(req, res) {
       results[i].dataValues.requested_datetime = moment(results[i].dataValues.requested_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
       results[i].dataValues.updated_datetime = moment(results[i].dataValues.updated_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
 
-      if(results[i].dataValues.person.department){
-        results[i].dataValues.agency_responsible = results[i].dataValues.person.department.name;
+      if(results[i].dataValues.person){
+        if(results[i].dataValues.person.department){
+          results[i].dataValues.agency_responsible = results[i].dataValues.person.department.name;
+        }
+        delete results[i].dataValues.person;
       }
-      delete results[i].dataValues.person;
 
-      results[i].dataValues.service_name = results[i].dataValues.service.service_name;
-      delete results[i].dataValues.service;
+      if(results[i].dataValues.service){
+        results[i].dataValues.service_name = results[i].dataValues.service.service_name;
+        delete results[i].dataValues.service;
+      }
 
       for (var l in results[i].dataValues.issues){
         results[i].dataValues.description = results[i].dataValues.issues[l].description;
@@ -247,15 +251,42 @@ var getServiceRequests = function(req, res) {
  */
 var postServiceRequest = function(req, res) {
   console.log(req.file);
-  console.log(req.body);
-  switch (req.params.format) {
-    case 'xml':
-      res.set('Content-Type', 'text/xml');
-      res.send(js2xmlparser("service_requests", ''));
-      break;
-    default:
-      res.json({});
-  }
+  //console.log(req.body);
+  var ticket = {
+    "category_id": parseInt(req.body.service_code,10),
+    "latitude": parseInt(req.body.lat,10),
+    "longitude": parseInt(req.body.long,10),
+    "enteredByPerson_id": req.body.person_id,
+    "client_id": req.body.application,
+    "assignedPerson_id": req.body.assignee
+  };
+
+  models.request.create(ticket).then(function(ticket) {
+    //Update the corresponding issue
+    var issue = {
+      "ticket_id": ticket.id,
+      "contacMethod_id": req.body.contactmethod,
+      "longitude": parseInt(req.body.long,10),
+      "reportedByPerson_id": req.body.person_id,
+      "description": req.body.description
+    };
+    models.issue.create(issue).then(function(){
+      res.redirect('/');
+    });
+
+  });
+
+};
+
+  //Validate first if the minimal set of attributes is present.
+  // switch (req.params.format) {
+  //   case 'xml':
+  //     res.set('Content-Type', 'text/xml');
+  //     res.send(js2xmlparser("service_requests", ''));
+  //     break;
+  //   default:
+  //     res.json({});
+  // }
   /**
    * The numbers represent the HTTP status code returned for each error type:
    * 404 - jurisdiction_id provided was not found (specify in error response)
@@ -263,12 +294,11 @@ var postServiceRequest = function(req, res) {
    * 400 - General service error (Anything that fails during service list processing. The client will need to notify us)
    */
 
-};
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
-router.route('/api/v2/requests.:format').post(upload.single('media'), postServiceRequest);
+router.route('/api/v2/requests.:format').post(upload.single('media'), util.ensureApiKey, util.ensureIdentified, postServiceRequest);
 router.route('/api/v2/request.:format').post(postServiceRequest);
 
 module.exports = router;

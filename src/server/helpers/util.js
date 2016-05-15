@@ -11,6 +11,93 @@ String.prototype.toProperCase = function() {
 
 var models = require('../models');
 
+
+exports.ensureApiKey = function(req,res,next){
+  console.log(req.body);
+  if(req.body.api_key){
+    models.application.findOne(
+      {
+        where: {
+          api_key: req.body.api_key
+        }
+      }
+    ).then(function(result){
+      req.body.application = result.id;
+      req.body.assignee = result.contactPerson_id;
+      req.body.contactmethod = result.contactMethod_id;
+      next();
+    });
+  } else {
+    res.status(403).json({
+      type: 'forbidden',
+      message: 'Sorry, you need to provide a valid api_key'
+    });
+  }
+};
+/**
+ * Check if the issuer is known within the system.
+ * Sequence:
+ *   1. Email?
+ *   2. Person?
+ *   3. DeviceId?
+ *   4. IP address
+
+ *
+ * If email is known, but person doesn't match, throw error
+ * If email is unknown, and Person is unknown, add person and email and return new personid
+ * If email and person match; return personid
+ * If none of the above applies, set user to anonymous, (register ip?)
+ */
+exports.ensureIdentified = function(req, res, next) {
+  var check_ip = req.ip || '0.0.0.0';
+  var check_Person;
+  var check_Email;
+  var check_Deviceid;
+  if(req.body.deviceid){
+    check_Deviceid = req.body.deviceid;
+  }
+  if(req.body.last_name){
+    check_Person = check_Person || {};
+    check_Person.lastname = req.body.last_name;
+  }
+  if(req.body.first_name){
+    check_Person = check_Person || {};
+    check_Person.firstname = req.body.first_name;
+  }
+  if(req.body.email){
+    check_Email = check_Email || req.body.email;
+  }
+  if(check_Email && check_Person){
+    models.person.findOrCreate(
+      {
+        where: check_Person
+      }
+    ).spread(function(user, created) {
+      console.log(user.id);
+      console.log(created);
+      models.personEmail.findOrCreate(
+        {
+          where: {
+            person_id: user.id,
+            email: check_Email
+          }
+        }
+      ).spread(function(email, created){
+        req.body.person_id = email.person_id;
+        console.log(email.id);
+        console.log(email.person_id);
+        console.log(created);
+        next();
+      });
+    });
+  } else {
+    //Anonymous
+    if(check_Deviceid){
+
+    }
+  }
+};
+
 /**
  * Middleware function to check if a request contains the right credentials to be
  * Authenticated. This function needs more work.
@@ -120,5 +207,6 @@ var getConfig = function(key) {
 };
 exports.getConfig = getConfig;
 exports.removeNulls = removeNulls;
+
 exports.ensureAuthorized = ensureAuthorized;
 exports.ensureAdmin = ensureAdmin;
