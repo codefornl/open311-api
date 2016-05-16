@@ -8,6 +8,7 @@ var router = express.Router();
 var env = process.env.NODE_ENV || "development";
 var multer  = require('multer');
 var upload = multer({ dest: 'media/tmp/' });
+var fs = require('fs-extra');
 
 /**
  * Open311 - GET Service List
@@ -250,7 +251,7 @@ var getServiceRequests = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
-  console.log(req.file);
+
   //console.log(req.body);
   var ticket = {
     "category_id": parseInt(req.body.service_code,10),
@@ -270,12 +271,36 @@ var postServiceRequest = function(req, res) {
       "reportedByPerson_id": req.body.person_id,
       "description": req.body.description
     };
-    models.issue.create(issue).then(function(){
-      res.redirect('/');
+    models.issue.create(issue).then(function(issue){
+      var path = require('path');
+      var ext = path.extname(req.file.originalname);
+      var targetFile = req.file.filename + ext;
+      var curtime = moment();
+      var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
+      //move the uploaded file to the correct path (/media/year/month)
+      fs.move(req.file.path,  targetPath + targetFile, function(err){
+        //After move, store the corresponding media record.
+        var media = {
+          issue_id: issue.id,
+          filename: req.file.originalname,
+          internalFilename: targetFile,
+          mime_type: req.file.mime_type,
+          media_type: 'image',
+          uploaded: curtime,
+          person_id: req.body.person_id
+        };
+        if (err) {
+          // @todo res.send error
+          return console.error(err);
+        } else {
+          models.media.create(media).then(function(media){
+            // @todo res.send success
+            console.log("success!");
+          });
+        }
+      });
     });
-
   });
-
 };
 
   //Validate first if the minimal set of attributes is present.

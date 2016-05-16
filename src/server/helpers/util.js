@@ -49,13 +49,8 @@ exports.ensureApiKey = function(req,res,next){
  * If none of the above applies, set user to anonymous, (register ip?)
  */
 exports.ensureIdentified = function(req, res, next) {
-  var check_ip = req.ip || '0.0.0.0';
   var check_Person;
-  var check_Email;
-  var check_Deviceid;
-  if(req.body.deviceid){
-    check_Deviceid = req.body.deviceid;
-  }
+
   if(req.body.last_name){
     check_Person = check_Person || {};
     check_Person.lastname = req.body.last_name;
@@ -64,10 +59,8 @@ exports.ensureIdentified = function(req, res, next) {
     check_Person = check_Person || {};
     check_Person.firstname = req.body.first_name;
   }
-  if(req.body.email){
-    check_Email = check_Email || req.body.email;
-  }
-  if(check_Email && check_Person){
+
+  if(req.body.email && check_Person){
     models.person.findOrCreate(
       {
         where: check_Person
@@ -79,22 +72,43 @@ exports.ensureIdentified = function(req, res, next) {
         {
           where: {
             person_id: user.id,
-            email: check_Email
+            email: req.body.email
           }
         }
       ).spread(function(email, created){
-        req.body.person_id = email.person_id;
-        console.log(email.id);
-        console.log(email.person_id);
-        console.log(created);
-        next();
+        //Register/find Device and/or phone
+        var device;
+        if(req.body.device_id){
+          device = device || {};
+          device.device_id = req.body.device_id;
+        }
+        if(req.body.phone){
+          device = device || {};
+          if(!device.device_id){
+            device.device_id = req.ip;
+          }
+          device.phone = req.body.phone;
+        }
+        if(device){
+          device.person_id = email.person_id;
+          models.personDevice.findOrCreate(
+            {
+              where: device
+            }
+          ).spread(function(device, created){
+            req.body.person_id = device.person_id;
+            next();
+          });
+        } else {
+          req.body.person_id = email.person_id;
+          next();
+        }
+
       });
     });
   } else {
     //Anonymous
-    if(check_Deviceid){
 
-    }
   }
 };
 
