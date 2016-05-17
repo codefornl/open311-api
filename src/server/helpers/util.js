@@ -90,7 +90,7 @@ exports.ensureIdentified = function(req, res, next) {
       if(req.body.device_id){
         device = device || {};
         if(!req.body.phone){
-          device.phone = req.ip;
+          device.number = req.ip;
           device.label = 'Main';
         }
         device.deviceId = req.body.device_id;
@@ -102,7 +102,7 @@ exports.ensureIdentified = function(req, res, next) {
           device.deviceId = req.ip;
           device.label = 'Mobile';
         }
-          device.phone = req.body.phone;
+          device.number = req.body.phone;
       }
       if(device){
         device.person_id = email.person_id;
