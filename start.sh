@@ -10,6 +10,7 @@ sed -i "s^__DATABASE_DIALECT__^$DATABASE_DIALECT^g" /open311/build/config.json
 sed -i "s^__DATABASE_STORAGE__^$DATABASE_STORAGE^g" /open311/build/config.json
 sed -i "s^__LOGGING__^$LOGGING^g" /open311/build/config.json
 sed -i "s^__SYSTEM_EMAIL__^$SYSTEM_EMAIL^g" /open311/build/config.json
+sed -i "s^__REMOTE_PORT__^$REMOTE_PORT^g" /open311/build/config.json
 
 cd /open311
 npm start
