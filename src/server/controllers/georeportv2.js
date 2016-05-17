@@ -254,19 +254,24 @@ var postServiceRequest = function(req, res) {
   var format = req.params.format || 'xml';
   var ticket = {
     "category_id": parseInt(req.body.service_code,10),
-    "latitude": parseInt(req.body.lat,10),
-    "longitude": parseInt(req.body.long,10),
+    "latitude": parseFloat(req.body.lat),
+    "longitude": parseFloat(req.body.long),
     "enteredByPerson_id": req.body.person_id,
     "client_id": req.body.application,
     "assignedPerson_id": req.body.assignee
   };
+  if(req.body.address_string){
+    ticket.location = req.body.address_string;
+  }
+  if(req.body.address_id){
+    ticket.addressId = req.body.address_id;
+  }
 
   models.request.create(ticket).then(function(ticket) {
     //Update the corresponding issue
     var issue = {
       "ticket_id": ticket.id,
       "contacMethod_id": req.body.contactmethod,
-      "longitude": parseInt(req.body.long,10),
       "reportedByPerson_id": req.body.person_id,
       "description": req.body.description
     };
