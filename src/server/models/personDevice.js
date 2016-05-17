@@ -8,7 +8,7 @@
     var personDevice = sequelize.define("personDevice", {
       number: DataTypes.STRING,
       label: DataTypes.STRING,
-      deviceid: DataTypes.STRING
+      deviceId: DataTypes.STRING
     }, {
       tableName: 'peoplePhones',
       timestamps: false,

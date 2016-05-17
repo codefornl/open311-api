@@ -93,13 +93,13 @@ exports.ensureIdentified = function(req, res, next) {
           device.phone = req.ip;
           device.label = 'Main';
         }
-        device.device_id = req.body.device_id;
+        device.deviceId = req.body.device_id;
 
       }
       if(req.body.phone){
         device = device || {};
-        if(!device.device_id){
-          device.device_id = req.ip;
+        if(!device.deviceId){
+          device.deviceId = req.ip;
           device.label = 'Mobile';
         }
           device.phone = req.body.phone;
