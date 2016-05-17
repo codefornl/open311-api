@@ -13,7 +13,6 @@ var models = require('../models');
 
 
 exports.ensureApiKey = function(req,res,next){
-  console.log(req.body);
   if(req.body.api_key){
     models.application.findOne(
       {
@@ -50,7 +49,7 @@ exports.ensureApiKey = function(req,res,next){
  */
 exports.ensureIdentified = function(req, res, next) {
   var check_Person;
-
+  var check_Email;
   if(req.body.last_name){
     check_Person = check_Person || {};
     check_Person.lastname = req.body.last_name;
@@ -59,57 +58,80 @@ exports.ensureIdentified = function(req, res, next) {
     check_Person = check_Person || {};
     check_Person.firstname = req.body.first_name;
   }
-
-  if(req.body.email && check_Person){
-    models.person.findOrCreate(
-      {
-        where: check_Person
-      }
-    ).spread(function(user, created) {
-      console.log(user.id);
-      console.log(created);
-      models.personEmail.findOrCreate(
-        {
-          where: {
-            person_id: user.id,
-            email: req.body.email
-          }
-        }
-      ).spread(function(email, created){
-        //Register/find Device and/or phone
-        var device;
-        if(req.body.device_id){
-          device = device || {};
-          device.device_id = req.body.device_id;
-        }
-        if(req.body.phone){
-          device = device || {};
-          if(!device.device_id){
-            device.device_id = req.ip;
-          }
-          device.phone = req.body.phone;
-        }
-        if(device){
-          device.person_id = email.person_id;
-          models.personDevice.findOrCreate(
-            {
-              where: device
-            }
-          ).spread(function(device, created){
-            req.body.person_id = device.person_id;
-            next();
-          });
-        } else {
-          req.body.person_id = email.person_id;
-          next();
-        }
-
-      });
-    });
-  } else {
-    //Anonymous
-
+  if(req.body.email && req.body.email){
+    check_Email = req.body.email;
   }
+  if(!req.body.email && !check_Person) {
+    //Anonymous
+    check_Person = {
+      firstname: "Anonymous",
+      username: "anonymous",
+      role: "anonymous"
+    };
+    check_Email = "anonymous@foo.bar";
+  }
+  models.person.findOrCreate(
+    {
+      where: check_Person
+    }
+  ).spread(function(user, created) {
+    console.log(user.id);
+    console.log(created);
+    models.personEmail.findOrCreate(
+      {
+        where: {
+          person_id: user.id,
+          email: check_Email
+        }
+      }
+    ).spread(function(email, created){
+      //Register/find Device and/or phone
+      var device;
+      if(req.body.device_id){
+        device = device || {};
+        if(!req.body.phone){
+          device.phone = req.ip;
+          device.label = 'Main';
+        }
+        device.device_id = req.body.device_id;
+
+      }
+      if(req.body.phone){
+        device = device || {};
+        if(!device.device_id){
+          device.device_id = req.ip;
+          device.label = 'Mobile';
+        }
+          device.phone = req.body.phone;
+      }
+      if(device){
+        device.person_id = email.person_id;
+        models.personDevice.findOrCreate(
+          {
+            where: device
+          }
+        ).spread(function(device, created){
+          req.body.person_id = device.person_id;
+          next();
+        });
+      } else {
+        //Register the ip address of the request.
+        device = {
+          number: req.ip,
+          label: 'Other'
+        };
+        device.person_id = email.person_id;
+        models.personDevice.findOrCreate(
+          {
+            where: device
+          }
+        ).spread(function(device, created){
+          req.body.person_id = device.person_id;
+          next();
+        });
+      }
+    });
+  });
 };
 
 /**

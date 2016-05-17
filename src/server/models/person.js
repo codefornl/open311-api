@@ -9,6 +9,8 @@
       firstname: DataTypes.STRING,
       middlename: DataTypes.STRING,
       lastname: DataTypes.STRING,
+      username: DataTypes.STRING,
+      role: DataTypes.STRING
     }, {
       tableName: 'people',
       timestamps: false,

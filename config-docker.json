@@ -1,0 +1,13 @@
+{
+  "__NODE_ENV__": {
+    "host": "__DATABASE_HOST__",
+    "database": "__DATABASE_NAME__",
+    "username": "__DATABASE_USER__",
+    "password": "__DATABASE_PASSWORD__",
+    "port": __DATABASE_PORT__,
+    "dialect": "__DATABASE_DIALECT__",
+    "storage": "__DATABASE_STORAGE__",
+    "logging": __LOGGING__,
+    "email": "__SYSTEM_EMAIL__"
+  }
+}
