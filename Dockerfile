@@ -15,6 +15,7 @@ ENV DATABASE_DIALECT mysql
 ENV DATABASE_STORAGE ./db.open311.sqlite
 ENV LOGGING false
 ENV SYSTEM_EMAIL open311@localhost
+ENV REMOTE_PORT 80
 
 
 # Install

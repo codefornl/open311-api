@@ -8,6 +8,7 @@
     "dialect": "__DATABASE_DIALECT__",
     "storage": "__DATABASE_STORAGE__",
     "logging": __LOGGING__,
-    "email": "__SYSTEM_EMAIL__"
+    "email": "__SYSTEM_EMAIL__",
+    "remote_port": "__REMOTE_PORT__"
   }
 }

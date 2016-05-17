@@ -212,7 +212,7 @@ var getServiceRequests = function(req, res) {
       for (var l in results[i].dataValues.issues){
         results[i].dataValues.description = results[i].dataValues.issues[l].description;
         for (var m in results[i].dataValues.issues[l].media){
-          var port = req.app.settings.port || cfg.port;
+          var port = util.getConfig('remote_port') || req.app.settings.port;
           var callingUrl = req.protocol +
             '://' +
             req.hostname +
@@ -251,8 +251,7 @@ var getServiceRequests = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
-
-  //console.log(req.body);
+  var format = req.params.format || 'xml';
   var ticket = {
     "category_id": parseInt(req.body.service_code,10),
     "latitude": parseInt(req.body.lat,10),
@@ -294,8 +293,25 @@ var postServiceRequest = function(req, res) {
           return console.error(err);
         } else {
           models.media.create(media).then(function(media){
-            // @todo res.send success
-            console.log("success!");
+            var results = [{
+              "service_request_id": ticket.id,
+              "service_notice": "Your request will be handled ASAP",
+              "account_id": null
+            }];
+            switch (format) {
+              case 'json':
+                res.json(results);
+                break;
+              default:
+              var xmlServiceRequests = results;
+              var final = js2xmlparser("service_requests", xmlServiceRequests, {
+                arrayMap: {
+                  service_requests: "request"
+                }
+              });
+              res.set('Content-Type', 'text/xml');
+              res.send(final);
+            }
           });
         }
       });
@@ -324,6 +340,6 @@ router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
 router.route('/api/v2/requests.:format').post(upload.single('media'), util.ensureApiKey, util.ensureIdentified, postServiceRequest);
-router.route('/api/v2/request.:format').post(postServiceRequest);
+router.route('/api/v2/request.:format').post(upload.single('media'), util.ensureApiKey, util.ensureIdentified, postServiceRequest);
 
 module.exports = router;
