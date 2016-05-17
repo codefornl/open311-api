@@ -191,6 +191,40 @@ var getServiceRequests = function(req, res) {
       ['enteredDate', 'DESC']
     ]
   };
+  var where;
+  if(req.query.service_request_id){
+    where = where || {};
+    where.id = {
+      $in: util.StringToIntArray(req.query.service_request_id)
+    };
+  }
+  if(req.query.service_code){
+    where = where || {};
+    where.category_id = {
+      $in: util.StringToIntArray(req.query.service_code)
+    };
+  }
+
+  var datewindow;
+  if(req.query.start_date){
+    datewindow = { $lt: req.query.start_date};
+  }
+  if(req.query.end_date){
+    datewindow = datewindow || {};
+    datewindow.$gt = req.query.end_date;
+  }
+  if(datewindow){
+    where = where || {};
+    where.enteredDate = datewindow;
+  }
+
+  if(req.query.status){
+    where = where || {};
+    where.status = req.query.status;
+  }
+  if(where){
+    options.where = where;
+  }
   models.request.findAll(options).then(function(results) {
     for(var i in results){
 

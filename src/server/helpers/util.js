@@ -33,6 +33,24 @@ exports.ensureApiKey = function(req,res,next){
     });
   }
 };
+
+exports.StringToIntArray = function(stringToSplit){
+  function isInt(value) {
+    return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value));
+  }
+  var m = stringToSplit
+    .replace(/\s\s+/g, ' ')
+    .replace(/^\s+|\s+$/g,",")
+    .split(/\s*,\s*/);
+  var o = [];
+  for (var i = 0; i < m.length; i++) {
+    if(isInt(m[i])){
+      o.push(parseInt(m[i], 10));
+    }
+  }
+  return o;
+};
+
 /**
  * Check if the issuer is known within the system.
  * Sequence:
