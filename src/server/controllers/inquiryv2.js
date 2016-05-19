@@ -1,7 +1,6 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
-var json2xml = require('json2xml');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";

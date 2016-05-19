@@ -1,6 +1,7 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
+var middleware = require('../helpers/middleware.js');
 var js2xmlparser = require("js2xmlparser");
 var moment = require('moment');
 var objectAssign = require('object-assign');
@@ -337,6 +338,13 @@ var postServiceRequest = function(req, res) {
               "service_notice": "Your request will be handled ASAP",
               "account_id": null
             }];
+
+            //send a simple mail too, this time just for testing via direct transport
+            var mailer = require('../helpers/mail.js');
+            //We have ticket, issue, and media, plus some user details in the req object.
+            //Send what is required.
+            mailer.newRequest(ticket.id);
+
             switch (format) {
               case 'json':
                 res.json(results);
@@ -378,7 +386,7 @@ router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
-router.route('/api/v2/requests.:format').post(upload.single('media'), util.ensureApiKey, util.ensureIdentified, postServiceRequest);
-router.route('/api/v2/request.:format').post(upload.single('media'), util.ensureApiKey, util.ensureIdentified, postServiceRequest);
+router.route('/api/v2/requests.:format').post(upload.single('media'), middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
+router.route('/api/v2/request.:format').post(upload.single('media'), middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
 
 module.exports = router;

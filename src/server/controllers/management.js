@@ -1,7 +1,7 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
-var json2xml = require('json2xml');
+var middleware = require('../helpers/middleware.js');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
@@ -120,9 +120,9 @@ var postServiceAttributeValues = function(req, res) {
   }
 };
 
-router.route('/api/service').post(util.ensureAdmin).post(postService);
-router.route('/api/service/:service_code/attribute').post(util.ensureAdmin).post(postServiceAttributes);
-router.route('/api/service/:attribute_code/values').post(util.ensureAdmin).post(postServiceAttributeValues);
-router.route('/api/jurisdiction').post(util.ensureAdmin).post(postJurisdiction);
-router.route('/api/discovery').post(util.ensureAdmin).post(postDiscovery);
+router.route('/api/service').post(middleware.ensureAdmin).post(postService);
+router.route('/api/service/:service_code/attribute').post(middleware.ensureAdmin).post(postServiceAttributes);
+router.route('/api/service/:attribute_code/values').post(middleware.ensureAdmin).post(postServiceAttributeValues);
+router.route('/api/jurisdiction').post(middleware.ensureAdmin).post(postJurisdiction);
+router.route('/api/discovery').post(middleware.ensureAdmin).post(postDiscovery);
 module.exports = router;

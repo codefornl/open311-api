@@ -1,7 +1,7 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
-var json2xml = require('json2xml');
+var js2xmlparser = require("js2xmlparser");
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
@@ -39,10 +39,13 @@ var getServiceList = function(req, res) {
   };
   switch (req.params.format) {
     case 'xml':
+      var final = js2xmlparser("services", skeleton, {
+        arrayMap: {
+          services: "service"
+        }
+      });
       res.set('Content-Type', 'text/xml');
-      res.send(json2xml(skeleton, {
-        header: true
-      }));
+      res.send(final);
       break;
     default:
       res.json(skeleton.services);
@@ -87,10 +90,14 @@ var getServiceDefinition = function(req, res) {
   }
   switch (req.params.format) {
     case 'xml':
+      var final = js2xmlparser("service_definition", skeleton ,{
+        arrayMap: {
+          values: "value",
+          attributes: "attribute"
+        }
+      });
       res.set('Content-Type', 'text/xml');
-      res.send(json2xml(skeleton, {
-        header: true
-      }));
+      res.send(final);
       break;
     default:
       res.json(skeleton.service_definition);
@@ -108,14 +115,16 @@ var postServiceRequest = function(req, res) {
   if (req.params.jurisdiction_id) {
     console.log(req.query);
   }
+  var skeleton = [{
+    "service_request_id": -1,
+    "service_notice": "This is a dummy, not implemented",
+    "account_id": null
+  }];
   switch (req.params.format) {
     case 'xml':
+      var final = js2xmlparser("service_request", skeleton);
       res.set('Content-Type', 'text/xml');
-      res.send(json2xml({
-        service_requests: ''
-      }, {
-        header: true
-      }));
+      res.send(final);
       break;
     default:
       res.json({});

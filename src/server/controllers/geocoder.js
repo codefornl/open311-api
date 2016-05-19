@@ -2,7 +2,7 @@ var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
 var nominatim = require('../helpers/nominatim.js');
-var json2xml = require('json2xml');
+var js2xmlparser = require("js2xmlparser");
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
@@ -26,13 +26,9 @@ var getAddressInfo = function(req, res) {
             res.json(result);
             break;
           default:
-            var xmlResult = result;
+            var final = js2xmlparser(result);
             res.set('Content-Type', 'text/xml');
-            res.send(json2xml({
-              result: xmlResult
-            }, {
-              header: true
-            }));
+            res.send(final);
         }
     });
   } else {
@@ -48,13 +44,9 @@ var getAddressInfo = function(req, res) {
           res.json(result);
           break;
         default:
-          var xmlResult = result;
+          var final = js2xmlparser(result);
           res.set('Content-Type', 'text/xml');
-          res.send(json2xml({
-            result: xmlResult
-          }, {
-            header: true
-          }));
+          res.send(final);
       }
   }
 };
