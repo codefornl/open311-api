@@ -1,6 +1,7 @@
 var path = require('path');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
+var util = require('../helpers.util.js');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var models = require('../models');
 
@@ -75,7 +76,7 @@ exports.newRequest = function(id){
       };
       var transport = nodemailer.createTransport(debugtransport);
       transport.sendMail({
-        from: 'eindhoven@meldloket.nl',
+        from: util.getConfig('email'),
         to: 'milo@dogodigi.net',
         subject: 'A new request has been issued',
         html: results.html,

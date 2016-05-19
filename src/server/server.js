@@ -14,7 +14,8 @@ function clientErrorHandler(err, req, res, next) {
 }
 
 // To run in production: NODE_ENV=production
-
+var i18next = require('i18next');
+var middleware = require('i18next-express-middleware');
 var express = require('express'),
   bodyParser = require('body-parser'),
   http = require('http'),
@@ -22,7 +23,16 @@ var express = require('express'),
   compress = require('compression');
 
 var env = process.env.NODE_ENV || 'development';
+
+i18next
+  .use(middleware.LanguageDetector)
+  .init();
+  
 var app = express();
+app.use(middleware.handle(i18next, {
+  removeLngFromUrl: false
+}));
+
 app.enable('trust proxy');
 app.use(express.static(__dirname + '/public'));
 app.use('/media', express.static(__dirname + '/media'));
