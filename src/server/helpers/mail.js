@@ -1,7 +1,7 @@
 var path = require('path');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
-var util = require('../helpers.util.js');
+var util = require('../helpers/util.js');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var models = require('../models');
 

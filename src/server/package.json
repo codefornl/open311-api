@@ -37,6 +37,7 @@
     "fs-extra": "^0.30.0",
     "i18next": "^3.1.0",
     "i18next-express-middleware": "^1.0.1",
+    "i18next-node-fs-backend": "^0.1.2",
     "js2xmlparser": "^1.0.0",
     "jsonwebtoken": "^6.2.0",
     "moment": "^2.13.0",

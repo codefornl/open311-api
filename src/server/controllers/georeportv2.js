@@ -335,7 +335,7 @@ var postServiceRequest = function(req, res) {
           models.media.create(media).then(function(media){
             var results = [{
               "service_request_id": ticket.id,
-              "service_notice": "Your request will be handled ASAP",
+              "service_notice": req.i18n.t('service.notice'),
               "account_id": null
             }];
 

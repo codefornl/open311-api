@@ -16,6 +16,7 @@ function clientErrorHandler(err, req, res, next) {
 // To run in production: NODE_ENV=production
 var i18next = require('i18next');
 var middleware = require('i18next-express-middleware');
+var Backend = require('i18next-node-fs-backend');
 var express = require('express'),
   bodyParser = require('body-parser'),
   http = require('http'),
@@ -25,9 +26,17 @@ var express = require('express'),
 var env = process.env.NODE_ENV || 'development';
 
 i18next
+  .use(Backend)
   .use(middleware.LanguageDetector)
-  .init();
-  
+  .init({
+    lng: 'nl',
+    debug: false,
+    "fallbackLng": "en",
+    backend: {
+      loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json'
+    }
+  });
+
 var app = express();
 app.use(middleware.handle(i18next, {
   removeLngFromUrl: false
@@ -51,8 +60,8 @@ app.use(function(req, res, next) {
 app.use(require('./controllers'));
 app.use(function(req, res) {
   res.status(404).json({
-    type: 'error',
-    message: req.method + ' not available for this endpoint'
+    type: i18next.t('error'),
+    message: req.method + ' ' + i18next.t('endpoint') + ' ' + i18next.t('messages.not_available')
   });
 });
 
