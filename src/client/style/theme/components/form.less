@@ -2,27 +2,27 @@
     margin-bottom: 40px;
     padding: 25px;
     padding-top: 0px;
-    color: #494949;
+    color: @font-color;
 }
 
 .hint {
-    min-height: 11pt;
-    font-size: 10pt;
-    color: #AA0000;
+    min-height: 12px;
+    font-size: 10px;
+    color: @hint-color;
     padding: 3px;
 }
 
 .form > hr {
     border: none;
     height: 1px;
-    color: #C9C9C9; /* old IE */
-    background-color: #C9C9C9; /* Modern Browsers */
+    color: @border-color; /* old IE */
+    background-color: @border-color; /* Modern Browsers */
     margin-top: 20px;
     margin-bottom: 40px;
 }
 
 label {
-    font-size: 11pt;
+    font-size: 10px;
     margin-top: 10px;
     display: block;
     margin-bottom: 5px;
@@ -30,12 +30,12 @@ label {
 
 .input {
     font-family: "Myriad Pro";
-    font-size: 13pt;
+    font-size: 13px;
 
     border-radius: 4px;
     /*border: solid 1px #C9C9C9;#B0B0B0*/
     border: 0px;
-    background-color: #FFFFFF;
+    background-color: @base-color;
 
     padding: 10px;
     padding-bottom: 7px;
@@ -57,17 +57,17 @@ button {
 
 .media-box {
     border-radius: 4px;
-    border: dashed 1px #B0B0B0;
-    color: #125688;
-    background: #FFFFFF;
+    border: @border;
+    color: @secondary-color;
+    background: @base-color;
     padding-top: 100px;
     padding-bottom: 100px;
     text-align: center;
 }
 
 .media-box.image {
-    border: solid 1px #B0B0B0;
-    background: #FFFFFF;
+    border: @border;
+    background: @base-color;
     padding: 0px;
     padding-bottom: 25px;
 }

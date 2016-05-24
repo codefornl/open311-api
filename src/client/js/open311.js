@@ -20,8 +20,10 @@ var open311 = (function() {
   var first_name = m.prop("");
   var email = m.prop("");
   var service_code = m.prop(-1);
-  var lat = m.prop(0);
-  var long = m.prop(0);
+  var latlng = m.prop({
+    lat: 0,
+    lng: 0
+  });
   var description = m.prop("");
   var media = m.prop();
 
@@ -31,8 +33,9 @@ var open311 = (function() {
     formData.append("service_code", service_code());
     formData.append("email", email());
     formData.append("first_name", first_name());
-    formData.append("lat", lat());
-    formData.append("long", long());
+    var loc = latlng();
+    formData.append("lat", loc.lat);
+    formData.append("long", loc.lng);
     formData.append("description", description());
     formData.append("media", media());
     m.request({
@@ -54,8 +57,7 @@ var open311 = (function() {
     first_name: first_name,
     service_code: service_code,
     email: email,
-    lat: lat,
-    long: long,
+    latlng: latlng,
     description: description,
     media: media,
     postRequest: postRequest,

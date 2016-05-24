@@ -84,7 +84,7 @@ var Add = {
       m.component(EmailTextInput, open311.email),
 
       m("hr"),
-
+      m.component(LocationInput, open311.latlng),
       m.component(DescriptionInput, open311.description),
       m.component(MediaInput, open311.media),
       m.component(ServiceSelector, open311.serviceList, open311.loadServiceList),
