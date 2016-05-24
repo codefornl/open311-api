@@ -13,6 +13,7 @@ var LocationInput = {
     controller: function(){
       this.loadMap = function(){
         L.mapbox.accessToken = 'pk.eyJ1Ijoid29sa2VubWFjaGluZSIsImEiOiI5U21YdzNNIn0.cSp-n-GPeSBvZzqZYuxbbg';
+
         var map = L.mapbox.map('map', 'mapbox.streets');
                 map.setView([51.42017745971680, 5.47374010086060], 16);
 
@@ -48,7 +49,30 @@ var LocationInput = {
                 marker.setIcon(downIcon);
                 open311.latlng(marker.getLatLng());
             }, false);
+            // This uses the HTML5 geolocation API, which is available on
+            // most mobile browsers and modern browsers, but not in Internet Explorer
+            //
+            // See this chart of compatibility for details:
+            // http://caniuse.com/#feat=geolocation
+            if (!navigator.geolocation) {
+              alert('Locatiebepaling wordt niet ondersteund');
+            } else {
+              //e.preventDefault();
+              //e.stopPropagation();
+              map.locate();
+            }
+            // Once we've got a position, zoom and center the map
+            // on it, and add a single marker.
+            map.on('locationfound', function(e) {
+              map.fitBounds(e.bounds);
+              marker.setLatLng(map.getCenter());
+            });
 
+            // If the user chooses not to allow their location
+            // to be shared, display an error message.
+            map.on('locationerror', function() {
+              alert('Kan geen locatie bepalen.');
+            });
         };
     },
 

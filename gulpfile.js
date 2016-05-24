@@ -61,7 +61,7 @@ gulp.task('install_npm',function(){
 });
 
 /* Build client */
-gulp.task('client', ['js', 'less', 'html', 'static']);
+gulp.task('client', ['js', 'less', 'html', 'img']);
 //concatenate all js files into one
 // gulp.task('js', function(){
 //     return gulp.src(dirs.clientsrc+'/js/**/*.js')
@@ -97,7 +97,7 @@ gulp.task('html', function(){
         .pipe(gulp.dest(dirs.clientbuild+'/'));
 });
 
-gulp.task('static', function(){
-    return gulp.src(dirs.clientsrc+'/static/*')
-        .pipe(gulp.dest(dirs.clientbuild+'/static'));
+gulp.task('img', function(){
+    return gulp.src(dirs.clientsrc + '/img/*')
+        .pipe(gulp.dest(dirs.clientbuild + '/img'));
 });
