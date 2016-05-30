@@ -15,7 +15,7 @@
       "port": __SMTP_PORT__,
       "auth": {
                 "user": "__SMTP_USER__",
-                "pass": "SMTP_PASSWORD__"
+                "pass": "__SMTP_PASSWORD__"
             },
       "tls": {"rejectUnauthorized": __SMTP_CERT_CHECK__},
       "debug":__SMTP_DEBUG__
