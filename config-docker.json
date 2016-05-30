@@ -7,8 +7,18 @@
     "port": __DATABASE_PORT__,
     "dialect": "__DATABASE_DIALECT__",
     "storage": "__DATABASE_STORAGE__",
-    "logging": __LOGGING__,
     "email": "__SYSTEM_EMAIL__",
-    "remote_port": "__REMOTE_PORT__"
+    "remote_port": __REMOTE_PORT__,
+    "logging": __LOGGING__,
+    "smtp": {
+      "host": "__SMTP_HOST__",
+      "port": __SMTP_PORT__,
+      "auth": {
+                "user": "__SMTP_USER__",
+                "pass": "SMTP_PASSWORD__"
+            },
+      "tls": {"rejectUnauthorized": __SMTP_CERT_CHECK__},
+      "debug":__SMTP_DEBUG__
+    }
   }
 }

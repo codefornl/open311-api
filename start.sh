@@ -12,5 +12,12 @@ sed -i "s^__LOGGING__^$LOGGING^g" /open311/build/config.json
 sed -i "s^__SYSTEM_EMAIL__^$SYSTEM_EMAIL^g" /open311/build/config.json
 sed -i "s^__REMOTE_PORT__^$REMOTE_PORT^g" /open311/build/config.json
 
+sed -i "s^__SMTP_HOST__^$SMTP_HOST^g" /open311/build/config.json
+sed -i "s^__SMTP_PORT__^$SMTP_PORT^g" /open311/build/config.json
+sed -i "s^__SMTP_USER__^$SMTP_USER^g" /open311/build/config.json
+sed -i "s^__SMTP_PASSWORD__^$SMTP_PASSWORD^g" /open311/build/config.json
+sed -i "s^__SMTP_CERT_CHECK__^$SMTP_CERT_CHECK^g" /open311/build/config.json
+sed -i "s^__SMTP_DEBUG__^$SMTP_DEBUG^g" /open311/build/config.json
+
 cd /open311
 npm start

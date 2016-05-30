@@ -74,7 +74,7 @@ exports.newRequest = function(req, id){
         smtpTransport(util.getConfig('smtp'))
       );
 
-      if( env === "development" ) {
+      if( env === "foo" ) {
         //debug
         console.log("development, debugging mail, not sending");
         var debugtransport = {
