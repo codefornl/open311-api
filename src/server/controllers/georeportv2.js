@@ -3,13 +3,42 @@ var express = require('express');
 var util = require('../helpers/util.js');
 var middleware = require('../helpers/middleware.js');
 var js2xmlparser = require("js2xmlparser");
-var moment = require('moment');
+//var moment = require('moment');
+var moment = require('moment-business-time');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
 var multer  = require('multer');
 var upload = multer({ dest: 'media/tmp/' });
 var fs = require('fs-extra');
+
+/*
+ *
+ *
+ */
+var getResponsible = function(req, res, next) {
+  var format = req.params.format || 'xml';
+  var lat = req.body.lat || 51.4352200;
+  var lon = req.body.long || 5.4757312;
+  var service_id = req.body.service_id || 1;
+  var tolerance = req.body.tolerance || 0;
+
+  models.sequelize.query('CALL `DepartmentsAtLocation`(:orig_lat, :orig_lon, :service_id, :tolerance)',
+    {
+      raw: true,
+      replacements: {
+        orig_lat: lat,
+        orig_lon: lon,
+        service_id: service_id,
+        tolerance: tolerance
+      },
+      type: models.sequelize.QueryTypes.RAW
+    }
+  ).then(function(hits) {
+    next(util.first(hits));
+  });
+ };
+
 
 /**
  * Open311 - GET Service List
@@ -333,32 +362,47 @@ var postServiceRequest = function(req, res) {
           return console.error(err);
         } else {
           models.media.create(media).then(function(media){
-            var results = [{
-              "service_request_id": ticket.id,
-              "service_notice": req.i18n.t('service.notice'),
-              "account_id": null
-            }];
-
-            //send a simple mail too, this time just for testing via direct transport
             var mailer = require('../helpers/mail.js');
             //We have ticket, issue, and media, plus some user details in the req object.
-            //Send what is required.
-            mailer.newRequest(ticket.id);
-
-            switch (format) {
-              case 'json':
-                res.json(results);
-                break;
-              default:
-              var xmlServiceRequests = results;
-              var final = js2xmlparser("service_requests", xmlServiceRequests, {
-                arrayMap: {
-                  service_requests: "request"
+            //get the responsible party
+            getResponsible(req,res,function(responsible){
+              //Send what is required.
+              req.to_open311 = {
+                "name": responsible.name,
+                "email": responsible.email
+              };
+              var translate_string = 'service.notice-closed';
+              var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
+              if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
+                translate_string = 'service.notice';
+              }
+              var service_notice = req.i18n.t(translate_string,
+                {
+                  "responsible": responsible.name
                 }
-              });
-              res.set('Content-Type', 'text/xml');
-              res.send(final);
-            }
+              );
+
+              mailer.newRequest(req, ticket.id);
+              var results = [{
+                "service_request_id": ticket.id,
+                "service_notice": service_notice,
+                "account_id": null
+              }];
+              switch (format) {
+                case 'json':
+                  res.json(results);
+                  break;
+                default:
+                var xmlServiceRequests = results;
+                var final = js2xmlparser("service_requests", xmlServiceRequests, {
+                  arrayMap: {
+                    service_requests: "request"
+                  }
+                });
+                res.set('Content-Type', 'text/xml');
+                res.send(final);
+              }
+            });
           });
         }
       });
@@ -381,7 +425,7 @@ var postServiceRequest = function(req, res) {
    * 400 - jurisdiction_id was not provided (specify in error response)
    * 400 - General service error (Anything that fails during service list processing. The client will need to notify us)
    */
-
+//router.route('/api/v2/testprocedure').get(testProcedure);
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);

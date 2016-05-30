@@ -9,6 +9,10 @@ String.prototype.toProperCase = function() {
   });
 };
 
+exports.first = function(obj) {
+    for (var a in obj) return obj[a];
+};
+
 exports.StringToIntArray = function(stringToSplit){
   function isInt(value) {
     return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value));

@@ -233,7 +233,8 @@
         "zip": "Zip"
     },
     "service": {
-      "notice": "Uw verzoek zal zo snel mogelijk worden behandeld"
+      "notice": "Uw melding is verzonden aan {{responsible}}. Er kan contact met u worden opgenomen.",
+      "notice-closed": "Uw melding is verzonden aan {{responsible}}. {{responsible}} is momenteel gesloten. Kunt u niet wachten? Neem dan contact op met 0900-8844."
     },
     "error": "fout",
     "endpoint": "eindpunt",
@@ -253,6 +254,12 @@
         "verified_locations": "Indicates verified locations",
         "not_implemented": "Not implemented",
         "not_available": "niet beschikbaar"
+    },
+    "mail": {
+      "request": {
+        "title": "Er is een nieuwe melding over {{service}}",
+        "subject": "Melding {{service}}"
+      }
     },
     "status": {
         "closed": "Closed",

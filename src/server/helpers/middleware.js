@@ -64,8 +64,6 @@ exports.ensureIdentified = function(req, res, next) {
       where: check_Person
     }
   ).spread(function(user, created) {
-    console.log(user.id);
-    console.log(created);
     req.body.user = user;
     models.personEmail.findOrCreate(
       {
