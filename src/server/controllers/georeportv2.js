@@ -376,6 +376,7 @@ var postServiceRequest = function(req, res) {
               if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
                 translate_string = 'service.notice';
               }
+              console.log(req.headers["accept-language"]);
               var service_notice = req.i18n.t(translate_string,
                 {
                   "responsible": responsible.name

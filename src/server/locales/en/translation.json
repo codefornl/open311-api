@@ -255,6 +255,12 @@
         "not_implemented": "Not implemented",
         "not_available": "not available"
     },
+    "mail": {
+      "request": {
+        "title": "Er is een nieuwe melding over {{service}}",
+        "subject": "Melding {{service}}"
+      }
+    },
     "status": {
         "closed": "Closed",
         "open": "Open"
