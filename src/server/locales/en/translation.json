@@ -233,7 +233,8 @@
         "zip": "Zip"
     },
     "service": {
-      "notice": "Your request will be handled ASAP"
+      "notice": "Your request is sent to {{responsible}}, they can contact you.",
+      "notice-closed": "Your request is sent to {{responsible}}. {{responsible}} is closed. If you cannot wait,please contact 0900-8844."
     },
     "error": "error",
     "endpoint": "endpoint",
