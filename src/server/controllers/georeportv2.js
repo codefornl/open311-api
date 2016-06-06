@@ -366,20 +366,31 @@ var postServiceRequest = function(req, res) {
             //We have ticket, issue, and media, plus some user details in the req object.
             //get the responsible party
             getResponsible(req,res,function(responsible){
-              //Send what is required.
-              req.to_open311 = {
-                "name": responsible.name,
-                "email": responsible.email
-              };
-              var translate_string = 'service.notice-closed';
-              var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
-              if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
-                translate_string = 'service.notice';
+              var send_to = req.i18n.t('mail.system');
+              var translate_string = 'service.notice-system';
+              if(responsible){
+                req.to_open311 = {
+                  "name": responsible.name,
+                  "email": responsible.email
+                };
+                send_to = responsible.name;
+                translate_string = 'service.notice-closed';
+                var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
+                if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
+                  translate_string = 'service.notice';
+                }
+              } else {
+                // A responsible party could not be found, route to system.
+                req.to_open311 = {
+                  "name": req.i18n.t('mail.system'),
+                  "email": util.getConfig('email'),
+                };
               }
+
               console.log(req.headers["accept-language"]);
               var service_notice = req.i18n.t(translate_string,
                 {
-                  "responsible": responsible.name
+                  "responsible": send_to
                 }
               );
 

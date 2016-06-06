@@ -234,6 +234,7 @@
     },
     "service": {
       "notice": "Uw melding is verzonden aan {{responsible}}. Er kan contact met u worden opgenomen.",
+      "notice-system": "Voor uw locatie is geen instantie bekend. {{responsible}} heeft uw melding ontvangen, maar er kan geen actie worden ondernomen.",
       "notice-closed": "Uw melding is verzonden aan {{responsible}}. {{responsible}} is momenteel gesloten. Kunt u niet wachten? Neem dan contact op met 0900-8844."
     },
     "error": "fout",
@@ -259,10 +260,11 @@
       "request": {
         "title": "Er is een nieuwe melding over {{service}}",
         "subject": "Melding {{service}}"
-      }
+      },
+      "system": "Meldloket"
     },
     "status": {
-        "closed": "Closed",
+        "closed": "Gesloten",
         "open": "Open"
     },
     "password": {

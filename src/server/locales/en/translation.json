@@ -234,6 +234,7 @@
     },
     "service": {
       "notice": "Your request is sent to {{responsible}}, they can contact you.",
+      "notice-system": "We cannot handle your location. {{responsible}} recieved the request, but no action can be taken.",
       "notice-closed": "Your request is sent to {{responsible}}. {{responsible}} is closed. If you cannot wait,please contact 0900-8844."
     },
     "error": "error",
@@ -259,7 +260,8 @@
       "request": {
         "title": "Er is een nieuwe melding over {{service}}",
         "subject": "Melding {{service}}"
-      }
+      },
+      "system": "Open311"
     },
     "status": {
         "closed": "Closed",

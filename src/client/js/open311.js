@@ -42,7 +42,19 @@ var open311 = (function() {
       method: "POST",
       url: apiEndpoint + "requests.json",
       data: formData,
-      serialize: function(value) {return value;} //simply pass the FormData object intact to the underlying XMLHttpRequest, instead of JSON.stringify'ing it
+      serialize: function(value) {
+        //simply pass the FormData object intact to the underlying XMLHttpRequest, instead of JSON.stringify'ing it
+        return value;
+      }
+    }).then(function(data) {
+      console.log("Post success");
+      var myModal = new Modal({
+        content: data[0].service_notice
+      });
+      myModal.open();
+      console.log(data);
+    }, function(error) {
+      console.log(error);
     });
   }
 

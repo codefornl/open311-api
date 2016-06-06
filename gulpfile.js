@@ -70,6 +70,7 @@ gulp.task('client', ['js', 'less', 'html', 'img']);
 gulp.task('js', function(){
   return gulp.src([
       dirs.clientsrc+'/js/open311.js',
+      dirs.clientsrc+'/js/modal.js',
       dirs.clientsrc+'/js/form/*.js',
       dirs.clientsrc+'/js/overview/*.js'
     ])
