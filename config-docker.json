@@ -10,6 +10,7 @@
     "email": "__SYSTEM_EMAIL__",
     "remote_port": __REMOTE_PORT__,
     "logging": __LOGGING__,
+    "tolerance": __SEARCH_TOLERANCE_M__,
     "smtp": {
       "host": "__SMTP_HOST__",
       "port": __SMTP_PORT__,

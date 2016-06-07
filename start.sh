@@ -18,6 +18,7 @@ sed -i "s^__SMTP_USER__^$SMTP_USER^g" /open311/build/config.json
 sed -i "s^__SMTP_PASSWORD__^$SMTP_PASSWORD^g" /open311/build/config.json
 sed -i "s^__SMTP_CERT_CHECK__^$SMTP_CERT_CHECK^g" /open311/build/config.json
 sed -i "s^__SMTP_DEBUG__^$SMTP_DEBUG^g" /open311/build/config.json
+sed -i "s^__SEARCH_TOLERANCE_M__^$SEARCH_TOLERANCE_M^g" /open311/build/config.json
 
 cd /open311
 npm start

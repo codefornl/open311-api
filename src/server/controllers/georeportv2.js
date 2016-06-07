@@ -21,7 +21,8 @@ var getResponsible = function(req, res, next) {
   var lat = req.body.lat || 51.4352200;
   var lon = req.body.long || 5.4757312;
   var service_id = req.body.service_id || 1;
-  var tolerance = req.body.tolerance || 100;
+  var tolerance = util.getConfig('tolerance') || 10;
+  tolerance = req.body.tolerance || tolerance;
 
   models.sequelize.query('CALL `DepartmentsAtLocation`(:orig_lat, :orig_lon, :service_id, :tolerance)',
     {
