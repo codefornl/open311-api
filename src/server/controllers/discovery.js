@@ -9,7 +9,7 @@ var env = process.env.NODE_ENV || "development";
 
 var getDiscovery = function(req, res) {
   var format = req.params.format || 'xml';
-  var port = req.app.settings.port || cfg.port;
+  var port = util.getConfig('remote_port') || req.app.settings.port;
   var url = req.protocol +
     '://' +
     req.hostname +
