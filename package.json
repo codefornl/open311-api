@@ -21,7 +21,7 @@
   "private": true,
   "scripts": {
     "start": "cd build && npm start",
-    "test": "cd build && NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/",
+    "test": "npm run build && cd build && NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/",
     "build": "./node_modules/.bin/gulp build"
   },
   "repository": {

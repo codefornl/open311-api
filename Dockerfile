@@ -32,7 +32,7 @@ COPY ./src /open311/src
 
 RUN npm install && npm run build && ./node_modules/.bin/gulp install_npm
 COPY config-docker.json /open311/build/config.json
-VOLUME /open311/media
+VOLUME /open311/build/media
 # Add image configuration and scripts
 ADD start.sh /start.sh
 RUN chmod 755 /*.sh

@@ -39,6 +39,7 @@ exports.ensureApiKey = function(req,res,next){
 exports.ensureIdentified = function(req, res, next) {
   var check_Person;
   var check_Email;
+
   if(req.body.last_name){
     check_Person = check_Person || {};
     check_Person.lastname = req.body.last_name;
@@ -59,6 +60,7 @@ exports.ensureIdentified = function(req, res, next) {
     };
     check_Email = "anonymous@foo.bar";
   }
+
   models.person.findOrCreate(
     {
       where: check_Person

@@ -341,104 +341,151 @@ var postServiceRequest = function(req, res) {
       "description": req.body.description
     };
     models.issue.create(issue).then(function(issue){
-      var path = require('path');
-      var ext = path.extname(req.file.originalname);
-      var targetFile = req.file.filename + ext;
-      var curtime = moment();
-      var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
-      //move the uploaded file to the correct path (/media/year/month)
-      fs.move(req.file.path,  targetPath + targetFile, function(err){
-        //After move, store the corresponding media record.
-        var media = {
-          issue_id: issue.id,
-          filename: req.file.originalname,
-          internalFilename: targetFile,
-          mime_type: req.file.mime_type,
-          media_type: 'image',
-          uploaded: curtime,
-          person_id: req.body.person_id
-        };
-        if (err) {
-          // @todo res.send error
-          return console.error(err);
-        } else {
-          models.media.create(media).then(function(media){
-            var mailer = require('../helpers/mail.js');
-            //We have ticket, issue, and media, plus some user details in the req object.
-            //get the responsible party
-            getResponsible(req,res,function(responsible){
-              var send_to = req.i18n.t('mail.system');
-              var translate_string = 'service.notice-system';
-              if(responsible){
-                req.to_open311 = {
-                  "name": responsible.name,
-                  "email": responsible.email
-                };
-                send_to = responsible.name;
-                translate_string = 'service.notice-closed';
-                var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
-                if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
-                  translate_string = 'service.notice';
-                }
-              } else {
-                // A responsible party could not be found, route to system.
-                req.to_open311 = {
-                  "name": req.i18n.t('mail.system'),
-                  "email": util.getConfig('email'),
-                };
-              }
+      if(req.file){
+        //media attached
+        postWithMedia(req,res,issue);
+      } else {
+        postTextOnly(req,res,issue);
+      }
 
-              console.log(req.headers["accept-language"]);
-              var service_notice = req.i18n.t(translate_string,
-                {
-                  "responsible": send_to
-                }
-              );
-
-              mailer.newRequest(req, ticket.id);
-              var results = [{
-                "service_request_id": ticket.id,
-                "service_notice": service_notice,
-                "account_id": null
-              }];
-              switch (format) {
-                case 'json':
-                  res.json(results);
-                  break;
-                default:
-                var xmlServiceRequests = results;
-                var final = js2xmlparser("service_requests", xmlServiceRequests, {
-                  arrayMap: {
-                    service_requests: "request"
-                  }
-                });
-                res.set('Content-Type', 'text/xml');
-                res.send(final);
-              }
-            });
-          });
-        }
-      });
-    });
+    }); //models.issue.create
   });
 };
+postWithMedia = function(req,res,issue){
+  var format = req.params.format || 'xml';
+  var path = require('path');
+  var ext = path.extname(req.file.originalname);
+  var targetFile = req.file.filename + ext;
+  var curtime = moment();
+  var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
+  //move the uploaded file to the correct path (/media/year/month)
+  fs.move(req.file.path,  targetPath + targetFile, function(err){
+    //After move, store the corresponding media record.
+    var media = {
+      issue_id: issue.id,
+      filename: req.file.originalname,
+      internalFilename: targetFile,
+      mime_type: req.file.mime_type,
+      media_type: 'image',
+      uploaded: curtime,
+      person_id: req.body.person_id
+    };
+    if (err) {
+      // @todo res.send error
+      return console.error(err);
+    } else {
+      models.media.create(media).then(function(media){
+        var mailer = require('../helpers/mail.js');
+        //We have ticket, issue, and media, plus some user details in the req object.
+        //get the responsible party
+        getResponsible(req,res,function(responsible){
+          var send_to = req.i18n.t('mail.system');
+          var translate_string = 'service.notice-system';
+          if(responsible){
+            req.to_open311 = {
+              "name": responsible.name,
+              "email": responsible.email
+            };
+            send_to = responsible.name;
+            translate_string = 'service.notice-closed';
+            var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
+            if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
+              translate_string = 'service.notice';
+            }
+          } else {
+            // A responsible party could not be found, route to system.
+            req.to_open311 = {
+              "name": req.i18n.t('mail.system'),
+              "email": util.getConfig('email'),
+            };
+          }
 
-  //Validate first if the minimal set of attributes is present.
-  // switch (req.params.format) {
-  //   case 'xml':
-  //     res.set('Content-Type', 'text/xml');
-  //     res.send(js2xmlparser("service_requests", ''));
-  //     break;
-  //   default:
-  //     res.json({});
-  // }
-  /**
-   * The numbers represent the HTTP status code returned for each error type:
-   * 404 - jurisdiction_id provided was not found (specify in error response)
-   * 400 - jurisdiction_id was not provided (specify in error response)
-   * 400 - General service error (Anything that fails during service list processing. The client will need to notify us)
-   */
-//router.route('/api/v2/testprocedure').get(testProcedure);
+          var service_notice = req.i18n.t(translate_string,
+            {
+              "responsible": send_to
+            }
+          );
+
+          mailer.newRequest(req, issue.ticket_id);
+          var results = [{
+            "service_request_id": issue.ticket_id,
+            "service_notice": service_notice,
+            "account_id": null
+          }];
+          switch (format) {
+            case 'json':
+              res.json(results);
+              break;
+            default:
+            var xmlServiceRequests = results;
+            var final = js2xmlparser("service_requests", xmlServiceRequests, {
+              arrayMap: {
+                service_requests: "request"
+              }
+            });
+            res.set('Content-Type', 'text/xml');
+            res.send(final);
+          }
+        }); //getResponsible
+      }); //models.media.create
+    }
+  }); //fs.move
+};
+postTextOnly = function(req,res,issue){
+  var format = req.params.format || 'xml';
+  var mailer = require('../helpers/mail.js');
+  //We have ticket, issue, and media, plus some user details in the req object.
+  //get the responsible party
+  getResponsible(req,res,function(responsible){
+    var send_to = req.i18n.t('mail.system');
+    var translate_string = 'service.notice-system';
+    if(responsible){
+      req.to_open311 = {
+        "name": responsible.name,
+        "email": responsible.email
+      };
+      send_to = responsible.name;
+      translate_string = 'service.notice-closed';
+      var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
+      if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
+        translate_string = 'service.notice';
+      }
+    } else {
+      // A responsible party could not be found, route to system.
+      req.to_open311 = {
+        "name": req.i18n.t('mail.system'),
+        "email": util.getConfig('email'),
+      };
+    }
+
+    var service_notice = req.i18n.t(translate_string,
+      {
+        "responsible": send_to
+      }
+    );
+
+    mailer.newRequest(req, issue.ticket_id);
+    var results = [{
+      "service_request_id": issue.ticket_id,
+      "service_notice": service_notice,
+      "account_id": null
+    }];
+    switch (format) {
+      case 'json':
+        res.json(results);
+        break;
+      default:
+        var xmlServiceRequests = results;
+        var final = js2xmlparser("service_requests", xmlServiceRequests, {
+          arrayMap: {
+            service_requests: "request"
+          }
+        });
+        res.set('Content-Type', 'text/xml');
+        res.send(final);
+    }
+  }); //getResponsible
+};
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);

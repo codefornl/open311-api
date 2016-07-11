@@ -92,7 +92,6 @@ var postServiceAttributeValues = function(req, res) {
       }
     };
     models.service_attribute.findOne(whereClause).then(function(service_attribute) {
-      //console.log(service_attribute);
       //req.body.service_attributeId = service_attribute.id;
       //check to see if the values match the given type
       var _values = []; //req.body.endpoints;
