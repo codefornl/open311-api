@@ -9,6 +9,14 @@ exports.ensureApiKey = function(req,res,next){
         }
       }
     ).then(function(result){
+      if(!result || !result.id){
+        res.status(403).json({
+          type: req.i18n.t('error.type.forbidden'),
+          code: 'middleware_15',
+          message: req.i18n.t('error.message.invalid_api_key')
+        });
+        return;
+      }
       req.body.application = result.id;
       req.body.assignee = result.contactPerson_id;
       req.body.contactmethod = result.contactMethod_id;
@@ -16,8 +24,9 @@ exports.ensureApiKey = function(req,res,next){
     });
   } else {
     res.status(403).json({
-      type: 'forbidden',
-      message: 'Sorry, you need to provide a valid api_key'
+      type: req.i18n.t('error.type.forbidden'),
+      code: 'middleware_26',
+      message: req.i18n.t('error.message.missing_api_key')
     });
   }
 };

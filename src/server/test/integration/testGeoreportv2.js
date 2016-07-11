@@ -57,6 +57,45 @@ describe('testing Georeport v2', function() {
       .expect('Content-Type', 'text/xml; charset=utf-8')
       .expect(200, done);
   });
+  it('Post Request without api_key should fail', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('service_code', 3)
+      .field('first_name', 'Test User')
+      .field('description', 'This is a test message')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.48513770164579)
+      .field('long', 5.232168700000033)
+      //.attach('image', 'some path')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(403).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        done();
+      });
+  });
+  it('Post Request with invalid api_key should fail', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('api_key', 'xxxxxxxxxx')
+      .field('service_code', 3)
+      .field('first_name', 'Test User')
+      .field('description', 'This is a test message')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.48513770164579)
+      .field('long', 5.232168700000033)
+      //.attach('image', 'some path')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(403).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        done();
+      });
+  });
   it('Post Request without media should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')

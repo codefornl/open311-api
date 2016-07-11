@@ -15,6 +15,12 @@ describe('Testing Management api', function() {
         logging: null
       })
       .then(function(err) {
+        //create admin
+        models.application.create({
+          name: 'testapp',
+          url: 'http://testapp.com',
+          api_key: '56b074c9495b1'
+        });
         //create user
         models.account.create({
           first_name: 'Regular',
@@ -54,15 +60,6 @@ describe('Testing Management api', function() {
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
   });
-  // it('Post other jurisdiction as administrator should succeed', function(done) {
-  //   request(server.app).post('/api/jurisdiction')
-  //     .set('authorization', 'token admintoken')
-  //     .send({
-  //       jurisdiction_id: 'woz.eindhoven.nl'
-  //     })
-  //     .expect('Content-Type', 'application/json; charset=utf-8')
-  //     .expect(200, done);
-  // });
   it('Post discovery as administrator should succeed', function(done) {
     request(server.app).post('/api/discovery')
       .set('authorization', 'token admintoken')

@@ -237,7 +237,16 @@
       "notice-system": "Voor uw locatie is geen instantie bekend. {{responsible}} heeft uw melding ontvangen, maar er kan geen actie worden ondernomen.",
       "notice-closed": "Uw melding is verzonden aan {{responsible}}. {{responsible}} is momenteel gesloten. Kunt u niet wachten? Neem dan contact op met 0900-8844."
     },
-    "error": "fout",
+    "error": {
+      "type":{
+        "general": "fout",
+        "forbidden": "niet toegestaan"
+      },
+      "message": {
+        "missing_api_key": "Geen sleutel ontvangen, neem contact op met de leverancier",
+        "invalid_api_key": "Ongeldige sleutel, neem contact op met de leverancier"
+      }
+    },
     "endpoint": "eindpunt",
     "messages": {
         "add_action": "Update the history log with actions performed on this case",

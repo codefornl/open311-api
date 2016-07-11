@@ -237,7 +237,16 @@
       "notice-system": "We cannot handle your location. {{responsible}} recieved the request, but no action can be taken.",
       "notice-closed": "Your request is sent to {{responsible}}. {{responsible}} is closed. If you cannot wait,please contact 0900-8844."
     },
-    "error": "error",
+    "error": {
+      "type":{
+        "general": "error",
+        "forbidden": "forbidden"
+      },
+      "message": {
+        "missing_api_key": "Missing API key, contact the developers",
+        "invalid_api_key": "No API key provided, contact the developers"
+      }
+    },
     "endpoint": "endpoint",
     "messages": {
         "add_action": "Update the history log with actions performed on this case",
@@ -290,6 +299,4 @@
         "service_level_agreement_description": "Departments agree to handle new cases within the time specified.",
         "sla_status_notice": "Most tickets of this type should be closed within %1$d days, although some cases may be longer.  %2$d days have already passed."
     }
-
-
 }
