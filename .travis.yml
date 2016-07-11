@@ -1,5 +1,5 @@
 language: node_js
 before_script:
   - npm install -g gulp
-  - npm build
-  - npm install_npm
+  - gulp build
+  - gulp install_npm
