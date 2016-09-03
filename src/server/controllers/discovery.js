@@ -23,7 +23,7 @@ var getDiscovery = function(req, res) {
     "contact": "You can email " + util.getConfig('email') + " for assistance",
     "key_service": "You can request a key at: " + keyservice,
     "endpoints":[{
-      "specification": "http://wiki.open311.org/GeoReport_v2</specification",
+      "specification": "http://wiki.open311.org/GeoReport_v2",
       "url": url,
       "type": env,
       "changeset": moment().format('YYYY-MM-DDTHH:mm:ssZ')
