@@ -147,7 +147,7 @@ exports.ensureIdentified = function(req, res, next) {
   if (bearerHeader) {
     var bearer = bearerHeader.split(" ");
     bearerToken = bearer[1];
-    console.log(bearerToken);
+    //console.log(bearerToken);
     req.token = bearerToken;
     models.account.findOne({
       token: req.token

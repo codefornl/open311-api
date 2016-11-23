@@ -39,7 +39,7 @@ var getServiceList = function(req, res) {
   };
   switch (req.params.format) {
     case 'xml':
-      var final = js2xmlparser("services", skeleton, {
+      var final = js2xmlparser.parse("services", skeleton, {
         arrayMap: {
           services: "service"
         }
@@ -90,7 +90,7 @@ var getServiceDefinition = function(req, res) {
   }
   switch (req.params.format) {
     case 'xml':
-      var final = js2xmlparser("service_definition", skeleton ,{
+      var final = js2xmlparser.parse("service_definition", skeleton ,{
         arrayMap: {
           values: "value",
           attributes: "attribute"
@@ -122,7 +122,7 @@ var postServiceRequest = function(req, res) {
   }];
   switch (req.params.format) {
     case 'xml':
-      var final = js2xmlparser("service_request", skeleton);
+      var final = js2xmlparser.parse("service_request", skeleton);
       res.set('Content-Type', 'text/xml');
       res.send(final);
       break;

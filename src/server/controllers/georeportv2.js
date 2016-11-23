@@ -2,7 +2,7 @@ var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
 var middleware = require('../helpers/middleware.js');
-var js2xmlparser = require("js2xmlparser");
+var js2xmlparser = require('js2xmlparser');
 //var moment = require('moment');
 var moment = require('moment-business-time');
 var objectAssign = require('object-assign');
@@ -18,21 +18,33 @@ var fs = require('fs-extra');
  */
 var getResponsible = function(req, res, next) {
   var format = req.params.format || 'xml';
-  var lat = req.body.lat || 51.4352200;
-  var lon = req.body.long || 5.4757312;
-  var service_id = req.body.service_id || 1;
+  var lat = req.body.lat;
+  var lon = req.body.long;
+  var service_id = req.body.service_code || 1;
+  var address_string = req.body.address_string;
   var tolerance = util.getConfig('tolerance') || 10;
   tolerance = req.body.tolerance || tolerance;
 
-  models.sequelize.query('CALL `DepartmentsAtLocation`(:orig_lat, :orig_lon, :service_id, :tolerance)',
+  var call = 'CALL `DepartmentsAtLocation`(:orig_lat, :orig_lon, :service_id, :tolerance)';
+  var replacements = {
+    service_id: service_id,
+    tolerance: tolerance,
+    orig_lat: 0,
+    orig_lon: 0
+  };
+  if(address_string) {
+    replacements.address_string = address_string;
+    call = 'CALL `SearchAtLocation`(:orig_lat, :orig_lon, :service_id, :address_string, :tolerance)';
+  }
+
+  if(lat & lon){
+    replacements.orig_lat = lat;
+    replacements.orig_lon = lon;
+  }
+  models.sequelize.query(call,
     {
       raw: true,
-      replacements: {
-        orig_lat: lat,
-        orig_lon: lon,
-        service_id: service_id,
-        tolerance: tolerance
-      },
+      replacements: replacements,
       type: models.sequelize.QueryTypes.RAW
     }
   ).then(function(hits) {
@@ -110,7 +122,7 @@ var getServiceList = function(req, res) {
           for (var x in xmlResult) {
             xmlServices.push(xmlResult[x].dataValues);
           }
-          var final = js2xmlparser("services", xmlServices, {
+          var final = js2xmlparser.parse("services", xmlServices, {
             arrayMap: {
               services: "service"
             }
@@ -278,13 +290,16 @@ var getServiceRequests = function(req, res) {
         results[i].dataValues.description = results[i].dataValues.issues[l].description;
         for (var m in results[i].dataValues.issues[l].media){
           var port = util.getConfig('remote_port') || req.app.settings.port;
-          var callingUrl = req.protocol +
-            '://' +
-            req.hostname +
-            ( port == 80 || port == 443 ? '' : ':' + port ) + '/media/';
-          results[i].dataValues.media_url = callingUrl + moment(results[i].dataValues.issues[l].media[m].uploaded).format('YYYY/M/D') +
-            "/" +
-            results[i].dataValues.issues[l].media[m].internalFilename;
+          if(results[i].issues[l].media[m].media_type === 'url'){
+            results[i].dataValues.media_url = results[i].issues[l].media[m].filename;
+          } else {
+            var callingUrl = req.protocol +
+              '://' +
+              req.hostname +
+              ( port == 80 || port == 443 ? '' : ':' + port ) + '/media/';
+            results[i].dataValues.media_url = callingUrl + moment(results[i].dataValues.issues[l].media[m].uploaded).format('YYYY/M/D') +
+            "/" + results[i].dataValues.issues[l].media[m].internalFilename;
+          }
         }
       }
       delete results[i].dataValues.issues;
@@ -316,15 +331,24 @@ var getServiceRequests = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
+  console.log(req.body.media);
+  console.log(req.file);
+  console.log(req.files);
   var format = req.params.format || 'xml';
   var ticket = {
     "category_id": parseInt(req.body.service_code,10),
-    "latitude": parseFloat(req.body.lat),
-    "longitude": parseFloat(req.body.long),
+    "latitude": 0,
+    "longitude": 0,
     "enteredByPerson_id": req.body.person_id,
     "client_id": req.body.application,
     "assignedPerson_id": req.body.assignee
   };
+  if(req.body.lat){
+    ticket.latitude = parseFloat(req.body.lat);
+  }
+  if(req.body.long){
+    ticket.longitude = parseFloat(req.body.lat);
+  }
   if(req.body.address_string){
     ticket.location = req.body.address_string;
   }
@@ -343,13 +367,83 @@ var postServiceRequest = function(req, res) {
     models.issue.create(issue).then(function(issue){
       if(req.file){
         //media attached
-        postWithMedia(req,res,issue);
+        postWithMedia(req,res,issue); //todo ```then``` instead of duplicate code.
       } else {
-        postTextOnly(req,res,issue);
+        if(req.body.media){
+          console.log('Gonna post with media url');
+          postWithMediaUrl(req,res,issue); //todo ```then``` instead of duplicate code.
+        } else {
+          postTextOnly(req,res,issue);
+        }
       }
 
     }); //models.issue.create
   });
+};
+postWithMediaUrl = function(req,res,issue){
+  var format = req.params.format || 'xml';
+  var curtime = moment();
+  var media = {
+    issue_id: issue.id,
+    filename: req.body.media,
+    internalFilename: '-',
+    media_type: 'url',
+    uploaded: curtime,
+    person_id: req.body.person_id
+  };
+  models.media.create(media).then(function(media){
+    var mailer = require('../helpers/mail.js');
+    //We have ticket, issue, and media, plus some user details in the req object.
+    //get the responsible party
+    getResponsible(req,res,function(responsible){
+      var send_to = req.i18n.t('mail.system');
+      var translate_string = 'service.notice-system';
+      if(responsible){
+        req.to_open311 = {
+          "name": responsible.name,
+          "email": responsible.email
+        };
+        send_to = responsible.name;
+        translate_string = 'service.notice-closed';
+        var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
+        if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
+          translate_string = 'service.notice';
+        }
+      } else {
+        req.to_open311 = {
+          "name": req.i18n.t('mail.system'),
+          "email": util.getConfig('email'),
+        };
+      }
+
+      var service_notice = req.i18n.t(translate_string,
+        {
+          "responsible": send_to
+        }
+      );
+
+      mailer.newRequest(req, issue.ticket_id);
+      var results = [{
+        "service_request_id": issue.ticket_id,
+        "service_notice": service_notice,
+        "account_id": null
+      }];
+      switch (format) {
+        case 'json':
+          res.json(results);
+          break;
+        default:
+          var xmlServiceRequests = results;
+          var final = js2xmlparser("service_requests", xmlServiceRequests, {
+            arrayMap: {
+              service_requests: "request"
+            }
+          });
+          res.set('Content-Type', 'text/xml');
+          res.send(final);
+        }
+      }); //getResponsible
+    }); //models.media.create
 };
 postWithMedia = function(req,res,issue){
   var format = req.params.format || 'xml';

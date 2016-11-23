@@ -45,7 +45,7 @@ var getDiscovery = function(req, res) {
 
     default:
       res.set('Content-Type', 'text/xml');
-      res.send(js2xmlparser("discovery", discovery,{
+      res.send(js2xmlparser.parse("discovery", discovery,{
         arrayMap: {
           endpoints: "endpoint",
           formats: "format"

@@ -26,7 +26,7 @@ var getAddressInfo = function(req, res) {
             res.json(result);
             break;
           default:
-            var final = js2xmlparser(result);
+            var final = js2xmlparser.parse(result);
             res.set('Content-Type', 'text/xml');
             res.send(final);
         }
@@ -44,7 +44,7 @@ var getAddressInfo = function(req, res) {
           res.json(result);
           break;
         default:
-          var final = js2xmlparser(result);
+          var final = js2xmlparser.parse(result);
           res.set('Content-Type', 'text/xml');
           res.send(final);
       }

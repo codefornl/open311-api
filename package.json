@@ -30,13 +30,13 @@
     "url": "http://github.com/codeforeindhoven/open311-api.git"
   },
   "dependencies": {
-    "gulp": "~3.9.1",
-    "gulp-include": "~2.1.0",
-    "gulp-install": "~0.6.0",
-    "gulp-less": "~3.0.5",
-    "gulp-concat": "^2.6.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-include": "^2.1.1",
+    "gulp-install": "^0.6.0",
+    "gulp-less": "^3.0.5",
     "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.5.3"
+    "gulp-sourcemaps": "^1.9.1",
+    "gulp-uglify": "^1.5.4"
   }
 }
