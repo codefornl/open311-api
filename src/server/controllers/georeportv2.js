@@ -1,6 +1,7 @@
 var models = require('../models');
 var express = require('express');
 var util = require('../helpers/util.js');
+var errors = require('../helpers/errors.js');
 var middleware = require('../helpers/middleware.js');
 var js2xmlparser = require('js2xmlparser');
 //var moment = require('moment');
@@ -130,6 +131,9 @@ var getServiceList = function(req, res) {
           res.send(final);
       }
     });
+  }).catch(function(e) {
+    //Catch any unexpected errors
+    errors.catchError(req,res, e);
   });
 };
 
@@ -328,6 +332,9 @@ var getServiceRequests = function(req, res) {
         res.set('Content-Type', 'text/xml');
         res.send(final);
     }
+  }).catch(function(e) {
+    //Catch any unexpected errors
+    errors.catchError(req,res, e);
   });
 };
 

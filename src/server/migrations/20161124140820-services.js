@@ -7,7 +7,7 @@
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
-          type: Sequelize.INTEGER
+          type: Sequelize.INTEGER.UNSIGNED
         },
         name: {
           type: Sequelize.STRING

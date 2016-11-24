@@ -7,16 +7,16 @@
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
-          type: Sequelize.INTEGER
+          type: Sequelize.INTEGER.UNSIGNED
         },
-        jurisdiction_id: {
-          type: Sequelize.STRING
-        },
+        jurisdiction_id: Sequelize.STRING,
         is_default: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: false
-        }
+        },
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE
       });
     },
     down: function(queryInterface, Sequelize) {

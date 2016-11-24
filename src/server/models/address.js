@@ -11,8 +11,8 @@
       place: DataTypes.STRING,
       city: DataTypes.STRING,
       province: DataTypes.STRING,
-      latitude: DataTypes.STRING,
-      longitude: DataTypes.INTEGER,
+      latitude: DataTypes.FLOAT,
+      longitude: DataTypes.FLOAT,
       source: DataTypes.STRING,
       source_object: DataTypes.STRING,
       source_id: DataTypes.STRING

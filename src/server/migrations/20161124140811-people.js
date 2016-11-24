@@ -7,45 +7,21 @@
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
-          type: Sequelize.INTEGER
+          type: Sequelize.INTEGER.UNSIGNED
         },
-        firstname: {
-          type: Sequelize.STRING
-        },
-        middlename: {
-          type: Sequelize.STRING
-        },
-        lastname: {
-          type: Sequelize.STRING
-        },
-        organization: {
-          type: Sequelize.STRING
-        },
-        address: {
-          type: Sequelize.STRING
-        },
-        city: {
-          type: Sequelize.STRING
-        },
-        state: {
-          type: Sequelize.STRING
-        },
-        zip: {
-          type: Sequelize.STRING
-        },
+        firstname: Sequelize.STRING,
+        middlename: Sequelize.STRING,
+        lastname: Sequelize.STRING,
+        organization: Sequelize.STRING,
+        address: Sequelize.STRING,
+        city: Sequelize.STRING,
+        state: Sequelize.STRING,
+        zip: Sequelize.STRING,
         department_id: Sequelize.INTEGER,
-        username: {
-          type: Sequelize.STRING
-        },
-        password: {
-          type: Sequelize.STRING
-        },
-        authenticationMethod: {
-          type: Sequelize.STRING
-        },
-        role: {
-          type: Sequelize.STRING
-        }
+        username: Sequelize.STRING,
+        password: Sequelize.STRING,
+        authenticationMethod: Sequelize.STRING,
+        role: Sequelize.STRING
       });
     },
     down: function(queryInterface, Sequelize) {

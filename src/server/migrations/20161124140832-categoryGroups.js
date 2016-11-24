@@ -2,7 +2,7 @@
   'use strict';
   module.exports = {
     up: function(queryInterface, Sequelize) {
-      return queryInterface.createTable('actions', {
+      return queryInterface.createTable('categoryGroups', {
         id: {
           allowNull: false,
           autoIncrement: true,
@@ -10,15 +10,11 @@
           type: Sequelize.INTEGER.UNSIGNED
         },
         name: Sequelize.STRING,
-        description: Sequelize.STRING,
-        type: {
-          type: Sequelize.ENUM,
-          values: ['system', 'department']
-        }
+        ordering: Sequelize.INTEGER(4).UNSIGNED
       });
     },
     down: function(queryInterface, Sequelize) {
-      return queryInterface.dropTable('actions');
+      return queryInterface.dropTable('categoryGroups');
     }
   };
 }());

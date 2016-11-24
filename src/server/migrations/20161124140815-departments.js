@@ -7,17 +7,11 @@
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
-          type: Sequelize.INTEGER
+          type: Sequelize.INTEGER.UNSIGNED
         },
-        name: {
-          type: Sequelize.STRING
-        },
-        description: {
-          type: Sequelize.STRING
-        },
-        defaultPerson_id: {
-          type: Sequelize.INTEGER
-        }
+        name: Sequelize.STRING,
+        description: Sequelize.STRING,
+        defaultPerson_id: Sequelize.INTEGER
       });
     },
     down: function(queryInterface, Sequelize) {
