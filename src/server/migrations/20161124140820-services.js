@@ -32,7 +32,6 @@
         customFields: Sequelize.TEXT,
         lastModified:{
           type: Sequelize.DATE,
-          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
           allowNull: false
         },
         slaDays: Sequelize.INTEGER,
