@@ -9,7 +9,7 @@
         "type": DataTypes.STRING,
         "field": "name"
       },
-      customFIelds: DataTypes.TEXT,
+      customFields: DataTypes.TEXT,
       description: DataTypes.TEXT,
       keywords: DataTypes.TEXT
     }, {
