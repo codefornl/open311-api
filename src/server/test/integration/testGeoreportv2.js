@@ -177,6 +177,51 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+  it('Post Request with sound file should pass', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 3)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with url image')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.48513770164579)
+      .field('long', 5.232168700000033)
+      .attach('media', 'test/assets/test.mp3')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        console.log(res.body);
+        service_request_id.push(res.body[0].service_request_id);
+        done();
+      });
+  });
+  it('Post Request with multiple media urls should pass', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 3)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with url image')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.48513770164579)
+      .field('long', 5.232168700000033)
+      .field('media[0]', 'http://lorempixel.com/400/200/')
+      .field('media[1]', 'http://d2436y6oj07al2.cloudfront.net/seff/downloads/elephant.wav')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        console.log(res.body);
+        service_request_id.push(res.body[0].service_request_id);
+        done();
+      });
+  });
 
   it('Get ServiceRequests should pass', function(done) {
     // See that we get a status 200 on retrieving the Index

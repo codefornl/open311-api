@@ -1,4 +1,5 @@
 var models = require('../models');
+var multer  = require('multer');
 
 exports.ensureApiKey = function(req,res,next){
   if(req.body.api_key){
@@ -147,7 +148,6 @@ exports.ensureIdentified = function(req, res, next) {
   if (bearerHeader) {
     var bearer = bearerHeader.split(" ");
     bearerToken = bearer[1];
-    //console.log(bearerToken);
     req.token = bearerToken;
     models.account.findOne({
       token: req.token
@@ -210,4 +210,16 @@ exports.ensureAdmin = function(req, res, next) {
       message: 'Sorry, cannot let you in'
     });
   }
+};
+
+exports.processMedia = function(req, res, next) {
+  var m = multer({ dest: 'media/tmp/' });
+  var upload = m.single('media');
+  upload(req, res, function (err) {
+     if (err) {
+       console.log(err);
+     }
+     next();
+   });
+
 };

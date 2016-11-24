@@ -23,7 +23,8 @@
     "start": "cd build && npm start",
     "test": "cd build && NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/",
     "build": "./node_modules/.bin/gulp build",
-    "install": "./node_modules/.bin/gulp install_npm"
+    "install": "./node_modules/.bin/gulp install_npm",
+    "prepare_travis": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate"
   },
   "repository": {
     "type": "git",

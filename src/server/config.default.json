@@ -5,10 +5,26 @@
     "email": "change this"
   },
   "test": {
-    "dialect": "sqlite",
-    "storage": "./db.test.sqlite",
+    "host": "127.0.0.1",
+    "database": "database_test",
+    "username": "travis",
+    "password": "",
+    "port": 3306,
+    "dialect": "mysql",
+    "email": "dummy@open311.local",
+    "remote_port": 3000,
     "logging": false,
-    "email": "change this"
+    "smtp": {
+      "host": "localhost",
+      "port": 25,
+      "auth": {
+                "user": "dummy@open311.local",
+                "pass": "nosecret"
+            },
+      "tls": {"rejectUnauthorized": false},
+      "debug":true
+    },
+    "tolerance": 10
   },
   "production": {
     "dialect": "sqlite",

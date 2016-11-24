@@ -8,11 +8,9 @@ var moment = require('moment-business-time');
 var objectAssign = require('object-assign');
 var router = express.Router();
 var env = process.env.NODE_ENV || "development";
-var multer  = require('multer');
-var upload = multer({ dest: 'media/tmp/' });
 var fs = require('fs-extra');
-
-/*
+var guess = require("guess-content-type");
+/**
  *
  *
  */
@@ -32,25 +30,23 @@ var getResponsible = function(req, res, next) {
     orig_lat: 0,
     orig_lon: 0
   };
-  if(address_string) {
+  if (address_string) {
     replacements.address_string = address_string;
     call = 'CALL `SearchAtLocation`(:orig_lat, :orig_lon, :service_id, :address_string, :tolerance)';
   }
 
-  if(lat & lon){
+  if (lat & lon) {
     replacements.orig_lat = lat;
     replacements.orig_lon = lon;
   }
-  models.sequelize.query(call,
-    {
-      raw: true,
-      replacements: replacements,
-      type: models.sequelize.QueryTypes.RAW
-    }
-  ).then(function(hits) {
+  models.sequelize.query(call, {
+    raw: true,
+    replacements: replacements,
+    type: models.sequelize.QueryTypes.RAW
+  }).then(function(hits) {
     next(util.first(hits));
   });
- };
+};
 
 
 /**
@@ -73,37 +69,40 @@ var getServiceList = function(req, res) {
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
     var options = {
-      attributes: [['id', 'service_code'], ['name', 'service_name'], 'description','customFields', 'keywords'],
+      attributes: [
+        ['id', 'service_code'],
+        ['name', 'service_name'], 'description', 'customFields', 'keywords'
+      ],
       include: [{
         model: models.service_group,
         attributes: ['name']
       }]
 
     };
-    if(jurisdiction){
+    if (jurisdiction) {
       options.where = {
         jurisdictionId: jurisdiction.id
       };
     }
 
     models.service.findAll(options).then(function(results) {
-      for(var i in results){
-        if(results[i].dataValues.service_group){
+      for (var i in results) {
+        if (results[i].dataValues.service_group) {
           results[i].dataValues.group = results[i].dataValues.service_group.name;
         }
 
-        if(results[i].dataValues.keywords) {
+        if (results[i].dataValues.keywords) {
           results[i].dataValues.keywords = results[i].dataValues.keywords
             .replace(/, /g, ',')
             .replace(/,/g, ' ')
             .split(' ');
-          if(format === 'xml'){
+          if (format === 'xml') {
             results[i].dataValues.keywords = results[i].dataValues.keywords.join(', ');
           }
         }
 
         results[i].dataValues.type = 'realtime';
-        if(results[i].dataValues.customFields){
+        if (results[i].dataValues.customFields) {
           results[i].dataValues.metadata = true;
         } else {
           results[i].dataValues.metadata = false;
@@ -154,12 +153,15 @@ var getServiceDefinition = function(req, res) {
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
     var options = {
-      where:{
+      where: {
         id: req.params.service_code
       },
-      attributes: [['id', 'service_code'],['customFields', 'attributes']]
+      attributes: [
+        ['id', 'service_code'],
+        ['customFields', 'attributes']
+      ]
     };
-    if(jurisdiction){
+    if (jurisdiction) {
       options.where = {
         jurisdictionId: jurisdiction.id
       };
@@ -167,11 +169,14 @@ var getServiceDefinition = function(req, res) {
     models.service.findOne(options).then(function(results) {
       var attributes = JSON.parse(results.dataValues.attributes);
       // format the values as "key" and "name"
-      for(var j in attributes){
-        if(attributes[j].values){
-          for (var val in attributes[j].values){
+      for (var j in attributes) {
+        if (attributes[j].values) {
+          for (var val in attributes[j].values) {
             var tempval = attributes[j].values[val];
-            attributes[j].values[val] = {"key": tempval, "name": tempval};
+            attributes[j].values[val] = {
+              "key": tempval,
+              "name": tempval
+            };
           }
         }
       }
@@ -182,7 +187,7 @@ var getServiceDefinition = function(req, res) {
           break;
         default:
           var xmlResult = results.dataValues;
-          var final = js2xmlparser("service_definition", xmlResult ,{
+          var final = js2xmlparser("service_definition", xmlResult, {
             arrayMap: {
               values: "value",
               attributes: "attribute"
@@ -205,8 +210,7 @@ var getServiceRequests = function(req, res) {
     attributes: [
       ['id', 'service_request_id'],
       ['category_id', 'service_code'],
-      'status',
-      ['location', 'address'],
+      'status', ['location', 'address'],
       ['latitude', 'lat'],
       ['longitude', 'long'],
       ['enteredDate', 'requested_datetime'],
@@ -215,33 +219,32 @@ var getServiceRequests = function(req, res) {
     include: [{
       model: models.service,
       attributes: ['service_name']
-    },{
+    }, {
       model: models.issue,
       attributes: ['description'],
       include: [{
         model: models.media
       }]
-    },{
+    }, {
       model: models.person,
       attributes: ['firstname', 'middlename', 'lastname'],
       include: [{
         model: models.department,
         attributes: ['name']
       }]
-    }
-    ],
+    }],
     order: [
       ['enteredDate', 'DESC']
     ]
   };
   var where;
-  if(req.query.service_request_id){
+  if (req.query.service_request_id) {
     where = where || {};
     where.id = {
       $in: util.StringToIntArray(req.query.service_request_id)
     };
   }
-  if(req.query.service_code){
+  if (req.query.service_code) {
     where = where || {};
     where.category_id = {
       $in: util.StringToIntArray(req.query.service_code)
@@ -249,56 +252,58 @@ var getServiceRequests = function(req, res) {
   }
 
   var datewindow;
-  if(req.query.start_date){
-    datewindow = { $lt: req.query.start_date};
+  if (req.query.start_date) {
+    datewindow = {
+      $lt: req.query.start_date
+    };
   }
-  if(req.query.end_date){
+  if (req.query.end_date) {
     datewindow = datewindow || {};
     datewindow.$gt = req.query.end_date;
   }
-  if(datewindow){
+  if (datewindow) {
     where = where || {};
     where.enteredDate = datewindow;
   }
 
-  if(req.query.status){
+  if (req.query.status) {
     where = where || {};
     where.status = req.query.status;
   }
-  if(where){
+  if (where) {
     options.where = where;
   }
   models.request.findAll(options).then(function(results) {
-    for(var i in results){
+    for (var i in results) {
 
       results[i].dataValues.requested_datetime = moment(results[i].dataValues.requested_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
       results[i].dataValues.updated_datetime = moment(results[i].dataValues.updated_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
 
-      if(results[i].dataValues.person){
-        if(results[i].dataValues.person.department){
+      if (results[i].dataValues.person) {
+        if (results[i].dataValues.person.department) {
           results[i].dataValues.agency_responsible = results[i].dataValues.person.department.name;
         }
         delete results[i].dataValues.person;
       }
 
-      if(results[i].dataValues.service){
+      if (results[i].dataValues.service) {
         results[i].dataValues.service_name = results[i].dataValues.service.service_name;
         delete results[i].dataValues.service;
       }
 
-      for (var l in results[i].dataValues.issues){
+      for (var l in results[i].dataValues.issues) {
         results[i].dataValues.description = results[i].dataValues.issues[l].description;
-        for (var m in results[i].dataValues.issues[l].media){
+        for (var m in results[i].dataValues.issues[l].media) {
           var port = util.getConfig('remote_port') || req.app.settings.port;
-          if(results[i].issues[l].media[m].media_type === 'url'){
+          if (results[i].issues[l].media[m].media_type === 'url') {
             results[i].dataValues.media_url = results[i].issues[l].media[m].filename;
           } else {
             var callingUrl = req.protocol +
               '://' +
               req.hostname +
-              ( port == 80 || port == 443 ? '' : ':' + port ) + '/media/';
+              (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
             results[i].dataValues.media_url = callingUrl + moment(results[i].dataValues.issues[l].media[m].uploaded).format('YYYY/M/D') +
-            "/" + results[i].dataValues.issues[l].media[m].internalFilename;
+              "/" + results[i].dataValues.issues[l].media[m].internalFilename;
           }
         }
       }
@@ -310,18 +315,18 @@ var getServiceRequests = function(req, res) {
         res.json(results);
         break;
       default:
-      var xmlResult = results;
-      var xmlServiceRequests = [];
-      for (var x in xmlResult) {
-        xmlServiceRequests.push(xmlResult[x].dataValues);
-      }
-      var final = js2xmlparser("service_requests", xmlServiceRequests, {
-        arrayMap: {
-          service_requests: "request"
+        var xmlResult = results;
+        var xmlServiceRequests = [];
+        for (var x in xmlResult) {
+          xmlServiceRequests.push(xmlResult[x].dataValues);
         }
-      });
-      res.set('Content-Type', 'text/xml');
-      res.send(final);
+        var final = js2xmlparser("service_requests", xmlServiceRequests, {
+          arrayMap: {
+            service_requests: "request"
+          }
+        });
+        res.set('Content-Type', 'text/xml');
+        res.send(final);
     }
   });
 };
@@ -331,28 +336,25 @@ var getServiceRequests = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
-  console.log(req.body.media);
-  console.log(req.file);
-  console.log(req.files);
   var format = req.params.format || 'xml';
   var ticket = {
-    "category_id": parseInt(req.body.service_code,10),
+    "category_id": parseInt(req.body.service_code, 10),
     "latitude": 0,
     "longitude": 0,
     "enteredByPerson_id": req.body.person_id,
     "client_id": req.body.application,
     "assignedPerson_id": req.body.assignee
   };
-  if(req.body.lat){
+  if (req.body.lat) {
     ticket.latitude = parseFloat(req.body.lat);
   }
-  if(req.body.long){
+  if (req.body.long) {
     ticket.longitude = parseFloat(req.body.lat);
   }
-  if(req.body.address_string){
+  if (req.body.address_string) {
     ticket.location = req.body.address_string;
   }
-  if(req.body.address_id){
+  if (req.body.address_id) {
     ticket.addressId = req.body.address_id;
   }
 
@@ -364,176 +366,79 @@ var postServiceRequest = function(req, res) {
       "reportedByPerson_id": req.body.person_id,
       "description": req.body.description
     };
-    models.issue.create(issue).then(function(issue){
-      if(req.file){
-        //media attached
-        postWithMedia(req,res,issue); //todo ```then``` instead of duplicate code.
+    models.issue.create(issue).then(function(issue) {
+      var curtime = moment();
+
+      var media = {
+        issue_id: issue.id,
+        uploaded: curtime,
+        person_id: req.body.person_id,
+        internalFilename: '-',
+        media_type: 'image'
+      };
+
+      if (req.file) {
+        var path = require('path');
+        var ext = path.extname(req.file.originalname);
+        var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
+        var targetFile = req.file.filename + ext;
+        //move the uploaded file to the correct path (/media/year/month)
+        fs.move(req.file.path, targetPath + targetFile, function(err) {
+          //After move, store the corresponding media record.
+          media.filename = req.file.originalname;
+          media.internalFilename = targetFile;
+          console.log(req.file);
+          media.mime_type = req.file.mimetype;
+          if (err) {
+            // @todo res.send error
+            return console.error(err);
+          } else {
+            models.media.create(media).then(function(media) {
+              sendMail(req, res, issue);
+            }); //models.media.create
+          }
+        }); //fs.move
       } else {
-        if(req.body.media){
-          console.log('Gonna post with media url');
-          postWithMediaUrl(req,res,issue); //todo ```then``` instead of duplicate code.
+        if (req.body.media) {
+          if (Array.isArray(req.body.media)) {
+            var bulkmedia = [];
+            for (var i = 0; i < req.body.media.length; i++){
+              var _media = JSON.parse(JSON.stringify(media));
+              _media.filename = req.body.media[i];
+              _media.media_type = 'url';
+              _media.mime_type = guess(req.body.media[i]);
+              bulkmedia.push(_media);
+            }
+            console.log(bulkmedia);
+            //bulkCreate, woohooohoo!
+            models.media.bulkCreate(bulkmedia).then(function(){
+              sendMail(req, res, issue);
+            });
+          } else {
+            media.filename = req.body.media;
+            media.media_type = 'url';
+            media.mime_type = guess(req.body.media);
+            models.media.create(media).then(function(media) {
+              sendMail(req, res, issue);
+            });
+          }
         } else {
-          postTextOnly(req,res,issue);
+          sendMail(req, res, issue);
         }
       }
-
-    }); //models.issue.create
+    });
   });
 };
-postWithMediaUrl = function(req,res,issue){
-  var format = req.params.format || 'xml';
-  var curtime = moment();
-  var media = {
-    issue_id: issue.id,
-    filename: req.body.media,
-    internalFilename: '-',
-    media_type: 'url',
-    uploaded: curtime,
-    person_id: req.body.person_id
-  };
-  models.media.create(media).then(function(media){
-    var mailer = require('../helpers/mail.js');
-    //We have ticket, issue, and media, plus some user details in the req object.
-    //get the responsible party
-    getResponsible(req,res,function(responsible){
-      var send_to = req.i18n.t('mail.system');
-      var translate_string = 'service.notice-system';
-      if(responsible){
-        req.to_open311 = {
-          "name": responsible.name,
-          "email": responsible.email
-        };
-        send_to = responsible.name;
-        translate_string = 'service.notice-closed';
-        var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
-        if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
-          translate_string = 'service.notice';
-        }
-      } else {
-        req.to_open311 = {
-          "name": req.i18n.t('mail.system'),
-          "email": util.getConfig('email'),
-        };
-      }
 
-      var service_notice = req.i18n.t(translate_string,
-        {
-          "responsible": send_to
-        }
-      );
-
-      mailer.newRequest(req, issue.ticket_id);
-      var results = [{
-        "service_request_id": issue.ticket_id,
-        "service_notice": service_notice,
-        "account_id": null
-      }];
-      switch (format) {
-        case 'json':
-          res.json(results);
-          break;
-        default:
-          var xmlServiceRequests = results;
-          var final = js2xmlparser("service_requests", xmlServiceRequests, {
-            arrayMap: {
-              service_requests: "request"
-            }
-          });
-          res.set('Content-Type', 'text/xml');
-          res.send(final);
-        }
-      }); //getResponsible
-    }); //models.media.create
-};
-postWithMedia = function(req,res,issue){
-  var format = req.params.format || 'xml';
-  var path = require('path');
-  var ext = path.extname(req.file.originalname);
-  var targetFile = req.file.filename + ext;
-  var curtime = moment();
-  var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
-  //move the uploaded file to the correct path (/media/year/month)
-  fs.move(req.file.path,  targetPath + targetFile, function(err){
-    //After move, store the corresponding media record.
-    var media = {
-      issue_id: issue.id,
-      filename: req.file.originalname,
-      internalFilename: targetFile,
-      mime_type: req.file.mime_type,
-      media_type: 'image',
-      uploaded: curtime,
-      person_id: req.body.person_id
-    };
-    if (err) {
-      // @todo res.send error
-      return console.error(err);
-    } else {
-      models.media.create(media).then(function(media){
-        var mailer = require('../helpers/mail.js');
-        //We have ticket, issue, and media, plus some user details in the req object.
-        //get the responsible party
-        getResponsible(req,res,function(responsible){
-          var send_to = req.i18n.t('mail.system');
-          var translate_string = 'service.notice-system';
-          if(responsible){
-            req.to_open311 = {
-              "name": responsible.name,
-              "email": responsible.email
-            };
-            send_to = responsible.name;
-            translate_string = 'service.notice-closed';
-            var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
-            if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
-              translate_string = 'service.notice';
-            }
-          } else {
-            // A responsible party could not be found, route to system.
-            req.to_open311 = {
-              "name": req.i18n.t('mail.system'),
-              "email": util.getConfig('email'),
-            };
-          }
-
-          var service_notice = req.i18n.t(translate_string,
-            {
-              "responsible": send_to
-            }
-          );
-
-          mailer.newRequest(req, issue.ticket_id);
-          var results = [{
-            "service_request_id": issue.ticket_id,
-            "service_notice": service_notice,
-            "account_id": null
-          }];
-          switch (format) {
-            case 'json':
-              res.json(results);
-              break;
-            default:
-            var xmlServiceRequests = results;
-            var final = js2xmlparser("service_requests", xmlServiceRequests, {
-              arrayMap: {
-                service_requests: "request"
-              }
-            });
-            res.set('Content-Type', 'text/xml');
-            res.send(final);
-          }
-        }); //getResponsible
-      }); //models.media.create
-    }
-  }); //fs.move
-};
-postTextOnly = function(req,res,issue){
+var sendMail = function(req, res, issue) {
   var format = req.params.format || 'xml';
   var mailer = require('../helpers/mail.js');
   //We have ticket, issue, and media, plus some user details in the req object.
   //get the responsible party
-  getResponsible(req,res,function(responsible){
+  getResponsible(req, res, function(responsible) {
     var send_to = req.i18n.t('mail.system');
     var translate_string = 'service.notice-system';
-    if(responsible){
+    if (responsible) {
       req.to_open311 = {
         "name": responsible.name,
         "email": responsible.email
@@ -541,22 +446,19 @@ postTextOnly = function(req,res,issue){
       send_to = responsible.name;
       translate_string = 'service.notice-closed';
       var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
-      if(moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()){
+      if (moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()) {
         translate_string = 'service.notice';
       }
     } else {
-      // A responsible party could not be found, route to system.
       req.to_open311 = {
         "name": req.i18n.t('mail.system'),
         "email": util.getConfig('email'),
       };
     }
 
-    var service_notice = req.i18n.t(translate_string,
-      {
-        "responsible": send_to
-      }
-    );
+    var service_notice = req.i18n.t(translate_string, {
+      "responsible": send_to
+    });
 
     mailer.newRequest(req, issue.ticket_id);
     var results = [{
@@ -584,7 +486,7 @@ router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
-router.route('/api/v2/requests.:format').post(upload.single('media'), middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
-router.route('/api/v2/request.:format').post(upload.single('media'), middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
+router.route('/api/v2/requests.:format').post(middleware.processMedia, middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
+router.route('/api/v2/request.:format').post(middleware.processMedia, middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
 
 module.exports = router;
