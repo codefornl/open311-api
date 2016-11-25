@@ -1,7 +1,7 @@
 FROM node:6
 
 # Create open311-api directory
-RUN mkdir -p /open311
+RUN mkdir -p /open311/build
 WORKDIR /open311
 
 # Variables
@@ -27,7 +27,7 @@ ENV SEARCH_TOLERANCE_M 10
 
 # Install
 COPY package.json /open311
-COPY ./src /open311/build
+ADD src /open311/build
 
 RUN npm install --prefix ./build
 COPY config-docker.json /open311/build/config.json
