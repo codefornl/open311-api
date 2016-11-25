@@ -20,7 +20,8 @@
         },
         contactPerson_id: {
           type: Sequelize.INTEGER.UNSIGNED,
-          allowNull: false
+          allowNull: false,
+          defaultValue: 1
         },
         contactMethod_id: Sequelize.INTEGER.UNSIGNED
       });

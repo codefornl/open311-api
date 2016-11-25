@@ -42,7 +42,6 @@ app.use(middleware.handle(i18next, {
 }));
 
 app.enable('trust proxy');
-app.use(express.static(__dirname + '/public'));
 app.use('/media', express.static(__dirname + '/media'));
 app.set('port', process.env.PORT || 3000);
 app.use(compress());

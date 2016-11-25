@@ -27,7 +27,6 @@ ENV SEARCH_TOLERANCE_M 10
 
 # Install
 COPY package.json /open311
-COPY gulpfile.js /open311
 COPY ./src /open311/build
 
 RUN npm install --prefix ./build
