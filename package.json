@@ -20,12 +20,13 @@
   ],
   "private": true,
   "scripts": {
-    "start": "cd src && npm start",
-    "test": "cd src && NODE_ENV=test node_modules/.bin/mocha test/ --timeout 30000 --reporter spec --bail test/",
-    "migrate:test": "cd src && node_modules/.bin/sequelize --config config.default.json --env test db:migrate",
-    "migrate:test:undo": "cd src && node_modules/.bin/sequelize --config config.default.json --env test db:migrate:undo",
-    "migrate:development": "cd src && node_modules/.bin/sequelize --config config.json --env development db:migrate",
-    "migrate": "cd src && node_modules/.bin/sequelize --config config.json --env production db:migrate"
+    "build": "cp src build", 
+    "start": "cd build && npm start",
+    "test": "cd build && NODE_ENV=test node_modules/.bin/mocha test/ --timeout 30000 --reporter spec --bail test/",
+    "migrate:test": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate",
+    "migrate:test:undo": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate:undo",
+    "migrate:development": "cd build && node_modules/.bin/sequelize --config config.json --env development db:migrate",
+    "migrate": "cd build && node_modules/.bin/sequelize --config config.json --env production db:migrate"
   },
   "repository": {
     "type": "git",
