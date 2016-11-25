@@ -28,11 +28,11 @@ ENV SEARCH_TOLERANCE_M 10
 # Install
 COPY package.json /open311
 COPY gulpfile.js /open311
-COPY ./src /open311/src
+COPY ./src /open311/build
 
-RUN npm install --prefix ./src
-COPY config-docker.json /open311/src/config.json
-VOLUME /open311/src/media
+RUN npm install --prefix ./build
+COPY config-docker.json /open311/build/config.json
+VOLUME /open311/build/media
 # Add image configuration and scripts
 ADD start.sh /start.sh
 RUN chmod 755 /*.sh
