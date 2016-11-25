@@ -18,6 +18,6 @@ before_install:
     - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm install -g npm@2 ;; esac
 before_script:
   - mysql -e 'create database database_test'
-  - cp ./src ./build
+  - mv ./src ./build
   - npm install --prefix ./build
   - npm run migrate:test
