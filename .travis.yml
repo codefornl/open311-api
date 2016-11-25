@@ -20,5 +20,4 @@ before_script:
   - mysql -e 'create database database_test'
   - npm install -g gulp
   - npm run build
-  - npm run install
-  - npm run prepare_travis
+  - npm run migrate:test

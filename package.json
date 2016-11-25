@@ -21,10 +21,12 @@
   "private": true,
   "scripts": {
     "start": "cd build && npm start",
-    "test": "cd build && NODE_ENV=test mocha test/ --timeout 30000 --reporter spec --bail test/",
+    "test": "cd build && NODE_ENV=test node_modules/.bin/mocha test/ --timeout 30000 --reporter spec --bail test/",
     "build": "./node_modules/.bin/gulp build",
-    "install": "./node_modules/.bin/gulp install_npm",
-    "prepare_travis": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate"
+    "migrate:test": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate",
+    "migrate:test:undo": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate:undo",
+    "migrate:development": "cd build && node_modules/.bin/sequelize --config config.json --env development db:migrate",
+    "migrate": "cd build && node_modules/.bin/sequelize --config config.json --env production db:migrate"
   },
   "repository": {
     "type": "git",
@@ -32,12 +34,6 @@
   },
   "dependencies": {
     "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-include": "^2.1.1",
-    "gulp-install": "^0.6.0",
-    "gulp-less": "^3.0.5",
-    "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "^1.9.1",
-    "gulp-uglify": "^1.5.4"
+    "gulp-dependency-install": "^0.0.8"
   }
 }

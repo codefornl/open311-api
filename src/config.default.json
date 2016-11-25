@@ -1,9 +1,4 @@
 {
-  "development": {
-    "dialect": "sqlite",
-    "storage": "./db.development.sqlite",
-    "email": "change this"
-  },
   "test": {
     "host": "127.0.0.1",
     "database": "database_test",
@@ -25,10 +20,5 @@
       "debug":true
     },
     "tolerance": 10
-  },
-  "production": {
-    "dialect": "sqlite",
-    "storage": "./db.production.sqlite",
-    "email": "change this"
   }
 }

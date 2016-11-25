@@ -9,8 +9,11 @@
           primaryKey: true,
           type: Sequelize.INTEGER.UNSIGNED
         },
-        name: Sequelize.STRING,
-        ordering: Sequelize.INTEGER(4).UNSIGNED
+        name: {
+          type: Sequelize.STRING(50),
+          allowNull: false
+        },
+        ordering: Sequelize.INTEGER(3).UNSIGNED
       });
     },
     down: function(queryInterface, Sequelize) {
