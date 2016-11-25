@@ -20,20 +20,15 @@
   ],
   "private": true,
   "scripts": {
-    "start": "cd build && npm start",
-    "test": "cd build && NODE_ENV=test node_modules/.bin/mocha test/ --timeout 30000 --reporter spec --bail test/",
-    "build": "./node_modules/.bin/gulp build",
-    "migrate:test": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate",
-    "migrate:test:undo": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate:undo",
-    "migrate:development": "cd build && node_modules/.bin/sequelize --config config.json --env development db:migrate",
-    "migrate": "cd build && node_modules/.bin/sequelize --config config.json --env production db:migrate"
+    "start": "cd src && npm start",
+    "test": "cd src && NODE_ENV=test node_modules/.bin/mocha test/ --timeout 30000 --reporter spec --bail test/",
+    "migrate:test": "cd src && node_modules/.bin/sequelize --config config.default.json --env test db:migrate",
+    "migrate:test:undo": "cd src && node_modules/.bin/sequelize --config config.default.json --env test db:migrate:undo",
+    "migrate:development": "cd src && node_modules/.bin/sequelize --config config.json --env development db:migrate",
+    "migrate": "cd src && node_modules/.bin/sequelize --config config.json --env production db:migrate"
   },
   "repository": {
     "type": "git",
     "url": "http://github.com/codeforeindhoven/open311-api.git"
-  },
-  "dependencies": {
-    "gulp": "^3.9.1",
-    "gulp-dependency-install": "^0.0.8"
   }
 }
