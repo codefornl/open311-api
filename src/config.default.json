@@ -2,7 +2,7 @@
   "test": {
     "host": "127.0.0.1",
     "database": "database_test",
-    "username": "travis",
+    "username": "root",
     "password": "",
     "port": 3306,
     "dialect": "mysql",
