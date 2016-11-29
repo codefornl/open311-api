@@ -86,7 +86,6 @@ var getServiceDefinition = function(req, res) {
 
   };
   if (req.query.jurisdiction_id) {
-    console.log(req.query);
   }
   switch (req.params.format) {
     case 'xml':
@@ -113,7 +112,6 @@ var getServiceDefinition = function(req, res) {
 
 var postServiceRequest = function(req, res) {
   if (req.params.jurisdiction_id) {
-    console.log(req.query);
   }
   var skeleton = [{
     "service_request_id": -1,

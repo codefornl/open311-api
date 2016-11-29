@@ -8,7 +8,6 @@ describe('testing Georeport v2', function() {
   var service_request_id = [];
   afterEach(function() {
     // runs after each test in this block
-    //console.log(service_request_id);
   });
   it('Get Services as json should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
@@ -172,7 +171,6 @@ describe('testing Georeport v2', function() {
         if(err){
           return done(err);
         }
-        console.log(res.body);
         service_request_id.push(res.body[0].service_request_id);
         done();
       });
@@ -194,7 +192,6 @@ describe('testing Georeport v2', function() {
         if(err){
           return done(err);
         }
-        console.log(res.body);
         service_request_id.push(res.body[0].service_request_id);
         done();
       });
@@ -217,7 +214,6 @@ describe('testing Georeport v2', function() {
         if(err){
           return done(err);
         }
-        console.log(res.body);
         service_request_id.push(res.body[0].service_request_id);
         done();
       });

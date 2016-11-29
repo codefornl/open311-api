@@ -20,3 +20,4 @@ before_script:
   - mysql -e 'create database database_test'
   - npm run build
   - npm run migrate:test
+  - npm run seed:test

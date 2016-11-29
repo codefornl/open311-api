@@ -14,7 +14,6 @@ var search = function(res, req, callback){
     port: 80,
     path: '/search?' + querystring.stringify(queryparams)
   };
-  console.log(options.path);
   http.get(options, function(remote_res){
     var mybuf = '';
     remote_res.on('error', function(e) {
@@ -75,7 +74,6 @@ var reverse = function(res, req, callback){
   queryparams.limit = 1;
   queryparams.email = 'milo@dogodigi.net';
   queryparams['accept-language'] = req.headers["accept-language"].substring(0,2);
-  console.log(queryparams);
   var Feature;
   var options = {
     host: 'nominatim.openstreetmap.org',

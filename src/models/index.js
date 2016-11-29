@@ -6,7 +6,7 @@
   var env = process.env.NODE_ENV || "development";
   var config;
   if (!fs.existsSync(__dirname + '/../config.json')) {
-      console.log('Warning, no config.json present. Falling back to config.default.json');
+      //console.log('Warning, no config.json present. Falling back to config.default.json');
       //check to see if config file exists, if not, default to config.default.json
       config = require(__dirname + '/../config.default.json')[env];
   } else {

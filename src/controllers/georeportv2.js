@@ -394,7 +394,6 @@ var postServiceRequest = function(req, res) {
           //After move, store the corresponding media record.
           media.filename = req.file.originalname;
           media.internalFilename = targetFile;
-          console.log(req.file);
           media.mime_type = req.file.mimetype;
           if (err) {
             // @todo res.send error
@@ -416,7 +415,6 @@ var postServiceRequest = function(req, res) {
               _media.mime_type = guess(req.body.media[i]);
               bulkmedia.push(_media);
             }
-            console.log(bulkmedia);
             //bulkCreate, woohooohoo!
             models.media.bulkCreate(bulkmedia).then(function(){
               sendMail(req, res, issue);
