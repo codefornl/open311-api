@@ -10,7 +10,7 @@ CREATE PROCEDURE `DepartmentsAtLocation`
     select a.*, d.name, pe.email from (
       select da.department_id as department_id, min(a.distance) as distance, a.level, a.source
     from
-    (SELECT id, truncate(st_distance_sphere(
+    (SELECT id, truncate(st_distance(
       ST_GeomFromText(concat('POINT(',orig_lon, ' ', orig_lat, ')'), 1),
       ST_GeomFromText(concat('POINT(', address.longitude, ' ', address.latitude, ')'), 1)
     ),2) as distance, 99 as level,
