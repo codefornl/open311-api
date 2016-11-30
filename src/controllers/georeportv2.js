@@ -102,7 +102,7 @@ var getServiceList = function(req, res) {
           }
         }
 
-        results[i].dataValues.type = 'realtime';
+        results[i].dataValues.type = results[i].dataValues.type || 'realtime';
         if (results[i].dataValues.customFields) {
           results[i].dataValues.metadata = true;
         } else {
@@ -111,22 +111,13 @@ var getServiceList = function(req, res) {
         delete results[i].dataValues.service_group;
         delete results[i].dataValues.customFields;
       }
+      results = util.removeNulls(results);
       switch (format) {
         case 'json':
-
           res.json(results);
           break;
         default:
-          var xmlResult = results;
-          var xmlServices = [];
-          for (var x in xmlResult) {
-            xmlServices.push(xmlResult[x].dataValues);
-          }
-          var final = js2xmlparser.parse("services", xmlServices, {
-            arrayMap: {
-              services: "service"
-            }
-          });
+          var final = js2xmlparser.parse("services", {"service": results});
           res.set('Content-Type', 'text/xml');
           res.send(final);
       }
@@ -185,13 +176,13 @@ var getServiceDefinition = function(req, res) {
         }
       }
       results.dataValues.attributes = attributes;
+      results = util.removeNulls(results);
       switch (format) {
         case 'json':
-          res.json(results.dataValues);
+          res.json(results);
           break;
         default:
-          var xmlResult = results.dataValues;
-          var final = js2xmlparser("service_definition", xmlResult, {
+          var final = js2xmlparser.parse("service_definition", results, {
             arrayMap: {
               values: "value",
               attributes: "attribute"
@@ -314,21 +305,13 @@ var getServiceRequests = function(req, res) {
       delete results[i].dataValues.issues;
 
     }
+    results = util.removeNulls(results);
     switch (format) {
       case 'json':
         res.json(results);
         break;
       default:
-        var xmlResult = results;
-        var xmlServiceRequests = [];
-        for (var x in xmlResult) {
-          xmlServiceRequests.push(xmlResult[x].dataValues);
-        }
-        var final = js2xmlparser("service_requests", xmlServiceRequests, {
-          arrayMap: {
-            service_requests: "request"
-          }
-        });
+        var final = js2xmlparser.parse("service_requests", {"service_request": results});
         res.set('Content-Type', 'text/xml');
         res.send(final);
     }
@@ -346,8 +329,6 @@ var postServiceRequest = function(req, res) {
   var format = req.params.format || 'xml';
   var ticket = {
     "category_id": parseInt(req.body.service_code, 10),
-    "latitude": 0,
-    "longitude": 0,
     "enteredByPerson_id": req.body.person_id,
     "client_id": req.body.application,
     "assignedPerson_id": req.body.assignee
@@ -356,7 +337,7 @@ var postServiceRequest = function(req, res) {
     ticket.latitude = parseFloat(req.body.lat);
   }
   if (req.body.long) {
-    ticket.longitude = parseFloat(req.body.lat);
+    ticket.longitude = parseFloat(req.body.long);
   }
   if (req.body.address_string) {
     ticket.location = req.body.address_string;
@@ -476,8 +457,7 @@ var sendMail = function(req, res, issue) {
         res.json(results);
         break;
       default:
-        var xmlServiceRequests = results;
-        var final = js2xmlparser("service_requests", xmlServiceRequests, {
+        var final = js2xmlparser.parse("service_requests", results, {
           arrayMap: {
             service_requests: "request"
           }

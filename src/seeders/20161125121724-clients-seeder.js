@@ -4,6 +4,7 @@
   module.exports = {
     up: function(queryInterface, Sequelize) {
       return queryInterface.bulkInsert('clients', [{
+        id: 1,
         name: 'testapp',
         url: 'http://testapp.com',
         api_key: '56b074c9495b1'
