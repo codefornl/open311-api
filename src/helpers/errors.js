@@ -1,25 +1,24 @@
 var js2xmlparser = require('js2xmlparser');
 var env = process.env.NODE_ENV || "development";
 
-exports.catchError = function(req, res, e) {
+exports.catchError = function(req, res, e, code) {
   var format = req.params.format || 'xml';
-  res.status(400);
-  result = [{"code": 400, "description": e.name + " -- " + e.message}];
+  code = code || 400;
+  res.status(code);
+  result = [
+    {
+      "code": code,
+      "description": e.name + " -- " + e.message,
+      // "extended_attributes": {
+      //   "system_error_code" :e.name
+      // }
+    }];
   switch (format) {
       case 'json':
         res.json(result);
         break;
       default:
-        var xmlResult = result;
-        var xmlServiceRequests = [];
-        for (var x in xmlResult) {
-          xmlServiceRequests.push(xmlResult[x]);
-        }
-        var final = js2xmlparser.parse("error", xmlServiceRequests, {
-          arrayMap: {
-            errors: "error"
-          }
-        });
+        var final = js2xmlparser.parse("errors", {"error": result});
         res.set('Content-Type', 'text/xml');
         res.send(final);
     }

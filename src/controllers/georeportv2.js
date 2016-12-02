@@ -87,7 +87,6 @@ var getServiceList = function(req, res) {
     }
 
     models.service.findAll(options).then(function(results) {
-      console.log("Service findAll");
       for (var i in results) {
         if (results[i].dataValues.service_group) {
           results[i].dataValues.group = results[i].dataValues.service_group.name;
@@ -162,36 +161,63 @@ var getServiceDefinition = function(req, res) {
       };
     }
     models.service.findOne(options).then(function(results) {
-      var attributes = JSON.parse(results.attributes);
-      // format the values as "key" and "name"
-      for (var j in attributes) {
-        if (attributes[j].values) {
-          for (var val in attributes[j].values) {
-            var tempval = attributes[j].values[val];
-            attributes[j].values[val] = {
-              "key": tempval,
-              "name": tempval
-            };
+      if(results && results.dataValues.attributes){
+        var attributes = JSON.parse(results.dataValues.attributes);
+        // format the values as "key" and "name"
+        for (var j in attributes) {
+          if (attributes[j].values) {
+            for (var val in attributes[j].values) {
+              var tempval = attributes[j].values[val];
+              attributes[j].values[val] = {
+                "key": tempval,
+                "name": tempval
+              };
+            }
           }
         }
+        results.dataValues.attributes = attributes;
+        results = util.removeNulls(results);
+        switch (format) {
+          case 'json':
+            res.json(results);
+            break;
+          default:
+            var final = js2xmlparser.parse("service_definition", results, {
+              arrayMap: {
+                values: "value",
+                attributes: "attribute"
+              }
+            });
+            res.set('Content-Type', 'text/xml');
+            res.send(final);
+        }
+      } else {
+        if(!results){
+          errors.catchError(req,res, {
+            "name": "ServiceError",
+            "message": "The requested service doesn't exist"
+          }, 404);
+        } else {
+          var e = {
+            "name": "ServiceAttributesError",
+            "message": "There requested service has no attributes"
+          };
+          errors.catchError(req,res, e, 400);
+        }
       }
-      results.attributes = attributes;
-      results = util.removeNulls(results);
-      switch (format) {
-        case 'json':
-          res.json(results);
-          break;
-        default:
-          var final = js2xmlparser.parse("service_definition", results, {
-            arrayMap: {
-              values: "value",
-              attributes: "attribute"
-            }
-          });
-          res.set('Content-Type', 'text/xml');
-          res.send(final);
-      }
+    }).catch(function(e) {
+      //Catch any unexpected errors
+      errors.catchError(req,res, {
+        "name": "ServiceCodeError",
+        "message": "No service_code, or no valid service_code provided"
+      }, 400);
     });
+  }).catch(function(e) {
+    //Catch any unexpected errors
+    errors.catchError(req,res, {
+      "name": "JurisdictionError",
+      "message": "No jurisdiction_id, or no valid jurisdiction_id provided"
+    }, 400);
   });
 };
 
