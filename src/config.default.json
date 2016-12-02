@@ -1,7 +1,7 @@
 {
   "development": {
     "host": "127.0.0.1",
-    "database": "database_test",
+    "database": "database_development",
     "username": "root",
     "port": 3306,
     "dialect": "mysql",
