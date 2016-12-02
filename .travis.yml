@@ -21,6 +21,7 @@ before_install:
 before_script:
   - mkdir build
   - mysql -u root -e 'create database database_test'
+  - mysql -u root -e 'GRANT ALL PRIVILEGES ON database_test.* TO \'root\'@\'localhost\' WITH GRANT OPTION;'
   - npm run build
   - npm run migrate:test
   - npm run seed:test
