@@ -1,4 +1,25 @@
 {
+  "development": {
+    "host": "127.0.0.1",
+    "database": "database_test",
+    "username": "root",
+    "port": 3306,
+    "dialect": "mysql",
+    "email": "dummy@open311.local",
+    "remote_port": 3000,
+    "logging": false,
+    "smtp": {
+      "host": "localhost",
+      "port": 25,
+      "auth": {
+                "user": "dummy@open311.local",
+                "pass": "nosecret"
+            },
+      "tls": {"rejectUnauthorized": false},
+      "debug":true
+    },
+    "tolerance": 10
+  },
   "test": {
     "host": "127.0.0.1",
     "database": "database_test",

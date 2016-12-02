@@ -87,29 +87,29 @@ var getServiceList = function(req, res) {
     }
 
     models.service.findAll(options).then(function(results) {
+      console.log("Service findAll");
       for (var i in results) {
-        if (results[i].service_group) {
-          results[i].group = results[i].service_group.name;
+        if (results[i].dataValues.service_group) {
+          results[i].dataValues.group = results[i].dataValues.service_group.name;
+          delete results[i].dataValues.service_group;
         }
 
-        if (results[i].keywords) {
-          results[i].keywords = results[i].keywords
+        if (results[i].dataValues.keywords) {
+          results[i].dataValues.keywords = results[i].dataValues.keywords
             .replace(/, /g, ',')
             .replace(/,/g, ' ')
             .split(' ');
-          if (format === 'xml') {
-            results[i].keywords = results[i].keywords.join(', ');
-          }
+            results[i].dataValues.keywords = results[i].dataValues.keywords.join(',');
         }
 
-        results[i].type = results[i].type || 'realtime';
-        if (results[i].customFields) {
-          results[i].metadata = true;
+        results[i].dataValues.type = results[i].dataValues.type || 'realtime';
+        if (results[i].dataValues.customFields) {
+          results[i].dataValues.metadata = true;
         } else {
-          results[i].metadata = false;
+          results[i].dataValues.metadata = false;
         }
-        delete results[i].service_group;
-        delete results[i].customFields;
+
+        delete results[i].dataValues.customFields;
       }
       results = util.removeNulls(results);
       switch (format) {
@@ -204,7 +204,10 @@ var getServiceRequests = function(req, res) {
   var options = {
     include: [{
       model: models.service,
-      attributes: ['service_name']
+      attributes: ['service_name'],
+      // include: [{
+      //   model: models.service_group
+      // }]
     }, {
       model: models.issue,
       attributes: ['description'],
@@ -278,6 +281,9 @@ var getServiceRequests = function(req, res) {
 
       if (results[i].service) {
         request.service_name = results[i].service.service_name;
+        // if (results[i].service.service_group) {
+        //   request.group = results[i].service.service_group.name;
+        // }
       }
 
       request.service_code = results[i].category_id;
@@ -323,16 +329,24 @@ var getServiceRequests = function(req, res) {
             first = false;
           } else {
             if (results[i].issues[l].media[m].media_type === 'url') {
-              rextras.push(results[i].issues[l].media[m].filename);
+              extras.push({
+                "url":results[i].issues[l].media[m].filename,
+                "mimetype": results[i].issues[l].media[m].mime_type,
+                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+              });
             } else {
-              extras.push(callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                "/" + results[i].issues[l].media[m].internalFilename);
+              extras.push({
+                " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                "/" + results[i].issues[l].media[m].internalFilename,
+                "mimetype": results[i].issues[l].media[m].mime_type,
+                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+              });
             }
           }
         }
       }
       if (extras.length > 0){
-        request.extras = extras;
+        request.extended_attributes = {"attachments": extras };
       }
       if (request.description === ""){
         request.description = null;
