@@ -273,6 +273,9 @@ var getServiceRequests = function(req, res) {
   }
   models.request.findAll(options).then(function(results) {
     var catcher = [];
+    var geojson = {type: "FeatureCollection",
+      "features": []
+    };
     for (var i in results) {
       var request = {};
       request.service_request_id = results[i].id;
@@ -351,10 +354,34 @@ var getServiceRequests = function(req, res) {
       if (request.description === ""){
         request.description = null;
       }
-      catcher.push(request);
+      if(format === 'geojson'){
+        if(request.lat && request.long){
+          var feature = {
+            "type": "Feature",
+            "id": request.service_request_id,
+            "geometry": {
+              "type": "Point",
+              "coordinates":[
+                request.long,
+                request.lat
+              ]
+            },
+
+          };
+          delete request.lat;
+          delete request.long;
+          feature.properties = util.removeNulls(request);
+          geojson.features.push(feature);
+        }
+      } else {
+        catcher.push(request);
+      }
     }
     catcher = util.removeNulls(catcher);
     switch (format) {
+      case 'geojson':
+        res.json(geojson);
+        break;
       case 'json':
         res.json(catcher);
         break;
