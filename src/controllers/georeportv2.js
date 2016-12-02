@@ -88,28 +88,28 @@ var getServiceList = function(req, res) {
 
     models.service.findAll(options).then(function(results) {
       for (var i in results) {
-        if (results[i].dataValues.service_group) {
-          results[i].dataValues.group = results[i].dataValues.service_group.name;
+        if (results[i].service_group) {
+          results[i].group = results[i].service_group.name;
         }
 
-        if (results[i].dataValues.keywords) {
-          results[i].dataValues.keywords = results[i].dataValues.keywords
+        if (results[i].keywords) {
+          results[i].keywords = results[i].keywords
             .replace(/, /g, ',')
             .replace(/,/g, ' ')
             .split(' ');
           if (format === 'xml') {
-            results[i].dataValues.keywords = results[i].dataValues.keywords.join(', ');
+            results[i].keywords = results[i].keywords.join(', ');
           }
         }
 
-        results[i].dataValues.type = results[i].dataValues.type || 'realtime';
-        if (results[i].dataValues.customFields) {
-          results[i].dataValues.metadata = true;
+        results[i].type = results[i].type || 'realtime';
+        if (results[i].customFields) {
+          results[i].metadata = true;
         } else {
-          results[i].dataValues.metadata = false;
+          results[i].metadata = false;
         }
-        delete results[i].dataValues.service_group;
-        delete results[i].dataValues.customFields;
+        delete results[i].service_group;
+        delete results[i].customFields;
       }
       results = util.removeNulls(results);
       switch (format) {
@@ -162,7 +162,7 @@ var getServiceDefinition = function(req, res) {
       };
     }
     models.service.findOne(options).then(function(results) {
-      var attributes = JSON.parse(results.dataValues.attributes);
+      var attributes = JSON.parse(results.attributes);
       // format the values as "key" and "name"
       for (var j in attributes) {
         if (attributes[j].values) {
@@ -175,7 +175,7 @@ var getServiceDefinition = function(req, res) {
           }
         }
       }
-      results.dataValues.attributes = attributes;
+      results.attributes = attributes;
       results = util.removeNulls(results);
       switch (format) {
         case 'json':
@@ -202,15 +202,6 @@ var getServiceDefinition = function(req, res) {
 var getServiceRequests = function(req, res) {
   var format = req.params.format || 'xml';
   var options = {
-    attributes: [
-      ['id', 'service_request_id'],
-      ['category_id', 'service_code'],
-      'status', ['location', 'address'],
-      ['latitude', 'lat'],
-      ['longitude', 'long'],
-      ['enteredDate', 'requested_datetime'],
-      ['lastModified', 'updated_datetime']
-    ],
     include: [{
       model: models.service,
       attributes: ['service_name']
@@ -229,7 +220,8 @@ var getServiceRequests = function(req, res) {
       }]
     }],
     order: [
-      ['enteredDate', 'DESC']
+      ['enteredDate', 'DESC'],
+      ['id', 'DESC']
     ]
   };
   var where;
@@ -265,53 +257,95 @@ var getServiceRequests = function(req, res) {
     where = where || {};
     where.status = req.query.status;
   }
+  if (req.query.page){
+    //default page size = 10
+    var page_size = parseInt(req.query.page_size) || 10;
+    options.limit = page_size;
+    if(parseInt(req.query.page) > 0){
+      options.offset = (parseInt(req.query.page) - 1) * page_size || 0;
+    }
+  }
   if (where) {
     options.where = where;
   }
   models.request.findAll(options).then(function(results) {
+    var catcher = [];
     for (var i in results) {
+      var request = {};
+      request.service_request_id = results[i].id;
+      request.status = results[i].status;
+      request.status_notes = null; //todo not implemented!
 
-      results[i].dataValues.requested_datetime = moment(results[i].dataValues.requested_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
-      results[i].dataValues.updated_datetime = moment(results[i].dataValues.updated_datetime).format('YYYY-MM-DDTHH:mm:ssZ');
+      if (results[i].service) {
+        request.service_name = results[i].service.service_name;
+      }
 
-      if (results[i].dataValues.person) {
-        if (results[i].dataValues.person.department) {
-          results[i].dataValues.agency_responsible = results[i].dataValues.person.department.name;
+      request.service_code = results[i].category_id;
+      request.description = results[i].description || null;
+      if (results[i].person) {
+        if (results[i].person.department) {
+          request.agency_responsible = results[i].person.department.name;
         }
-        delete results[i].dataValues.person;
       }
 
-      if (results[i].dataValues.service) {
-        results[i].dataValues.service_name = results[i].dataValues.service.service_name;
-        delete results[i].dataValues.service;
-      }
+      request.service_notice = null; //todo not implemented!
 
-      for (var l in results[i].dataValues.issues) {
-        results[i].dataValues.description = results[i].dataValues.issues[l].description;
-        for (var m in results[i].dataValues.issues[l].media) {
+      request.requested_datetime = moment(results[i].enteredDate).format('YYYY-MM-DDTHH:mm:ssZ');
+      request.updated_datetime = moment(results[i].lastModified).format('YYYY-MM-DDTHH:mm:ssZ');
+
+      request.expected_datetime = null; //todo not implemented!
+      request.address = results[i].location || null;
+      request.address_id = results[i].addressId || null;
+      request.zipcode = results[i].zip || null;
+
+      request.lat = results[i].latitude;
+      request.long = results[i].longitude;
+
+      //Media and description
+      var first = true;
+      var extras = [];
+      for (var l in results[i].issues) {
+        request.description = request.description || "";
+        request.description = results[i].issues[l].description;
+        for (var m in results[i].issues[l].media) {
           var port = util.getConfig('remote_port') || req.app.settings.port;
-          if (results[i].issues[l].media[m].media_type === 'url') {
-            results[i].dataValues.media_url = results[i].issues[l].media[m].filename;
+          var callingUrl = req.protocol +
+            '://' +
+            req.hostname +
+            (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
+          if (parseInt(m) === 0 && first){
+            if (results[i].issues[l].media[m].media_type === 'url') {
+              request.media_url = results[i].issues[l].media[m].filename;
+            } else {
+              request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                "/" + results[i].issues[l].media[m].internalFilename;
+            }
+            first = false;
           } else {
-            var callingUrl = req.protocol +
-              '://' +
-              req.hostname +
-              (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
-            results[i].dataValues.media_url = callingUrl + moment(results[i].dataValues.issues[l].media[m].uploaded).format('YYYY/M/D') +
-              "/" + results[i].dataValues.issues[l].media[m].internalFilename;
+            if (results[i].issues[l].media[m].media_type === 'url') {
+              rextras.push(results[i].issues[l].media[m].filename);
+            } else {
+              extras.push(callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                "/" + results[i].issues[l].media[m].internalFilename);
+            }
           }
         }
       }
-      delete results[i].dataValues.issues;
-
+      if (extras.length > 0){
+        request.extras = extras;
+      }
+      if (request.description === ""){
+        request.description = null;
+      }
+      catcher.push(request);
     }
-    results = util.removeNulls(results);
+    catcher = util.removeNulls(catcher);
     switch (format) {
       case 'json':
-        res.json(results);
+        res.json(catcher);
         break;
       default:
-        var final = js2xmlparser.parse("service_requests", {"service_request": results});
+        var final = js2xmlparser.parse("service_requests", {"service_request": catcher});
         res.set('Content-Type', 'text/xml');
         res.send(final);
     }
