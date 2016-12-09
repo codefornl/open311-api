@@ -129,6 +129,25 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+  it('Post Request by user without email should pass', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 3)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with address_string')
+      .field('phone', '080-4320392')
+      .field('address_string', 'stadhuisplein 10')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        service_request_id.push(res.body[0].service_request_id);
+        done();
+      });
+  });
   /*CALL `DepartmentsAtLocation`(51.4440149847777, 5.47120548271545, 1, 10);*/
   it('Post Request lat, long should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
