@@ -82,7 +82,12 @@ var getServiceList = function(req, res) {
     };
     if (jurisdiction) {
       options.where = {
-        jurisdictionId: jurisdiction.id
+        jurisdiction_id: jurisdiction.id
+      };
+    } else {
+      // Only get services without jurisdiction
+      options.where = {
+        jurisdiction_id: null
       };
     }
 
@@ -156,9 +161,10 @@ var getServiceDefinition = function(req, res) {
       ]
     };
     if (jurisdiction) {
-      options.where = {
-        jurisdictionId: jurisdiction.id
-      };
+      options.where.jurisdiction_id = jurisdiction.id
+    } else {
+      // Only get services without jurisdiction
+      options.where.jurisdiction_id = null
     }
     models.service.findOne(options).then(function(results) {
       if(results && results.dataValues.attributes){
@@ -227,198 +233,220 @@ var getServiceDefinition = function(req, res) {
  */
 var getServiceRequests = function(req, res) {
   var format = req.params.format || 'xml';
-  var options = {
-    include: [{
-      model: models.service,
-      attributes: ['service_name'],
-      // include: [{
-      //   model: models.service_group
-      // }]
-    }, {
-      model: models.issue,
-      attributes: ['description'],
-      include: [{
-        model: models.media
-      }]
-    }, {
-      model: models.person,
-      attributes: ['firstname', 'middlename', 'lastname'],
-      include: [{
-        model: models.department,
-        attributes: ['name']
-      }]
-    }],
-    order: [
-      ['enteredDate', 'DESC'],
-      ['id', 'DESC']
-    ]
-  };
-  var where;
-  if (req.query.service_request_id) {
-    where = where || {};
-    where.id = {
-      $in: util.StringToIntArray(req.query.service_request_id)
-    };
-  }
-  if (req.query.service_code) {
-    where = where || {};
-    where.category_id = {
-      $in: util.StringToIntArray(req.query.service_code)
-    };
-  }
-
-  var datewindow;
-  if (req.query.start_date) {
-    datewindow = {
-      $lt: req.query.start_date
-    };
-  }
-  if (req.query.end_date) {
-    datewindow = datewindow || {};
-    datewindow.$gt = req.query.end_date;
-  }
-  if (datewindow) {
-    where = where || {};
-    where.enteredDate = datewindow;
-  }
-
-  if (req.query.status) {
-    where = where || {};
-    where.status = req.query.status;
-  }
-  if (req.query.page){
-    //default page size = 10
-    var page_size = parseInt(req.query.page_size) || 10;
-    options.limit = page_size;
-    if(parseInt(req.query.page) > 0){
-      options.offset = (parseInt(req.query.page) - 1) * page_size || 0;
+  var whereClause = {
+    where: {
+      is_default: true
     }
-  }
-  if (where) {
-    options.where = where;
-  }
-  models.request.findAll(options).then(function(results) {
-    var catcher = [];
-    var geojson = {type: "FeatureCollection",
-      "features": []
+  };
+  if (req.query.jurisdiction_id) {
+    whereClause = {
+      where: {
+        jurisdiction_id: req.query.jurisdiction_id
+      }
     };
-    for (var i in results) {
-      var request = {};
-      request.service_request_id = results[i].id;
-      request.status = results[i].status;
-      request.status_notes = null; //todo not implemented!
+  }
+  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
+    var service_where = {
+      jurisdiction_id: null
+    };
+    if (jurisdiction) {
+      service_where = {
+        jurisdiction_id: jurisdiction.id
+      };
+    }
+    var options = {
+      include: [{
+        model: models.service,
+        where: service_where,
+        attributes: ['service_name'],
+        // include: [{
+        //   model: models.service_group
+        // }]
+      }, {
+        model: models.issue,
+        attributes: ['description'],
+        include: [{
+          model: models.media
+        }]
+      }, {
+        model: models.person,
+        attributes: ['firstname', 'middlename', 'lastname'],
+        include: [{
+          model: models.department,
+          attributes: ['name']
+        }]
+      }],
+      order: [
+        ['enteredDate', 'DESC'],
+        ['id', 'DESC']
+      ]
+    };
+    var where;
+    if (req.query.service_request_id) {
+      where = where || {};
+      where.id = {
+        $in: util.StringToIntArray(req.query.service_request_id)
+      };
+    }
+    if (req.query.service_code) {
+      where = where || {};
+      where.category_id = {
+        $in: util.StringToIntArray(req.query.service_code)
+      };
+    }
 
-      if (results[i].service) {
-        request.service_name = results[i].service.service_name;
-        // if (results[i].service.service_group) {
-        //   request.group = results[i].service.service_group.name;
-        // }
+    var datewindow;
+    if (req.query.start_date) {
+      datewindow = {
+        $lt: req.query.start_date
+      };
+    }
+    if (req.query.end_date) {
+      datewindow = datewindow || {};
+      datewindow.$gt = req.query.end_date;
+    }
+    if (datewindow) {
+      where = where || {};
+      where.enteredDate = datewindow;
+    }
+
+    if (req.query.status) {
+      where = where || {};
+      where.status = req.query.status;
+    }
+    if (req.query.page){
+      //default page size = 10
+      var page_size = parseInt(req.query.page_size) || 10;
+      options.limit = page_size;
+      if(parseInt(req.query.page) > 0){
+        options.offset = (parseInt(req.query.page) - 1) * page_size || 0;
       }
+    }
+    if (where) {
+      options.where = where;
+    }
+    models.request.findAll(options).then(function(results) {
+      var catcher = [];
+      var geojson = {type: "FeatureCollection",
+        "features": []
+      };
+      for (var i in results) {
+        var request = {};
+        request.service_request_id = results[i].id;
+        request.status = results[i].status;
+        request.status_notes = null; //todo not implemented!
 
-      request.service_code = results[i].category_id;
-      request.description = results[i].description || null;
-      if (results[i].person) {
-        if (results[i].person.department) {
-          request.agency_responsible = results[i].person.department.name;
+        if (results[i].service) {
+          request.service_name = results[i].service.service_name;
+          // if (results[i].service.service_group) {
+          //   request.group = results[i].service.service_group.name;
+          // }
         }
-      }
 
-      request.service_notice = null; //todo not implemented!
-
-      request.requested_datetime = moment(results[i].enteredDate).format('YYYY-MM-DDTHH:mm:ssZ');
-      request.updated_datetime = moment(results[i].lastModified).format('YYYY-MM-DDTHH:mm:ssZ');
-
-      request.expected_datetime = null; //todo not implemented!
-      request.address = results[i].location || null;
-      request.address_id = results[i].addressId || null;
-      request.zipcode = results[i].zip || null;
-
-      request.lat = results[i].latitude;
-      request.long = results[i].longitude;
-
-      //Media and description
-      var first = true;
-      var extras = [];
-      for (var l in results[i].issues) {
-        request.description = request.description || "";
-        request.description = results[i].issues[l].description;
-        for (var m in results[i].issues[l].media) {
-          var port = util.getConfig('remote_port') || req.app.settings.port;
-          var callingUrl = req.protocol +
-            '://' +
-            req.hostname +
-            (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
-          if (parseInt(m) === 0 && first){
-            if (results[i].issues[l].media[m].media_type === 'url') {
-              request.media_url = results[i].issues[l].media[m].filename;
-            } else {
-              request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                "/" + results[i].issues[l].media[m].internalFilename;
-            }
-            first = false;
-          } else {
-            if (results[i].issues[l].media[m].media_type === 'url') {
-              extras.push({
-                "url":results[i].issues[l].media[m].filename,
-                "mimetype": results[i].issues[l].media[m].mime_type,
-                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
-              });
-            } else {
-              extras.push({
-                " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                "/" + results[i].issues[l].media[m].internalFilename,
-                "mimetype": results[i].issues[l].media[m].mime_type,
-                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
-              });
-            }
+        request.service_code = results[i].category_id;
+        request.description = results[i].description || null;
+        if (results[i].person) {
+          if (results[i].person.department) {
+            request.agency_responsible = results[i].person.department.name;
           }
         }
-      }
-      if (extras.length > 0){
-        request.extended_attributes = {"attachments": extras };
-      }
-      if (request.description === ""){
-        request.description = null;
-      }
-      if(format === 'geojson'){
-        if(request.lat && request.long){
-          var feature = {
-            "type": "Feature",
-            "id": request.service_request_id,
-            "geometry": {
-              "type": "Point",
-              "coordinates":[
-                request.long,
-                request.lat
-              ]
-            },
 
-          };
-          delete request.lat;
-          delete request.long;
-          feature.properties = util.removeNulls(request);
-          geojson.features.push(feature);
+        request.service_notice = null; //todo not implemented!
+
+        request.requested_datetime = moment(results[i].enteredDate).format('YYYY-MM-DDTHH:mm:ssZ');
+        request.updated_datetime = moment(results[i].lastModified).format('YYYY-MM-DDTHH:mm:ssZ');
+
+        request.expected_datetime = null; //todo not implemented!
+        request.address = results[i].location || null;
+        request.address_id = results[i].addressId || null;
+        request.zipcode = results[i].zip || null;
+
+        request.lat = results[i].latitude;
+        request.long = results[i].longitude;
+
+        //Media and description
+        var first = true;
+        var extras = [];
+        for (var l in results[i].issues) {
+          request.description = request.description || "";
+          request.description = results[i].issues[l].description;
+          for (var m in results[i].issues[l].media) {
+            var port = util.getConfig('remote_port') || req.app.settings.port;
+            var callingUrl = req.protocol +
+              '://' +
+              req.hostname +
+              (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
+              if (parseInt(m) === 0 && first){
+                if (results[i].issues[l].media[m].media_type === 'url') {
+                  request.media_url = results[i].issues[l].media[m].filename;
+                } else {
+                  request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                    "/" + results[i].issues[l].media[m].internalFilename;
+                }
+                first = false;
+              } else {
+                if (results[i].issues[l].media[m].media_type === 'url') {
+                  extras.push({
+                    "url":results[i].issues[l].media[m].filename,
+                    "mimetype": results[i].issues[l].media[m].mime_type,
+                    "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+                  });
+                } else {
+                  extras.push({
+                    " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                    "/" + results[i].issues[l].media[m].internalFilename,
+                    "mimetype": results[i].issues[l].media[m].mime_type,
+                    "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+                  });
+                }
+              }
+            }
+          }
+        if (extras.length > 0){
+          request.extended_attributes = {"attachments": extras };
         }
-      } else {
-        catcher.push(request);
+        if (request.description === ""){
+          request.description = null;
+        }
+        if(format === 'geojson'){
+          if(request.lat && request.long){
+            var feature = {
+              "type": "Feature",
+              "id": request.service_request_id,
+              "geometry": {
+                "type": "Point",
+                "coordinates":[
+                  request.long,
+                  request.lat
+                ]
+              },
+            };
+            delete request.lat;
+            delete request.long;
+            feature.properties = util.removeNulls(request);
+            geojson.features.push(feature);
+          }
+        } else {
+          catcher.push(request);
+        }
       }
-    }
-    catcher = util.removeNulls(catcher);
-    switch (format) {
-      case 'geojson':
-        res.json(geojson);
-        break;
-      case 'json':
-        res.json(catcher);
-        break;
-      default:
-        var final = js2xmlparser.parse("service_requests", {"service_request": catcher});
-        res.set('Content-Type', 'text/xml');
-        res.send(final);
-    }
-  }).catch(function(e) {
-    //Catch any unexpected errors
-    errors.catchError(req,res, e);
+      catcher = util.removeNulls(catcher);
+      switch (format) {
+        case 'geojson':
+          res.json(geojson);
+          break;
+        case 'json':
+          res.json(catcher);
+          break;
+        default:
+          var final = js2xmlparser.parse("service_requests", {"service_request": catcher});
+          res.set('Content-Type', 'text/xml');
+          res.send(final);
+        }
+    }).catch(function(e) {
+      //Catch any unexpected errors
+      errors.catchError(req,res, e);
+    });
   });
 };
 

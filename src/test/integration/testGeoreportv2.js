@@ -38,7 +38,7 @@ describe('testing Georeport v2', function() {
     // See that we get a status 200 on retrieving the Index
     request(server.app).get('/api/v2/services/1.xml?jurisdiction_id=999')
       .expect('Content-Type', 'text/xml; charset=utf-8')
-      .expect(400, done);
+      .expect(404, done);
   });
   it('Get Discovery for v2 as json should pass', function(done) {
     // See that we get a status 200 on retrieving the Index

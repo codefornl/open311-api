@@ -17,7 +17,7 @@
       timestamps: false,
       classMethods: {
         associate: function(models) {
-          service.belongsTo(models.jurisdiction);
+          service.belongsTo(models.jurisdiction,{foreignKey: 'jurisdictionId'});
           service.belongsTo(models.service_group,{foreignKey: 'categoryGroup_id'});
           service.hasMany(models.request,{foreignKey: 'category_id'});
         }

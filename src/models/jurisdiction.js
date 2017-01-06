@@ -6,6 +6,10 @@
   module.exports = function(sequelize, DataTypes) {
     var jurisdiction = sequelize.define("jurisdiction", {
       jurisdiction_id: DataTypes.STRING,
+      name: DataTypes.STRING,
+      external_id: DataTypes.STRING,
+      parent_name: DataTypes.STRING,
+      parent_external_id: DataTypes.STRING,
       is_default: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

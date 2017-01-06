@@ -97,7 +97,7 @@
         {id:1651,jurisdiction_id:'eemsmond.nl',name:'Eemsmond',external_id:'1651',parent_name:'Groningen',parent_external_id:'20'},
         {id:770,jurisdiction_id:'eersel.nl',name:'Eersel',external_id:'0770',parent_name:'Noord-Brabant',parent_external_id:'30'},
         {id:1903,jurisdiction_id:'eijsden-margraten.nl',name:'Eijsden-Margraten',external_id:'1903',parent_name:'Limburg',parent_external_id:'31'},
-        {id:772,jurisdiction_id:'eindhoven.nl',name:'Eindhoven',external_id:'0772',parent_name:'Noord-Brabant',parent_external_id:'30'},
+        {id:772,jurisdiction_id:'eindhoven.nl',name:'Eindhoven',external_id:'0772',parent_name:'Noord-Brabant',parent_external_id:'30', is_default: true},
         {id:230,jurisdiction_id:'elburg.nl',name:'Elburg',external_id:'0230',parent_name:'Gelderland',parent_external_id:'25'},
         {id:114,jurisdiction_id:'emmen.nl',name:'Emmen',external_id:'0114',parent_name:'Drenthe',parent_external_id:'22'},
         {id:388,jurisdiction_id:'enkhuizen.nl',name:'Enkhuizen',external_id:'0388',parent_name:'Noord-Holland',parent_external_id:'27'},

@@ -1,13 +1,13 @@
 {
   "development": {
     "host": "127.0.0.1",
-    "database": "database_development",
+    "database": "database_test",
     "username": "root",
     "port": 3306,
     "dialect": "mysql",
     "email": "dummy@open311.local",
     "remote_port": 3000,
-    "logging": false,
+    "logging": true,
     "smtp": {
       "host": "localhost",
       "port": 25,
