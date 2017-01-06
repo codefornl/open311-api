@@ -161,10 +161,10 @@ var getServiceDefinition = function(req, res) {
       ]
     };
     if (jurisdiction) {
-      options.where.jurisdiction_id = jurisdiction.id
+      options.where.jurisdiction_id = jurisdiction.id;
     } else {
       // Only get services without jurisdiction
-      options.where.jurisdiction_id = null
+      options.where.jurisdiction_id = null;
     }
     models.service.findOne(options).then(function(results) {
       if(results && results.dataValues.attributes){
