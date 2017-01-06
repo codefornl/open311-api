@@ -27,7 +27,6 @@
     "migrate:test:undo": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:migrate:undo",
     "seed:test": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:seed:all",
     "seed:test:undo": "cd build && node_modules/.bin/sequelize --config config.default.json --env test db:seed:undo:all",
-    "migrate:development": "cd build && node_modules/.bin/sequelize --config config.json --env development db:migrate",
     "migrate": "cd build && node_modules/.bin/sequelize --config config.json --env production db:migrate"
   },
   "repository": {

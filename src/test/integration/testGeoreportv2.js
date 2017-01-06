@@ -22,6 +22,24 @@ describe('testing Georeport v2', function() {
       .expect('Content-Type', 'text/xml; charset=utf-8')
       .expect(200, done);
   });
+  it('Get ServiceDefinition as xml should fail as service_code 1 has no meta', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).get('/api/v2/services/1.xml')
+      .expect('Content-Type', 'text/xml; charset=utf-8')
+      .expect(400, done);
+  });
+  it('Get ServiceDefinition as xml should fail as service_code 999 does not exist', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).get('/api/v2/services/999.xml')
+      .expect('Content-Type', 'text/xml; charset=utf-8')
+      .expect(404, done);
+  });
+  it('Get ServiceDefinition as xml should fail as jurisdiction_id 999 does not exist', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).get('/api/v2/services/1.xml?jurisdiction_id=999')
+      .expect('Content-Type', 'text/xml; charset=utf-8')
+      .expect(400, done);
+  });
   it('Get Discovery for v2 as json should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
     request(server.app).get('/api/v2/discovery.json')
@@ -101,6 +119,25 @@ describe('testing Georeport v2', function() {
       .field('first_name', 'Test User')
       .field('description', 'Test with address_string')
       .field('email', 'test@test.nl')
+      .field('address_string', 'stadhuisplein 10')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        service_request_id.push(res.body[0].service_request_id);
+        done();
+      });
+  });
+  it('Post Request by user without email should pass', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 3)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with address_string')
+      .field('phone', '080-4320392')
       .field('address_string', 'stadhuisplein 10')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {

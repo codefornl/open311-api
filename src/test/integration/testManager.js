@@ -4,42 +4,7 @@ var request = require('supertest'),
   server.app.set('env', 'test');
 var models = require('../../models');
 
-var Open311 = require('open311');
-
-
 describe('Testing Management api', function() {
-  before(function(done) {
-    models.sequelize
-    .sync({
-        force: true,
-        logging: null
-      })
-      .then(function(err) {
-        //create admin
-        models.application.create({
-          name: 'testapp',
-          url: 'http://testapp.com',
-          api_key: '56b074c9495b1'
-        });
-        //create user
-        models.account.create({
-          first_name: 'Regular',
-          last_name: 'User',
-          email: 'user@open311.com',
-          token: 'usertoken',
-          role: 'user'
-        });
-        //create admin
-        models.account.create({
-          first_name: 'Admin',
-          last_name: 'User',
-          email: 'admin@open311.com',
-          token: 'admintoken',
-          role: 'admin'
-        });
-        done();
-      });
-  });
 
   it('Post to jurisdiction as regular user should fail', function(done) {
     request(server.app).post('/api/jurisdiction')

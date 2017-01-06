@@ -58,17 +58,19 @@ exports.ensureIdentified = function(req, res, next) {
     check_Person = check_Person || {};
     check_Person.firstname = req.body.first_name;
   }
-  if(req.body.email && req.body.email){
+  if(req.body.email){
     check_Email = req.body.email;
+  } else {
+    check_Email = "anonymous@foo.bar";
   }
-  if(!req.body.email && !check_Person) {
+
+  if(!check_Person) {
     //Anonymous
     check_Person = {
       firstname: "Anonymous",
       username: "anonymous",
       role: "anonymous"
     };
-    check_Email = "anonymous@foo.bar";
   }
 
   models.person.findOrCreate(

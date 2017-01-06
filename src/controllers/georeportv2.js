@@ -88,28 +88,27 @@ var getServiceList = function(req, res) {
 
     models.service.findAll(options).then(function(results) {
       for (var i in results) {
-        if (results[i].service_group) {
-          results[i].group = results[i].service_group.name;
+        if (results[i].dataValues.service_group) {
+          results[i].dataValues.group = results[i].dataValues.service_group.name;
+          delete results[i].dataValues.service_group;
         }
 
-        if (results[i].keywords) {
-          results[i].keywords = results[i].keywords
+        if (results[i].dataValues.keywords) {
+          results[i].dataValues.keywords = results[i].dataValues.keywords
             .replace(/, /g, ',')
             .replace(/,/g, ' ')
             .split(' ');
-          if (format === 'xml') {
-            results[i].keywords = results[i].keywords.join(', ');
-          }
+            results[i].dataValues.keywords = results[i].dataValues.keywords.join(',');
         }
 
-        results[i].type = results[i].type || 'realtime';
-        if (results[i].customFields) {
-          results[i].metadata = true;
+        results[i].dataValues.type = results[i].dataValues.type || 'realtime';
+        if (results[i].dataValues.customFields) {
+          results[i].dataValues.metadata = true;
         } else {
-          results[i].metadata = false;
+          results[i].dataValues.metadata = false;
         }
-        delete results[i].service_group;
-        delete results[i].customFields;
+
+        delete results[i].dataValues.customFields;
       }
       results = util.removeNulls(results);
       switch (format) {
@@ -162,36 +161,63 @@ var getServiceDefinition = function(req, res) {
       };
     }
     models.service.findOne(options).then(function(results) {
-      var attributes = JSON.parse(results.attributes);
-      // format the values as "key" and "name"
-      for (var j in attributes) {
-        if (attributes[j].values) {
-          for (var val in attributes[j].values) {
-            var tempval = attributes[j].values[val];
-            attributes[j].values[val] = {
-              "key": tempval,
-              "name": tempval
-            };
+      if(results && results.dataValues.attributes){
+        var attributes = JSON.parse(results.dataValues.attributes);
+        // format the values as "key" and "name"
+        for (var j in attributes) {
+          if (attributes[j].values) {
+            for (var val in attributes[j].values) {
+              var tempval = attributes[j].values[val];
+              attributes[j].values[val] = {
+                "key": tempval,
+                "name": tempval
+              };
+            }
           }
         }
+        results.dataValues.attributes = attributes;
+        results = util.removeNulls(results);
+        switch (format) {
+          case 'json':
+            res.json(results);
+            break;
+          default:
+            var final = js2xmlparser.parse("service_definition", results, {
+              arrayMap: {
+                values: "value",
+                attributes: "attribute"
+              }
+            });
+            res.set('Content-Type', 'text/xml');
+            res.send(final);
+        }
+      } else {
+        if(!results){
+          errors.catchError(req,res, {
+            "name": "ServiceError",
+            "message": "The requested service doesn't exist"
+          }, 404);
+        } else {
+          var e = {
+            "name": "ServiceAttributesError",
+            "message": "There requested service has no attributes"
+          };
+          errors.catchError(req,res, e, 400);
+        }
       }
-      results.attributes = attributes;
-      results = util.removeNulls(results);
-      switch (format) {
-        case 'json':
-          res.json(results);
-          break;
-        default:
-          var final = js2xmlparser.parse("service_definition", results, {
-            arrayMap: {
-              values: "value",
-              attributes: "attribute"
-            }
-          });
-          res.set('Content-Type', 'text/xml');
-          res.send(final);
-      }
+    }).catch(function(e) {
+      //Catch any unexpected errors
+      errors.catchError(req,res, {
+        "name": "ServiceCodeError",
+        "message": "No service_code, or no valid service_code provided"
+      }, 400);
     });
+  }).catch(function(e) {
+    //Catch any unexpected errors
+    errors.catchError(req,res, {
+      "name": "JurisdictionError",
+      "message": "No jurisdiction_id, or no valid jurisdiction_id provided"
+    }, 400);
   });
 };
 
@@ -204,7 +230,10 @@ var getServiceRequests = function(req, res) {
   var options = {
     include: [{
       model: models.service,
-      attributes: ['service_name']
+      attributes: ['service_name'],
+      // include: [{
+      //   model: models.service_group
+      // }]
     }, {
       model: models.issue,
       attributes: ['description'],
@@ -270,6 +299,9 @@ var getServiceRequests = function(req, res) {
   }
   models.request.findAll(options).then(function(results) {
     var catcher = [];
+    var geojson = {type: "FeatureCollection",
+      "features": []
+    };
     for (var i in results) {
       var request = {};
       request.service_request_id = results[i].id;
@@ -278,6 +310,9 @@ var getServiceRequests = function(req, res) {
 
       if (results[i].service) {
         request.service_name = results[i].service.service_name;
+        // if (results[i].service.service_group) {
+        //   request.group = results[i].service.service_group.name;
+        // }
       }
 
       request.service_code = results[i].category_id;
@@ -323,24 +358,56 @@ var getServiceRequests = function(req, res) {
             first = false;
           } else {
             if (results[i].issues[l].media[m].media_type === 'url') {
-              rextras.push(results[i].issues[l].media[m].filename);
+              extras.push({
+                "url":results[i].issues[l].media[m].filename,
+                "mimetype": results[i].issues[l].media[m].mime_type,
+                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+              });
             } else {
-              extras.push(callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                "/" + results[i].issues[l].media[m].internalFilename);
+              extras.push({
+                " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                "/" + results[i].issues[l].media[m].internalFilename,
+                "mimetype": results[i].issues[l].media[m].mime_type,
+                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+              });
             }
           }
         }
       }
       if (extras.length > 0){
-        request.extras = extras;
+        request.extended_attributes = {"attachments": extras };
       }
       if (request.description === ""){
         request.description = null;
       }
-      catcher.push(request);
+      if(format === 'geojson'){
+        if(request.lat && request.long){
+          var feature = {
+            "type": "Feature",
+            "id": request.service_request_id,
+            "geometry": {
+              "type": "Point",
+              "coordinates":[
+                request.long,
+                request.lat
+              ]
+            },
+
+          };
+          delete request.lat;
+          delete request.long;
+          feature.properties = util.removeNulls(request);
+          geojson.features.push(feature);
+        }
+      } else {
+        catcher.push(request);
+      }
     }
     catcher = util.removeNulls(catcher);
     switch (format) {
+      case 'geojson':
+        res.json(geojson);
+        break;
       case 'json':
         res.json(catcher);
         break;

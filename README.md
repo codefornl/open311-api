@@ -1,7 +1,7 @@
 # Build status
 
 [![Travis](https://travis-ci.org/CodeForEindhoven/open311-api.svg?branch=master)](https://travis-ci.org/CodeForEindhoven/open311-api)
-[![David](https://david-dm.org/codeforeindhoven/open311-api.svg?path=src/server)](https://david-dm.org/codeforeindhoven/open311-api?path=src/server)
+[![David](https://david-dm.org/codeforeindhoven/open311-api.svg?path=src)](https://david-dm.org/codeforeindhoven/open311-api?path=src)
 
 # About
 
@@ -27,7 +27,10 @@ From a console or terminal:
     git clone git@github.com:codeforeindhoven/open311-api.git
     cd open311-api
     npm install .
+    npm mkdir build
     npm run build
+
+Make sure you have a mysql database available
 
 *Note:* Check that `npm run build` doesn't generate errors. The installation
  process will tell you what components are missing (f.i. mysql)
@@ -36,8 +39,13 @@ Create a file called `config.json`
 
 *Note:* you can copy `config.default.json` to `config.json` to get hints on the required variables.
 
+Make sure you have the correct mysql credentials set up for your local mysql installation. The scripts will not
+create any databases so make sure you have created the required databases before starting or running tests
+
 ### Run the tests
 
+    npm run migrate:test
+    npm run seed:test
     npm test
 
 ### Run the Application
@@ -54,4 +62,4 @@ Or, using forever:
 
     NODE_ENV=production /usr/bin/forever start -c "npm start" /path/to/open311-api/
 
-Point your browser to [http://localhost:3000](http://localhost:3000) to check if the application is running.
+Point your browser to [http://localhost:3000/api/v2/services.json](http://localhost:3000/api/v2/services.json) to check if the application is running.
