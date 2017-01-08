@@ -118,10 +118,25 @@ var postServiceAttributeValues = function(req, res) {
     });
   }
 };
+//https://scotch.io/tutorials/easy-node-authentication-setup-and-local
+router.route('/api/admin').get(function(req,res){
+  // render the page and pass in any flash data if it exists
+  res.render('admin.ejs');
+});
 
-router.route('/api/service').post(middleware.ensureAdmin).post(postService);
-router.route('/api/service/:service_code/attribute').post(middleware.ensureAdmin).post(postServiceAttributes);
-router.route('/api/service/:attribute_code/values').post(middleware.ensureAdmin).post(postServiceAttributeValues);
-router.route('/api/jurisdiction').post(middleware.ensureAdmin).post(postJurisdiction);
-router.route('/api/discovery').post(middleware.ensureAdmin).post(postDiscovery);
+router.route('/api/login').get(function(req,res){
+  // render the page and pass in any flash data if it exists
+  res.render('login.ejs', { message: [] });
+});
+
+router.route('/api/signup').get(function(req,res){
+  // render the page and pass in any flash data if it exists
+  res.render('signup.ejs', { message: [] });
+});
+
+router.route('/api/admin/service').post(middleware.ensureAdmin).post(postService);
+router.route('/api/admin/service/:service_code/attribute').post(middleware.ensureAdmin).post(postServiceAttributes);
+router.route('/api/admin/service/:attribute_code/values').post(middleware.ensureAdmin).post(postServiceAttributeValues);
+router.route('/api/admin/jurisdiction').post(middleware.ensureAdmin).post(postJurisdiction);
+router.route('/api/admin/discovery').post(middleware.ensureAdmin).post(postDiscovery);
 module.exports = router;

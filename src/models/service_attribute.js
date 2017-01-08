@@ -22,7 +22,7 @@
     }, {
       classMethods: {
         associate: function(models) {
-          service_attribute.belongsTo(models.service);
+          service_attribute.belongsTo(models.service, {foreignKey: 'service_id'});
           service_attribute.hasMany(models.service_attribute_value);
         }
       }

@@ -7,7 +7,7 @@ function clientErrorHandler(err, req, res, next) {
   res.status(500);
   res.json({
     type: 'error',
-    request: JSON.stringify(errobj),
+    request: errobj,
     error: err
   });
 }

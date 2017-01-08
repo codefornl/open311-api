@@ -19,6 +19,7 @@
         associate: function(models) {
           service.belongsTo(models.jurisdiction,{foreignKey: 'jurisdictionId'});
           service.belongsTo(models.service_group,{foreignKey: 'categoryGroup_id'});
+          service.hasMany(models.service_attribute,{foreignKey: 'service_id'});
           service.hasMany(models.request,{foreignKey: 'category_id'});
         }
       }
