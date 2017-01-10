@@ -6,8 +6,9 @@ var m = multer({
   dest: 'media/tmp/'
 });
 var util = require('../helpers/util.js');
-var path = require('path');
+
 var errors = require('../helpers/errors.js');
+var path = require('path');
 var fs = require('fs-extra');
 var async = require("async");
 
