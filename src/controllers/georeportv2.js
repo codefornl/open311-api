@@ -229,7 +229,7 @@ var getServiceDefinition = function(req, res) {
 
 /**
  * Open311 - GET Service Requests
- * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
+ * @see http://wiki.open311.org/GeoReport_v2/#get-service-request
  */
 var getServiceRequests = function(req, res) {
   var format = req.params.format || 'xml';
