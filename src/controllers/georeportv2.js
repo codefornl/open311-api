@@ -105,7 +105,7 @@ var getServiceList = function(req, res) {
             .replace(/, /g, ',')
             .replace(/,/g, ' ')
             .split(' ');
-            results[i].dataValues.keywords = results[i].dataValues.keywords.join(',');
+          results[i].dataValues.keywords = results[i].dataValues.keywords.join(',');
         }
 
         results[i].dataValues.type = results[i].dataValues.type || 'realtime';
@@ -123,14 +123,16 @@ var getServiceList = function(req, res) {
           res.json(results);
           break;
         default:
-          var final = js2xmlparser.parse("services", {"service": results});
+          var final = js2xmlparser.parse("services", {
+            "service": results
+          });
           res.set('Content-Type', 'text/xml');
           res.send(final);
       }
     });
   }).catch(function(e) {
     //Catch any unexpected errors
-    errors.catchError(req,res, e);
+    errors.catchError(req, res, e);
   });
 };
 
@@ -169,7 +171,7 @@ var getServiceDefinition = function(req, res) {
       options.where.jurisdiction_id = null;
     }
     models.service.findOne(options).then(function(results) {
-      if(results && results.dataValues.attributes){
+      if (results && results.dataValues.attributes) {
         var attributes = JSON.parse(results.dataValues.attributes);
         // format the values as "key" and "name"
         for (var j in attributes) {
@@ -200,8 +202,8 @@ var getServiceDefinition = function(req, res) {
             res.send(final);
         }
       } else {
-        if(!results){
-          errors.catchError(req,res, {
+        if (!results) {
+          errors.catchError(req, res, {
             "name": "ServiceError",
             "message": "The requested service doesn't exist"
           }, 404);
@@ -210,19 +212,19 @@ var getServiceDefinition = function(req, res) {
             "name": "ServiceAttributesError",
             "message": "There requested service has no attributes"
           };
-          errors.catchError(req,res, e, 400);
+          errors.catchError(req, res, e, 400);
         }
       }
     }).catch(function(e) {
       //Catch any unexpected errors
-      errors.catchError(req,res, {
+      errors.catchError(req, res, {
         "name": "ServiceCodeError",
         "message": "No service_code, or no valid service_code provided"
       }, 400);
     });
   }).catch(function(e) {
     //Catch any unexpected errors
-    errors.catchError(req,res, {
+    errors.catchError(req, res, {
       "name": "JurisdictionError",
       "message": "No jurisdiction_id, or no valid jurisdiction_id provided"
     }, 400);
@@ -316,11 +318,11 @@ var getServiceRequests = function(req, res) {
       where = where || {};
       where.status = req.query.status;
     }
-    if (req.query.page){
+    if (req.query.page) {
       //default page size = 10
       var page_size = parseInt(req.query.page_size) || 10;
       options.limit = page_size;
-      if(parseInt(req.query.page) > 0){
+      if (parseInt(req.query.page) > 0) {
         options.offset = (parseInt(req.query.page) - 1) * page_size || 0;
       }
     }
@@ -329,7 +331,8 @@ var getServiceRequests = function(req, res) {
     }
     models.request.findAll(options).then(function(results) {
       var catcher = [];
-      var geojson = {type: "FeatureCollection",
+      var geojson = {
+        type: "FeatureCollection",
         "features": []
       };
       for (var i in results) {
@@ -378,46 +381,48 @@ var getServiceRequests = function(req, res) {
               '://' +
               req.hostname +
               (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
-              if (parseInt(m) === 0 && first){
-                if (results[i].issues[l].media[m].media_type === 'url') {
-                  request.media_url = results[i].issues[l].media[m].filename;
-                } else {
-                  request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                    "/" + results[i].issues[l].media[m].internalFilename;
-                }
-                first = false;
+            if (parseInt(m) === 0 && first) {
+              if (results[i].issues[l].media[m].media_type === 'url') {
+                request.media_url = results[i].issues[l].media[m].filename;
               } else {
-                if (results[i].issues[l].media[m].media_type === 'url') {
-                  extras.push({
-                    "url":results[i].issues[l].media[m].filename,
-                    "mimetype": results[i].issues[l].media[m].mime_type,
-                    "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
-                  });
-                } else {
-                  extras.push({
-                    " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                  "/" + results[i].issues[l].media[m].internalFilename;
+              }
+              first = false;
+            } else {
+              if (results[i].issues[l].media[m].media_type === 'url') {
+                extras.push({
+                  "url": results[i].issues[l].media[m].filename,
+                  "mimetype": results[i].issues[l].media[m].mime_type,
+                  "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+                });
+              } else {
+                extras.push({
+                  " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
                     "/" + results[i].issues[l].media[m].internalFilename,
-                    "mimetype": results[i].issues[l].media[m].mime_type,
-                    "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
-                  });
-                }
+                  "mimetype": results[i].issues[l].media[m].mime_type,
+                  "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+                });
               }
             }
           }
-        if (extras.length > 0){
-          request.extended_attributes = {"attachments": extras };
         }
-        if (request.description === ""){
+        if (extras.length > 0) {
+          request.extended_attributes = {
+            "attachments": extras
+          };
+        }
+        if (request.description === "") {
           request.description = null;
         }
-        if(format === 'geojson'){
-          if(request.lat && request.long){
+        if (format === 'geojson') {
+          if (request.lat && request.long) {
             var feature = {
               "type": "Feature",
               "id": request.service_request_id,
               "geometry": {
                 "type": "Point",
-                "coordinates":[
+                "coordinates": [
                   request.long,
                   request.lat
                 ]
@@ -441,13 +446,15 @@ var getServiceRequests = function(req, res) {
           res.json(catcher);
           break;
         default:
-          var final = js2xmlparser.parse("service_requests", {"service_request": catcher});
+          var final = js2xmlparser.parse("service_requests", {
+            "service_request": catcher
+          });
           res.set('Content-Type', 'text/xml');
           res.send(final);
-        }
+      }
     }).catch(function(e) {
       //Catch any unexpected errors
-      errors.catchError(req,res, e);
+      errors.catchError(req, res, e);
     });
   });
 };
@@ -508,8 +515,7 @@ var postServiceRequest = function(req, res) {
           media.internalFilename = targetFile;
           media.mime_type = req.file.mimetype;
           if (err) {
-            // @todo res.send error
-            return console.error(err);
+            errors.catchError(req, res, err);
           } else {
             models.media.create(media).then(function(media) {
               sendMail(req, res, issue);
@@ -520,7 +526,7 @@ var postServiceRequest = function(req, res) {
         if (req.body.media) {
           if (Array.isArray(req.body.media)) {
             var bulkmedia = [];
-            for (var i = 0; i < req.body.media.length; i++){
+            for (var i = 0; i < req.body.media.length; i++) {
               var _media = JSON.parse(JSON.stringify(media));
               _media.filename = req.body.media[i];
               _media.media_type = 'url';
@@ -528,8 +534,10 @@ var postServiceRequest = function(req, res) {
               bulkmedia.push(_media);
             }
             //bulkCreate, woohooohoo!
-            models.media.bulkCreate(bulkmedia).then(function(){
+            models.media.bulkCreate(bulkmedia).then(function() {
               sendMail(req, res, issue);
+            }).catch(function(err) {
+              errors.catchError(req, res, err);
             });
           } else {
             media.filename = req.body.media;
@@ -537,6 +545,8 @@ var postServiceRequest = function(req, res) {
             media.mime_type = guess(req.body.media);
             models.media.create(media).then(function(media) {
               sendMail(req, res, issue);
+            }).catch(function(err) {
+              errors.catchError(req, res, err);
             });
           }
         } else {
