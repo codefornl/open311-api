@@ -77,8 +77,10 @@ var getServiceList = function(req, res) {
       include: [{
         model: models.service_group,
         attributes: ['name']
-      }]
-
+      }],
+      order: [
+        ['sequence', 'ASC']
+      ]
     };
     if (jurisdiction) {
       options.where = {
