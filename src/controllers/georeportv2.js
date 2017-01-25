@@ -251,11 +251,17 @@ var getServiceRequests = function(req, res) {
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
     var service_where = {
-      jurisdiction_id: null
+      jurisdiction_id: null,
+      displayPermissionLevel:{
+        $in: ['public', 'anonymous']
+      }
     };
     if (jurisdiction) {
       service_where = {
-        jurisdiction_id: jurisdiction.id
+        jurisdiction_id: jurisdiction.id,
+        displayPermissionLevel:{
+          $in: ['public', 'anonymous']
+        }
       };
     }
     var options = {
@@ -574,7 +580,11 @@ var sendMail = function(req, res, issue) {
       translate_string = 'service.notice-closed';
       var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
       if (moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()) {
-        translate_string = 'service.notice';
+        if(responsible){
+          translate_string = 'service.notice';
+        } else {
+          translate_string = 'service.notice-anonymous';
+        }
       }
     } else {
       req.to_open311 = {

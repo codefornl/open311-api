@@ -233,6 +233,7 @@
         "zip": "Zip"
     },
     "service": {
+      "notice-anonymous": "Your request is sent to {{responsible}}.",
       "notice": "Your request is sent to {{responsible}}, they can contact you.",
       "notice-system": "We cannot handle your location. {{responsible}} recieved the request, but no action can be taken.",
       "notice-closed": "Your request is sent to {{responsible}}. {{responsible}} is closed. If you cannot wait,please contact 0900-8844."
