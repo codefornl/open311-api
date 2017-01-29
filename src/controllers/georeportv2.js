@@ -236,6 +236,8 @@ var getServiceDefinition = function(req, res) {
  * @see http://wiki.open311.org/GeoReport_v2/#get-service-request
  */
 var getServiceRequests = function(req, res) {
+  //read the header "open311-deviceid" that needs to be set by client applications and should be unique per user.
+  var deviceid = req.get('open311-deviceid');
   var format = req.params.format || 'xml';
   var whereClause = {
     where: {
