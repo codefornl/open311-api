@@ -268,7 +268,6 @@ describe('testing Georeport v2', function() {
                 done();
               });
           }
-          done();
         });
     });
 
