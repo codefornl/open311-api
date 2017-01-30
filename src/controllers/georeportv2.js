@@ -390,7 +390,8 @@ var getServiceRequests = function(req, res) {
               req.hostname +
               (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
             // Need to grab first image and store it in the media_url property
-            if (first && results[i].issues[l].media[m].mime_type.substring(0,5) === 'image') {
+            var mime_type = results[i].issues[l].media[m].mime_type || '';
+            if (first && mime_type.substring(0,5) === 'image') {
               if (results[i].issues[l].media[m].media_type === 'url' ) {
                 request.media_url = results[i].issues[l].media[m].filename;
               } else {
