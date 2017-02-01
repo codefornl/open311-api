@@ -534,8 +534,8 @@ var postServiceRequest = function(req, res) {
         }); //fs.move
       } else {
         if (req.body.media) {
+          var bulkmedia = [];
           if (Array.isArray(req.body.media)) {
-            var bulkmedia = [];
             for (var i = 0; i < req.body.media.length; i++) {
               var _media = JSON.parse(JSON.stringify(media));
               _media.filename = req.body.media[i];
@@ -543,22 +543,25 @@ var postServiceRequest = function(req, res) {
               _media.mime_type = guess(req.body.media[i]);
               bulkmedia.push(_media);
             }
-            //bulkCreate, woohooohoo!
-            models.media.bulkCreate(bulkmedia).then(function() {
-              sendMail(req, res, issue);
-            }).catch(function(err) {
-              errors.catchError(req, res, err);
-            });
           } else {
-            media.filename = req.body.media;
-            media.media_type = 'url';
-            media.mime_type = guess(req.body.media);
-            models.media.create(media).then(function(media) {
-              sendMail(req, res, issue);
-            }).catch(function(err) {
-              errors.catchError(req, res, err);
-            });
+            var mediaArr = req.body.media.split(",").map(
+              function(item) {
+                return item.trim();
+              }
+            );
+            for (var j = 0; j < mediaArr.length; j++) {
+              var _mediaA = JSON.parse(JSON.stringify(media));
+              _mediaA.filename = mediaArr[j];
+              _mediaA.media_type = 'url';
+              _mediaA.mime_type = guess(mediaArr[j]);
+              bulkmedia.push(_mediaA);
+            }
           }
+          models.media.bulkCreate(bulkmedia).then(function() {
+            sendMail(req, res, issue);
+          }).catch(function(err) {
+            errors.catchError(req, res, err);
+          });
         } else {
           sendMail(req, res, issue);
         }

@@ -238,6 +238,39 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+  it('Comma seperated media upload should pass', function(done) {
+    // See that we get a status 200 on retrieving the Index
+    request(server.app).post('/api/upload')
+      .type('form')
+      .field('api_key', '56b074c9495b1')
+      .attach('up_1', 'test/assets/treefrog.jpg')
+      .attach('up_2', 'test/assets/test.mp3')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if (err) {
+          return done(err);
+        } else {
+          request(server.app).post('/api/v2/requests.json')
+            .type('form')
+            .field('api_key', '56b074c9495b1')
+            .field('service_code', 3)
+            .field('first_name', 'Test User')
+            .field('description', 'Test with two files')
+            .field('email', 'test@test.nl')
+            .field('lat', 51.48513770164579)
+            .field('long', 5.232168700000033)
+            .field('media', res.body[0].path + " ," + res.body[1].path)
+            .expect('Content-Type', 'application/json; charset=utf-8')
+            .expect(200).end(function(err, res) {
+              if(err){
+                return done(err);
+              }
+              service_request_id.push(res.body[0].service_request_id);
+              done();
+            });
+        }
+    });
+  });
   it('Upload with multiple files should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/upload')
@@ -263,7 +296,6 @@ describe('testing Georeport v2', function() {
             .field('media[1]', res.body[1].path)
             .expect('Content-Type', 'application/json; charset=utf-8')
             .expect(200).end(function(err, res) {
-              console.log(res.body);
               if(err){
                 return done(err);
               }
