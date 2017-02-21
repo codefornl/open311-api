@@ -233,10 +233,10 @@
         "zip": "Zip"
     },
     "service": {
-      "notice-anonymous": "Uw melding is verzonden aan {{responsible}}.",
-      "notice": "Uw melding is verzonden aan {{responsible}}. Er kan contact met u worden opgenomen.",
-      "notice-system": "Voor uw locatie is geen instantie bekend. {{responsible}} heeft uw melding ontvangen, maar er kan geen actie worden ondernomen.",
-      "notice-closed": "Uw melding is verzonden aan {{responsible}}. {{responsible}} is momenteel gesloten. Kunt u niet wachten? Neem dan contact op met 0900-8844."
+      "notice-anonymous": "Je melding is verzonden aan {{responsible}}.",
+      "notice": "Je melding is verzonden aan {{responsible}}. Indien nodig nemen we contact met je op.",
+      "notice-system": "Je kunt hier geen melding doen. Wij nemen je melding niet in behandeling.",
+      "notice-closed": "Je melding is verzonden aan {{responsible}}. wij nemen je melding in behandeling. Geluidsoverlast 's nachts? Bel de politie via: 0900-8844. Spoedeisende hulp nodig? Bel de politie via: 112."
     },
     "error": {
       "type":{
