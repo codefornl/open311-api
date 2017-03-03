@@ -1,7 +1,7 @@
 # Build status
 
-[![Travis](https://travis-ci.org/CodeForEindhoven/open311-api.svg?branch=master)](https://travis-ci.org/CodeForEindhoven/open311-api)
-[![David](https://david-dm.org/codeforeindhoven/open311-api.svg?path=src)](https://david-dm.org/codeforeindhoven/open311-api?path=src)
+[![Travis](https://travis-ci.org/codefornl/open311-api.svg?branch=master)](https://travis-ci.org/codefornl/open311-api)
+[![David](https://david-dm.org/codefornl/open311-api.svg?path=src)](https://david-dm.org/codefornl/open311-api?path=src)
 
 # About
 
@@ -24,7 +24,7 @@ Node.js, Express, Sequelize.
 
 From a console or terminal:
 
-    git clone git@github.com:codeforeindhoven/open311-api.git
+    git clone git@github.com:codefornl/open311-api.git
     cd open311-api
     npm install .
     npm mkdir build
