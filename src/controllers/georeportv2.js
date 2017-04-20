@@ -25,37 +25,36 @@ var getResponsible = function(req, res, next) {
   var queryarr = [];
   if(process.env.USING_TRAVIS){
     next({"status":"ok"});
-  }
-  if (lat & lon) {
-    queryarr.push("lat=" + lat);
-    queryarr.push("lon=" + lon);
-  } else if (address_string){
-    queryarr.push("q=" + address_string);
-  }
-  queryarr.push("catalog_id=open311-ehv" );
-  queryarr.push("category=" + service_id)
-  querystring = "?" + queryarr.join("&");
-  var http = require('http');
-  var options = {
-    host: 'localhost',
-    port: 8888,
-    path: '/api/jurisdiction' + encodeURI(querystring),
-    json: true
-  };
-  var req = http.get(options, function(res) {
-    res.setEncoding('utf8');
-    res.on('data', function(data) {
-      //find a account for this name, if none are available, return default.
-      next(data);
+  } else {
+    if (lat & lon) {
+      queryarr.push("lat=" + lat);
+      queryarr.push("lon=" + lon);
+    } else if (address_string){
+      queryarr.push("q=" + address_string);
+    }
+    queryarr.push("catalog_id=open311-ehv" );
+    queryarr.push("category=" + service_id)
+    querystring = "?" + queryarr.join("&");
+    var http = require('http');
+    var options = {
+      host: 'localhost',
+      port: 8888,
+      path: '/api/jurisdiction' + encodeURI(querystring),
+      json: true
+    };
+    var req = http.get(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function(data) {
+        //find a account for this name, if none are available, return default.
+        next(data);
+      });
     });
-  });
 
-  req.on('error', function(e) {
-    console.log('ERROR: ' + e.message);
-    next(e);
-  });
-
-  
+    req.on('error', function(e) {
+      console.log('ERROR: ' + e.message);
+      next(e);
+    });
+  }
 };
 
 
