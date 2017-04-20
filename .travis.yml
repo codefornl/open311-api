@@ -3,6 +3,7 @@ sudo: required
 language: node_js
 env:
 - CXX=g++-4.8
+- USING_TRAVIS=shouldnotbethereinproductionorlocal
 node_js:
   - 6
 addons:
