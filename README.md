@@ -27,13 +27,8 @@ From a console or terminal:
     git clone git@github.com:codefornl/open311-api.git
     cd open311-api
     npm install .
-    npm mkdir build
-    npm run build
 
 Make sure you have a mysql database available
-
-*Note:* Check that `npm run build` doesn't generate errors. The installation
- process will tell you what components are missing (f.i. mysql)
 
 Create a file called `config.json`
 
