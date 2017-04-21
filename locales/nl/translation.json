@@ -264,7 +264,8 @@
         "usedForNotifications": "Used for notifications",
         "verified_locations": "Indicates verified locations",
         "not_implemented": "Not implemented",
-        "not_available": "niet beschikbaar"
+        "not_available": "niet beschikbaar",
+        "local_government": "Gemeente "
     },
     "mail": {
       "request": {

@@ -7,6 +7,11 @@
     "dialect": "mysql",
     "email": "dummy@open311.local",
     "remote_port": 3000,
+    "catalog_id": "open311_ehv",
+    "operator-api": {
+      "host": "localhost",
+      "port": 8888
+    },
     "logging": true,
     "smtp": {
       "host": "localhost",
@@ -28,6 +33,11 @@
     "dialect": "mysql",
     "email": "dummy@open311.local",
     "remote_port": 3000,
+    "catalog_id": "open311_ehv",
+    "operator-api": {
+      "host": "localhost",
+      "port": 8888
+    },
     "logging": false,
     "smtp": {
       "host": "localhost",

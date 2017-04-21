@@ -21,7 +21,7 @@
       },
       {
         id: 23,
-        name: 'Gemeente Eindhoven'
+        name: 'Eindhoven'
       },
       {
         id: 24,
@@ -38,6 +38,10 @@
       {
         id: 27,
         name: 'Thuis'
+      },
+      {
+        id: 28,
+        name: 'TESTCORP1'
       }], {});
     },
     down: function(queryInterface, Sequelize) {

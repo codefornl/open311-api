@@ -264,7 +264,8 @@
         "usedForNotifications": "Used for notifications",
         "verified_locations": "Indicates verified locations",
         "not_implemented": "Not implemented",
-        "not_available": "not available"
+        "not_available": "not available",
+        "local_government": ""
     },
     "mail": {
       "request": {

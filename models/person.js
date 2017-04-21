@@ -17,6 +17,7 @@
       classMethods: {
         associate: function(models) {
           person.belongsTo(models.department,{foreignKey: 'department_id'});
+          person.hasMany(models.personEmail, {foreignKey: 'person_id'});
         }
       }
     });

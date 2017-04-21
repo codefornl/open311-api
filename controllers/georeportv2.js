@@ -24,7 +24,7 @@ var getResponsible = function(req, res, next) {
   var address_string = req.body.address_string;
   var queryarr = [];
   if(process.env.USING_TRAVIS){
-    next({"status":"ok"});
+    next({"name": "testdummy", "email":"nobody@home.nl"});
   } else {
     if (lat & lon) {
       queryarr.push("lat=" + lat);
@@ -32,27 +32,48 @@ var getResponsible = function(req, res, next) {
     } else if (address_string){
       queryarr.push("q=" + address_string);
     }
-    queryarr.push("catalog_id=open311-ehv" );
+    var catalog_id = util.getConfig('catalog_id') || 'open311_ehv';
+    queryarr.push("catalog_id=" + catalog_id );
     queryarr.push("category=" + service_id)
     querystring = "?" + queryarr.join("&");
     var http = require('http');
-    var options = {
-      host: 'localhost',
-      port: 8888,
-      path: '/api/jurisdiction' + encodeURI(querystring),
-      json: true
+    var options = util.getConfig('operator-api');
+    if(options){
+      options.path = '/api/jurisdiction' + encodeURI(querystring);
+      options.json = true;
     };
-    var req = http.get(options, function(res) {
+    var operator_api = http.get(options, function(res) {
       res.setEncoding('utf8');
       res.on('data', function(data) {
+        var data = JSON.parse(data);
+        
         //find a account for this name, if none are available, return default.
-        next(data);
+        models.department.findOne({
+          where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('name')), models.sequelize.fn('lower', data.jurisdiction)),
+          include: [{ model: models.person, include:{model: models.personEmail} }]
+        }).then(function(result) {
+          var gov_prefix = "";
+          if(req.i18n.t('messages.' + data.type.toLowerCase().replace(/ /g, "_")) !== 'messages.' + data.type.toLowerCase().replace(/ /g, "_")){
+            gov_prefix = req.i18n.t('messages.' + data.type.toLowerCase().replace(/ /g, "_"));
+          }
+          if(result){
+            var out = {
+              email: result.dataValues.people[0].dataValues.personEmails[0].dataValues.email,
+              name: gov_prefix + result.dataValues.name
+            };
+            next(out);
+          } else {
+            //Get default
+            next();
+          }
+        })
+        
       });
     });
 
-    req.on('error', function(e) {
-      console.log('ERROR: ' + e.message);
-      next(e);
+    operator_api.on('error', function(e) {
+      console.log('Could not connect to the operator-api microservice: ' + e.message);
+      next();
     });
   }
 };

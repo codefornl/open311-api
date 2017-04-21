@@ -105,9 +105,11 @@ describe('testing Georeport v2', function() {
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('description', 'Test Anonymous with address_string')
-      .field('address_string', 'stadhuisplein 10')
+      .field('address_string', 'stadhuisplein 10 eindhoven')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {
+        assert(typeof res.body, "object");
+        //assert(res.body[0].service_notice.indexOf('Gemeente Eindhoven') > -1, true)
         if(err){
           return done(err);
         }
@@ -124,7 +126,7 @@ describe('testing Georeport v2', function() {
       .field('first_name', 'Test User')
       .field('description', 'Test with address_string')
       .field('email', 'test@test.nl')
-      .field('address_string', 'stadhuisplein 10')
+      .field('address_string', 'stadhuisplein 10 eindhoven')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {
         if(err){
@@ -143,7 +145,7 @@ describe('testing Georeport v2', function() {
       .field('first_name', 'Test User')
       .field('description', 'Test with address_string')
       .field('phone', '080-4320392')
-      .field('address_string', 'stadhuisplein 10')
+      .field('address_string', 'stadhuisplein 10 eindhoven')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {
         if(err){
@@ -159,12 +161,12 @@ describe('testing Georeport v2', function() {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
-      .field('service_code', 3)
+      .field('service_code', 2)
       .field('first_name', 'Test User')
       .field('description', 'Test with lat and long')
       .field('email', 'test@test.nl')
-      .field('lat', 51.444014984777702)
-      .field('long', 5.471205482715450)
+      .field('lat', 51.4559)
+      .field('long', 5.4320)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {
         if(err){

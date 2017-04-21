@@ -9,6 +9,11 @@
     "storage": "__DATABASE_STORAGE__",
     "email": "__SYSTEM_EMAIL__",
     "remote_port": __REMOTE_PORT__,
+    "catalog_id": "__CATALOG_ID__",
+    "operator-api": {
+      "host": "__OPERATOR_API_HOST__",
+      "port": __OPERATOR_API_PORT__
+    },
     "logging": __LOGGING__,
     "tolerance": __SEARCH_TOLERANCE_M__,
     "smtp": {
