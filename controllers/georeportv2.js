@@ -73,6 +73,7 @@ var getResponsible = function(req, res, next) {
 
     operator_api.on('error', function(e) {
       console.log('Could not connect to the operator-api microservice: ' + e.message);
+      //Get default
       next();
     });
   }

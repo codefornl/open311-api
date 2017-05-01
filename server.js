@@ -64,11 +64,10 @@ app.use(function(req, res) {
 });
 
 app.use(clientErrorHandler);
-if ('development' == env) {
-  app.locals.pretty = true;
-}
 
-if ('production' == env) {
+if (env === 'development') {
+  app.locals.pretty = true;
+} else {
   app.locals.pretty = false;
 }
 

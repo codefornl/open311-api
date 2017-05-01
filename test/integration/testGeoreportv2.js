@@ -67,7 +67,6 @@ describe('testing Georeport v2', function() {
       .field('email', 'test@test.nl')
       .field('lat', 51.48513770164579)
       .field('long', 5.232168700000033)
-      //.attach('image', 'some path')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(403).end(function(err, res) {
         if(err){
@@ -88,7 +87,6 @@ describe('testing Georeport v2', function() {
       .field('email', 'test@test.nl')
       .field('lat', 51.48513770164579)
       .field('long', 5.232168700000033)
-      //.attach('image', 'some path')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(403).end(function(err, res) {
         if(err){
@@ -97,7 +95,7 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
-  /*CALL `SearchAtLocation`(0, 0, 1, 'Aletta Jacobsplein 5',10);*/
+
   it('Anonymous Post Request with address_string should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
@@ -109,7 +107,7 @@ describe('testing Georeport v2', function() {
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {
         assert(typeof res.body, "object");
-        //assert(res.body[0].service_notice.indexOf('Gemeente Eindhoven') > -1, true)
+
         if(err){
           return done(err);
         }
@@ -117,6 +115,7 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+
   it('Post Request with address_string should pass', function(done) {
     // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
@@ -136,8 +135,8 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+
   it('Post Request by user without email should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -155,9 +154,8 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
-  /*CALL `DepartmentsAtLocation`(51.4440149847777, 5.47120548271545, 1, 10);*/
+
   it('Post Request lat, long should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -176,8 +174,8 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+
   it('Post Request with base64 media should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -199,7 +197,6 @@ describe('testing Georeport v2', function() {
   });
 
   it('Post Request with media url should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -220,7 +217,6 @@ describe('testing Georeport v2', function() {
       });
   });
   it('Post Request with sound file should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -240,8 +236,8 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+
   it('Comma seperated media upload should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/upload')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -274,7 +270,6 @@ describe('testing Georeport v2', function() {
     });
   });
   it('Upload with multiple files should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/upload')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -307,8 +302,8 @@ describe('testing Georeport v2', function() {
         }
     });
   });
+
   it('Post Request with multiple media urls should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -331,7 +326,6 @@ describe('testing Georeport v2', function() {
   });
 
   it('Get ServiceRequests should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).get('/api/v2/requests.json')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200).end(function(err, res) {
@@ -341,8 +335,8 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+
   it('Get ServiceRequests with single id should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).get('/api/v2/requests.json')
       .query({ 'service_request_id' : service_request_id[0] })
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -356,8 +350,8 @@ describe('testing Georeport v2', function() {
         done();
       });
   });
+
   it('Get ServiceRequests with all 3 new ids should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).get('/api/v2/requests.json')
       .query({ 'service_request_id' : service_request_id.join(',') })
       .expect('Content-Type', 'application/json; charset=utf-8')

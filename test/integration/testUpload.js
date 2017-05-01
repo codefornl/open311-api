@@ -7,11 +7,7 @@ var request = require('supertest'),
 server.app.set('env', 'test');
 
 describe('testing Uploads', function() {
-  afterEach(function() {
-    // runs after each test in this block
-  });
   it('Upload with image should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/upload')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -26,7 +22,6 @@ describe('testing Uploads', function() {
   });
 
   it('Upload with base64 file', function(done) {
-    // See that we get a status 200 on retrieving the Index
     var data = Buffer(fs.readFileSync('test/assets/treefrog.jpg')).toString('base64');
     request(server.app).post('/api/upload')
       .type('form')
@@ -41,7 +36,6 @@ describe('testing Uploads', function() {
       });
   });
   it('Upload with sound file should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/upload')
       .type('form')
       .field('api_key', '56b074c9495b1')
@@ -56,7 +50,6 @@ describe('testing Uploads', function() {
   });
 
   it('Upload with multiple files should pass', function(done) {
-    // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/upload')
       .type('form')
       .field('api_key', '56b074c9495b1')
