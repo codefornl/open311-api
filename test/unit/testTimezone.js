@@ -1,9 +1,12 @@
 assert = require('assert');
 describe('Testing timezone', function() {
 
-  it('Not implemented should be returned', function(done) {
+  it('Timezone +2 should be returned for (30,50)', function(done) {
     var ts = require('../../helpers/timezone');
-      assert.equal(ts.getTimezone({ type: 'Point', coordinates: [30, 50] })[0], "test_timezone_2");
+    ts.getTimezone({ type: 'Point', coordinates: [30, 50] }, function(err, result){
+      if (err) throw err;
+      assert.equal(result[0].tz_name, "Europe/Mariehamn");
       done();
+    });
   });
 });
