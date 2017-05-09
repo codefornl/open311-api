@@ -601,6 +601,7 @@ var postServiceRequest = function(req, res) {
 };
 
 var sendMail = function(req, res, issue) {
+  
   var format = req.params.format || 'xml';
   var mailer = require('../helpers/mail.js');
   //We have ticket, issue, and media, plus some user details in the req object.
@@ -608,32 +609,36 @@ var sendMail = function(req, res, issue) {
   getResponsible(req, res, function(responsible) {
     var send_to = req.i18n.t('mail.system');
     var translate_string = 'service.notice-system';
+    var to_open311 = {
+      "name": req.i18n.t('mail.system'),
+      "email": util.getConfig('email'),
+    };
+    
+    
+
     if (responsible) {
-      req.to_open311 = {
+      //Set the responsible part info
+      to_open311 = {
         "name": responsible.name,
         "email": responsible.email
       };
-      send_to = responsible.name;
+      translate_string = 'service.notice';
+    }
+    
+    // Anonymous?
+    if(!req.body.email && !req.body.phone){
+      translate_string = 'service.notice-anonymous';
+    }
+
+    var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
+    if (!moment(currtime).isWorkingDay() && !moment(currtime).isWorkingTime()) {
       translate_string = 'service.notice-closed';
-      var currtime = moment().format('YYYY-MM-DDTHH:mm:ss');
-      if (moment(currtime).isWorkingDay() && moment(currtime).isWorkingTime()) {
-        if(responsible){
-          translate_string = 'service.notice';
-        } else {
-          translate_string = 'service.notice-anonymous';
-        }
-      }
-    } else {
-      req.to_open311 = {
-        "name": req.i18n.t('mail.system'),
-        "email": util.getConfig('email'),
-      };
     }
 
     var service_notice = req.i18n.t(translate_string, {
       "responsible": send_to
     });
-
+    req.to_open311 = to_open311;
     mailer.newRequest(req, issue.ticket_id);
     var results = [{
       "service_request_id": issue.ticket_id,
