@@ -13,6 +13,7 @@ exports.catchError = function(req, res, e, code) {
       //   "system_error_code" :e.name
       // }
     }];
+  console.error(result[0].code + ": " + result[0].description);
   switch (format) {
       case 'json':
         res.json(result);

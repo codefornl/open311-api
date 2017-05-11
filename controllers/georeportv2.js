@@ -664,13 +664,23 @@ var sendMail = function(req, res, issue) {
         res.set('Content-Type', 'text/xml');
         res.send(final);
     }
-  }); //getResponsible
+  });
 };
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
 router.route('/api/v2/requests.:format').get(getServiceRequests);
-router.route('/api/v2/requests.:format').post(middleware.processMedia, middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
-router.route('/api/v2/request.:format').post(middleware.processMedia, middleware.ensureApiKey, middleware.ensureIdentified, postServiceRequest);
+router.route('/api/v2/requests.:format').post(
+  middleware.processMedia,
+  middleware.ensureApiKey,
+  middleware.validServiceCode,
+  middleware.ensureIdentified,
+  postServiceRequest);
+router.route('/api/v2/request.:format').post(
+  middleware.processMedia,
+  middleware.ensureApiKey,
+  middleware.validServiceCode,
+  middleware.ensureIdentified,
+  postServiceRequest);
 
 module.exports = router;

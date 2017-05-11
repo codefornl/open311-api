@@ -240,12 +240,13 @@
     },
     "error": {
       "type":{
-        "general": "fout",
+        "general": "Fout",
         "forbidden": "niet toegestaan"
       },
       "message": {
         "missing_api_key": "Geen sleutel ontvangen, neem contact op met de leverancier",
-        "invalid_api_key": "Ongeldige sleutel, neem contact op met de leverancier"
+        "invalid_api_key": "Ongeldige sleutel, neem contact op met de leverancier",
+        "invalid_service_code": "Ongeldige service, de melding kan niet worden verwerkt"
       }
     },
     "endpoint": "eindpunt",

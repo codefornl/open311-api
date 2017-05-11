@@ -1,5 +1,33 @@
 var models = require('../models');
 var multer  = require('multer');
+var errors = require('./errors');
+exports.validServiceCode = function(req,res,next){
+  console.log("Testing for service_code");
+  if(req.body.service_code || parseInt(req.body.service_code, 10) >= 0) {
+    models.service.findOne(
+      {
+        where: {
+          id: parseInt(req.body.service_code, 10)
+        },
+        attributes: ['id']
+      }
+    ).then(function(result){
+      if(!result){
+        errors.catchError(req, res, {
+            "name": req.i18n.t('error.type.general'),
+            "message": req.i18n.t('error.message.invalid_service_code')
+        }, 403);
+      } else {
+        next();
+      }
+    });
+  } else {
+    errors.catchError(req, res, {
+      "name": req.i18n.t('error.type.general'),
+      "message": req.i18n.t('error.message.invalid_service_code')
+    }, 403);
+  }
+};
 
 exports.ensureApiKey = function(req,res,next){
   if(req.body.api_key){
