@@ -16,7 +16,6 @@ var guess = require("guess-content-type");
  *
  */
 var getResponsible = function(req, res, next) {
-
   var format = req.params.format || 'xml';
   var lat = req.body.lat;
   var lon = req.body.long;
@@ -26,10 +25,10 @@ var getResponsible = function(req, res, next) {
   if(process.env.USING_TRAVIS){
     next({"name": "testdummy", "email":"nobody@home.nl"});
   } else {
-    if (lat & lon) {
+    if (lat && lon) {
       queryarr.push("lat=" + lat);
       queryarr.push("lon=" + lon);
-    } else if (address_string){
+    } else if (address_string) {
       queryarr.push("q=" + address_string);
     }
     var catalog_id = util.getConfig('catalog_id') || 'open311_ehv';
@@ -43,36 +42,41 @@ var getResponsible = function(req, res, next) {
       options.json = true;
     };
     var operator_api = http.get(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function(data) {
-        var data = JSON.parse(data);
-        
-        //find a account for this name, if none are available, return default.
-        models.department.findOne({
-          where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('name')), models.sequelize.fn('lower', data.jurisdiction)),
-          include: [{ model: models.person, include:{model: models.personEmail} }]
-        }).then(function(result) {
-          var gov_prefix = "";
-          if(req.i18n.t('messages.' + data.type.toLowerCase().replace(/ /g, "_")) !== 'messages.' + data.type.toLowerCase().replace(/ /g, "_")){
-            gov_prefix = req.i18n.t('messages.' + data.type.toLowerCase().replace(/ /g, "_"));
-          }
-          if(result){
-            var out = {
-              email: result.dataValues.people[0].dataValues.personEmails[0].dataValues.email,
-              name: gov_prefix + result.dataValues.name
-            };
-            next(out);
-          } else {
-            //Get default
-            next();
-          }
-        })
-        
-      });
+      if(res.statusCode === 200) {
+        res.setEncoding('utf8');
+        res.on('data', function(data) {
+          var data = JSON.parse(data);
+          //find a account for this name, if none are available, return default.
+          models.department.findOne({
+            where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('name')), models.sequelize.fn('lower', data.jurisdiction)),
+            include: [{ model: models.person, include:{model: models.personEmail} }]
+          }).then(function(result) {
+            var gov_prefix = "";
+            if(req.i18n.t('messages.' + data.type.toLowerCase().replace(/ /g, "_")) !== 'messages.' + data.type.toLowerCase().replace(/ /g, "_")){
+              gov_prefix = req.i18n.t('messages.' + data.type.toLowerCase().replace(/ /g, "_"));
+            }
+            if(result){
+              var out = {
+                email: result.dataValues.people[0].dataValues.personEmails[0].dataValues.email,
+                name: gov_prefix + result.dataValues.name
+              };
+              next(out);
+            } else {
+              //Get default
+              next();
+            }
+          })
+        }).on('error', function(e) {
+          console.error(e);
+          next();
+        });
+      } else {
+        next();
+      }
     });
 
     operator_api.on('error', function(e) {
-      console.log('Could not connect to the operator-api microservice: ' + e.message);
+      console.error('Could not connect to the operator-api microservice: ' + e.message);
       //Get default
       next();
     });
@@ -565,6 +569,7 @@ var postServiceRequest = function(req, res) {
       } else {
         if (req.body.media) {
           var bulkmedia = [];
+
           if (Array.isArray(req.body.media)) {
             for (var i = 0; i < req.body.media.length; i++) {
               var _media = JSON.parse(JSON.stringify(media));
@@ -587,6 +592,7 @@ var postServiceRequest = function(req, res) {
               bulkmedia.push(_mediaA);
             }
           }
+          
           models.media.bulkCreate(bulkmedia).then(function() {
             sendMail(req, res, issue);
           }).catch(function(err) {
