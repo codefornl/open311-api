@@ -2,7 +2,6 @@ var models = require('../models');
 var multer  = require('multer');
 var errors = require('./errors');
 exports.validServiceCode = function(req,res,next){
-  console.log("Testing for service_code");
   if(req.body.service_code || parseInt(req.body.service_code, 10) >= 0) {
     models.service.findOne(
       {
