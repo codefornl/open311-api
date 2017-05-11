@@ -49,9 +49,6 @@
     "js2xmlparser": "3.0.0",
     "jsonwebtoken": "7.3.0",
     "jsts": "^1.4.0",
-    "moment": "2.18.1",
-    "moment-business-time": "0.6.2",
-    "moment-timezone": "^0.5.13",
     "multer": "1.3.0",
     "mysql": "2.13.0",
     "nodemailer": "4.0.1",
@@ -60,6 +57,7 @@
     "path": "0.12.7",
     "sequelize": "3.30.4",
     "sqlite3": "3.1.8",
+    "tz-business-time": "^0.6.3",
     "tz-geo": "^1.0.1"
   },
   "devDependencies": {

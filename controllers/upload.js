@@ -1,6 +1,6 @@
 var multer = require('multer');
 var express = require('express');
-var moment = require('moment-business-time');
+var moment = require('tz-business-time');
 var router = express.Router();
 var m = multer({
   dest: 'media/tmp/'
