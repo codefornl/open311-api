@@ -55,6 +55,7 @@
     "nodemailer-smtp-transport": "2.7.4",
     "object-assign": "4.1.1",
     "path": "0.12.7",
+    "sequelize-cli": "^2.4.0",
     "sequelize": "3.30.4",
     "sqlite3": "3.1.8",
     "tz-business-time": "^0.6.3",
@@ -64,7 +65,6 @@
     "expect": "1.20.2",
     "mocha": "3.2.0",
     "mocha-junit-reporter": "1.13.0",
-    "sequelize-cli": "^2.4.0",
     "supertest": "3.0.0"
   }
 }
