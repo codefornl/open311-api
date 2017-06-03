@@ -6,16 +6,19 @@
   'use strict';
   module.exports = function(sequelize, DataTypes) {
     var application = sequelize.define("application", {
+      id : {
+        type: DataTypes.INTEGER.UNSIGNED,
+        primaryKey: true,
+        autoIncrement: true
+      },
       name: DataTypes.STRING,
       url: DataTypes.STRING,
       api_key: DataTypes.STRING,
     }, {
-      tableName: 'clients',
       timestamps: false,
       classMethods: {
         associate: function(models) {
-          application.belongsTo(models.person,{foreignKey: 'contactPerson_id'});
-          application.belongsTo(models.contactMethod,{foreignKey: 'contactMethod_id'});
+          application.belongsTo(models.person,{foreignKey: 'person_id'});
         }
       }
     });

@@ -13,11 +13,7 @@
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false
         },
-        contactMethod_id: Sequelize.INTEGER.UNSIGNED,
-        responseMethod_id: Sequelize.INTEGER.UNSIGNED,
-        issueType_id: Sequelize.INTEGER.UNSIGNED,
-        enteredByPerson_id: Sequelize.INTEGER.UNSIGNED,
-        reportedByPerson_id: Sequelize.INTEGER.UNSIGNED,
+        person_id: Sequelize.INTEGER.UNSIGNED,
         date:{
           type:Sequelize.DATE,
           allowNull: false

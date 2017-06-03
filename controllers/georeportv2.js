@@ -253,7 +253,6 @@ var getServiceDefinition = function(req, res) {
       }
     }).catch(function(e) {
       //Catch any unexpected errors
-      console.log(e);
       errors.catchError(req, res, {
         "name": "ServiceCodeError",
         "message": "No service_code, or no valid service_code provided"
@@ -319,7 +318,7 @@ var getServiceRequests = function(req, res) {
         }]
       }, {
         model: models.person,
-        attributes: ['firstname', 'middlename', 'lastname'],
+        attributes: ['name'],
         include: [{
           model: models.department,
           attributes: ['name']
@@ -533,15 +532,13 @@ var postServiceRequest = function(req, res) {
 
   models.request.create(ticket).then(function(ticket) {
     //Update the corresponding issue
-    console.log("ticket created");
     var issue = {
       "ticket_id": ticket.id,
       "contacMethod_id": req.body.contactmethod,
-      "reportedByPerson_id": req.body.person_id,
+      "person_id": req.body.person_id,
       "description": req.body.description
     };
     models.issue.create(issue).then(function(issue) {
-      console.log("issue created");
       var curtime = moment();
 
       var media = {
@@ -553,7 +550,6 @@ var postServiceRequest = function(req, res) {
       };
 
       if (req.file) {
-        console.log("file present");
         var path = require('path');
         var ext = path.extname(req.file.originalname);
         var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
@@ -568,7 +564,6 @@ var postServiceRequest = function(req, res) {
             errors.catchError(req, res, err);
           } else {
             models.media.create(media).then(function(media) {
-              console.log("media created");
               sendMail(req, res, issue);
             }); //models.media.create
           }

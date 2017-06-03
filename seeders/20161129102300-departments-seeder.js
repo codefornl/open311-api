@@ -34,7 +34,7 @@
       {
         id: 28,
         name: 'TESTCORP1',
-        jurisdiction_id: 772
+        jurisdiction_id: 9999
       }], {});
     },
     down: function(queryInterface, Sequelize) {

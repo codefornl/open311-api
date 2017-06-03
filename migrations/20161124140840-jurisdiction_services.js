@@ -2,8 +2,8 @@
   'use strict';
   module.exports = {
     up: function(queryInterface, Sequelize) {
-      return queryInterface.createTable('department_services', {
-        department_id: {
+      return queryInterface.createTable('jurisdiction_services', {
+        jurisdiction_id: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false
         },
@@ -14,7 +14,7 @@
       });
     },
     down: function(queryInterface, Sequelize) {
-      return queryInterface.dropTable('department_services');
+      return queryInterface.dropTable('jurisdiction_services');
     }
   };
 }());

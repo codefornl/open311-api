@@ -16,9 +16,11 @@
         defaultValue: false
       }
     }, {
+      timestamps: false,
       classMethods: {
         associate: function(models) {
           jurisdiction.hasMany(models.service, {foreignKey: 'jurisdiction_id'});
+          jurisdiction.hasMany(models.department, {foreignKey: 'jurisdiction_id'});
         }
       }
     });

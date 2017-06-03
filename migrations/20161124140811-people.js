@@ -9,9 +9,7 @@
           primaryKey: true,
           type: Sequelize.INTEGER.UNSIGNED
         },
-        firstname: Sequelize.STRING,
-        middlename: Sequelize.STRING,
-        lastname: Sequelize.STRING,
+        name: Sequelize.STRING,
         department_id: Sequelize.INTEGER,
         username: Sequelize.STRING,
         token: Sequelize.STRING,

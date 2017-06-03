@@ -46,8 +46,7 @@ exports.ensureApiKey = function(req,res,next){
         return;
       }
       req.body.application = result.id;
-      req.body.assignee = result.contactPerson_id;
-      req.body.contactmethod = result.contactMethod_id;
+      req.body.assignee = result.person_id;
       next();
     });
   } else {
@@ -74,16 +73,16 @@ exports.ensureApiKey = function(req,res,next){
  * If none of the above applies, set user to anonymous, (register ip?)
  */
 exports.ensureIdentified = function(req, res, next) {
-  var check_Person;
+  var check_Person = {};
   var check_Email;
-
-  if(req.body.last_name){
-    check_Person = check_Person || {};
-    check_Person.lastname = req.body.last_name;
-  }
+  var name;
   if(req.body.first_name){
     check_Person = check_Person || {};
-    check_Person.firstname = req.body.first_name;
+    check_Person.name = req.body.first_name;
+  }
+  if(req.body.last_name){
+    name = check_Person || {};
+    check_Person.name += " " + req.body.last_name;
   }
   if(req.body.email){
     check_Email = req.body.email;
@@ -94,7 +93,7 @@ exports.ensureIdentified = function(req, res, next) {
   if(!check_Person) {
     //Anonymous
     check_Person = {
-      firstname: "Anonymous",
+      name: "Anonymous",
       username: "anonymous",
       role: "anonymous"
     };

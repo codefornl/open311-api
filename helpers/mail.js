@@ -33,7 +33,7 @@ exports.newRequest = function(req, id){
       }]
     },{
       model: models.person,
-      attributes: ['firstname', 'middlename', 'lastname'],
+      attributes: ['name'],
       include: [{
         model: models.department,
         attributes: ['name']
@@ -56,7 +56,7 @@ exports.newRequest = function(req, id){
         }
       ),
       description: result.issues[0].description,
-      user: result.person.firstname
+      user: result.person.name
     };
     var config = {
       from: util.getConfig('email'),

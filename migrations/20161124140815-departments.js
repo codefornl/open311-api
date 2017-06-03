@@ -10,7 +10,6 @@
           type: Sequelize.INTEGER.UNSIGNED
         },
         name: Sequelize.STRING,
-        description: Sequelize.STRING,
         jurisdiction_id: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false
