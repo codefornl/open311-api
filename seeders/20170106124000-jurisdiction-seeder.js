@@ -393,6 +393,7 @@
         {id:1896,jurisdiction_id:'zwartewaterland.nl',name:'Zwartewaterland',external_id:'1896',parent_name:'Overijssel',parent_external_id:'23', is_default: false},
         {id:642,jurisdiction_id:'zwijndrecht.nl',name:'Zwijndrecht',external_id:'0642',parent_name:'Zuid-Holland',parent_external_id:'28', is_default: false},
         {id:193,jurisdiction_id:'zwolle.nl',name:'Zwolle',external_id:'0193',parent_name:'Overijssel',parent_external_id:'23', is_default: false},
+        {id:9999,jurisdiction_id:'example.com',name:'example',external_id:'9999',parent_name:'Unknown',parent_external_id:'9999', is_default: false}
       ], {});
     },
     down: function(queryInterface, Sequelize) {

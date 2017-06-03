@@ -21,7 +21,7 @@ describe('testing Uploads', function() {
       });
   });
 
-  it('Upload with base64 file', function(done) {
+  it('Upload with base64 file is DEPRECATED', function(done) {
     var data = Buffer(fs.readFileSync('test/assets/treefrog.jpg')).toString('base64');
     request(server.app).post('/api/upload')
       .type('form')
@@ -35,6 +35,7 @@ describe('testing Uploads', function() {
         done();
       });
   });
+
   it('Upload with sound file should pass', function(done) {
     request(server.app).post('/api/upload')
       .type('form')

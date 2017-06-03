@@ -10,7 +10,7 @@
         category_id: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false
-        },
+        }
       });
     },
     down: function(queryInterface, Sequelize) {

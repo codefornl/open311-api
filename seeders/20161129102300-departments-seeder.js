@@ -4,20 +4,7 @@
     up: function(queryInterface, Sequelize) {
       return queryInterface.bulkInsert('departments', [{
         id: 1,
-        name: 'Operations (Sociaal Domein)',
-        defaultPerson_id: 3
-      },
-      {
-        id: 2,
-        name: 'Ruimtelijke Expertise',
-        defaultPerson_id: 1
-
-      },
-      {
-        id: 3,
-        name: 'Programma & Gebiedsmanagement',
-        defaultPerson_id: 1
-
+        name: 'Systeem'
       },
       {
         id: 23,
@@ -26,6 +13,7 @@
       {
         id: 24,
         name: 'Wooninc'
+
       },
       {
         id: 25,

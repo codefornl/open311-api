@@ -165,45 +165,6 @@ exports.ensureIdentified = function(req, res, next) {
   });
 };
 
-/**
- * Middleware function to check if a request contains the right credentials to be
- * Authenticated. This function needs more work.
- * See http://code.tutsplus.com/tutorials/token-based-authentication-with-angularjs-nodejs--cms-22543
- * for a possible implementation.
- */
- exports.ensureAuthorized = function(req, res, next) {
-  var bearerToken;
-  var bearerHeader = req.headers.authorization;
-  if (bearerHeader) {
-    var bearer = bearerHeader.split(" ");
-    bearerToken = bearer[1];
-    req.token = bearerToken;
-    models.account.findOne({
-      token: req.token
-    }).then(function(err, user) {
-      if (err) {
-        res.status(403).json({
-          type: 'forbidden',
-          message: 'Sorry, cannot let you in'
-        });
-      } else {
-        if (user) {
-          next();
-        } else {
-          res.status(403).json({
-            type: 'forbidden',
-            message: 'User not found'
-          });
-        }
-      }
-    });
-  } else {
-    res.status(403).json({
-      type: 'forbidden',
-      message: 'Sorry, cannot let you in'
-    });
-  }
-};
 
 /**
  * Middleware to check if request contains the
@@ -217,7 +178,7 @@ exports.ensureAdmin = function(req, res, next) {
     var bearer = bearerHeader.split(" ");
     bearerToken = bearer[1];
     req.token = bearerToken;
-    models.account.findOne({
+    models.person.findOne({
       where: {
         token: req.token,
         role: 'admin'

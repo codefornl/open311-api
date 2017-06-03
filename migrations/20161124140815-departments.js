@@ -11,7 +11,10 @@
         },
         name: Sequelize.STRING,
         description: Sequelize.STRING,
-        defaultPerson_id: Sequelize.INTEGER
+        jurisdiction_id: {
+          type: Sequelize.INTEGER.UNSIGNED,
+          allowNull: false
+        }
       });
     },
     down: function(queryInterface, Sequelize) {

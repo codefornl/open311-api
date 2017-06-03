@@ -5,8 +5,8 @@
     up: function(queryInterface, Sequelize) {
       return queryInterface.bulkInsert('clients', [{
         id: 1,
-        name: 'testapp',
-        url: 'http://testapp.com',
+        name: 'nl.eindhoven.open311',
+        url: 'https://play.google.com/store/apps/details?id=nl.eindhoven.open311',
         api_key: '56b074c9495b1'
       }], {});
     },

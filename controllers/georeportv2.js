@@ -4,7 +4,6 @@ var util = require('../helpers/util.js');
 var errors = require('../helpers/errors.js');
 var middleware = require('../helpers/middleware.js');
 var js2xmlparser = require('js2xmlparser');
-//var moment = require('moment');
 var moment = require('tz-business-time');
 var objectAssign = require('object-assign');
 var router = express.Router();
@@ -33,20 +32,19 @@ var getResponsible = function(req, res, next) {
     }
     var catalog_id = util.getConfig('catalog_id') || 'open311_ehv';
     queryarr.push("catalog_id=" + catalog_id );
-    queryarr.push("category=" + service_id)
+    queryarr.push("category=" + service_id);
     querystring = "?" + queryarr.join("&");
     var http = require('http');
     var options = util.getConfig('operator-api');
     if(options){
       options.path = '/api/jurisdiction' + encodeURI(querystring);
       options.json = true;
-    };
+    }
     var operator_api = http.get(options, function(res) {
       if(res.statusCode === 200) {
         res.setEncoding('utf8');
-        res.on('data', function(data) {
-          var data = JSON.parse(data);
-          //find a account for this name, if none are available, return default.
+        res.on('data', function(_data) {
+          var data = JSON.parse(_data);
           models.department.findOne({
             where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('name')), models.sequelize.fn('lower', data.jurisdiction)),
             include: [{ model: models.person, include:{model: models.personEmail} }]
@@ -62,10 +60,9 @@ var getResponsible = function(req, res, next) {
               };
               next(out);
             } else {
-              //Get default
               next();
             }
-          })
+          });
         }).on('error', function(e) {
           console.error(e);
           next();
@@ -242,11 +239,10 @@ var getServiceDefinition = function(req, res) {
             "message": "The requested service doesn't exist"
           }, 404);
         } else {
-          var e = {
+          errors.catchError(req, res, {
             "name": "ServiceAttributesError",
             "message": "There requested service has no attributes"
-          };
-          errors.catchError(req, res, e, 400);
+          }, 400);
         }
       }
     }).catch(function(e) {
@@ -592,7 +588,7 @@ var postServiceRequest = function(req, res) {
               bulkmedia.push(_mediaA);
             }
           }
-          
+
           models.media.bulkCreate(bulkmedia).then(function() {
             sendMail(req, res, issue);
           }).catch(function(err) {
@@ -607,7 +603,7 @@ var postServiceRequest = function(req, res) {
 };
 
 var sendMail = function(req, res, issue) {
-  
+
   var format = req.params.format || 'xml';
   var mailer = require('../helpers/mail.js');
   //We have ticket, issue, and media, plus some user details in the req object.
@@ -619,8 +615,8 @@ var sendMail = function(req, res, issue) {
       "name": req.i18n.t('mail.system'),
       "email": util.getConfig('email'),
     };
-    
-    
+
+
 
     if (responsible) {
       //Set the responsible part info
@@ -630,7 +626,7 @@ var sendMail = function(req, res, issue) {
       };
       translate_string = 'service.notice';
     }
-    
+
     // Anonymous?
     if(!req.body.email && !req.body.phone){
       translate_string = 'service.notice-anonymous';

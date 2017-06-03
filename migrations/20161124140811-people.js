@@ -12,15 +12,9 @@
         firstname: Sequelize.STRING,
         middlename: Sequelize.STRING,
         lastname: Sequelize.STRING,
-        organization: Sequelize.STRING,
-        address: Sequelize.STRING,
-        city: Sequelize.STRING,
-        state: Sequelize.STRING,
-        zip: Sequelize.STRING,
         department_id: Sequelize.INTEGER,
         username: Sequelize.STRING,
-        password: Sequelize.STRING,
-        authenticationMethod: Sequelize.STRING,
+        token: Sequelize.STRING,
         role: Sequelize.STRING
       });
     },

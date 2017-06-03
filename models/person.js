@@ -10,6 +10,7 @@
       middlename: DataTypes.STRING,
       lastname: DataTypes.STRING,
       username: DataTypes.STRING,
+      token: DataTypes.STRING,
       role: DataTypes.STRING
     }, {
       tableName: 'people',
