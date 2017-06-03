@@ -46,7 +46,7 @@ var getResponsible = function(req, res, next) {
         res.on('data', function(_data) {
           var data = JSON.parse(_data);
           models.department.findOne({
-            where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('name')), models.sequelize.fn('lower', data.jurisdiction)),
+            where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('service_name')), models.sequelize.fn('lower', data.jurisdiction)),
             include: [{ model: models.person, include:{model: models.personEmail} }]
           }).then(function(result) {
             var gov_prefix = "";
@@ -103,11 +103,10 @@ var getServiceList = function(req, res) {
     var options = {
       attributes: [
         ['id', 'service_code'],
-        ['name', 'service_name'], 'description', 'customFields', 'keywords'
+        'customFields'
       ],
       include: [{
-        model: models.service_group,
-        attributes: ['name']
+        model: models.service_group
       }],
       order: [
         ['sequence', 'ASC']
@@ -125,37 +124,42 @@ var getServiceList = function(req, res) {
     }
 
     models.service.findAll(options).then(function(results) {
+      var out = [];
       for (var i in results) {
-        if (results[i].dataValues.service_group) {
-          results[i].dataValues.group = results[i].dataValues.service_group.name;
-          delete results[i].dataValues.service_group;
+        var _service = results[i].get_i18n(req.i18n.language);
+        if (_service.dataValues.service_group) {
+          var _group = _service.dataValues.service_group.get_i18n(req.i18n.language);
+          _service.dataValues.group = _group.group_name;
+          delete _service.dataValues.service_group;
         }
 
-        if (results[i].dataValues.keywords) {
-          results[i].dataValues.keywords = results[i].dataValues.keywords
+        if (_service.dataValues.keywords) {
+          _service.dataValues.keywords = _service.dataValues.keywords
             .replace(/, /g, ',')
             .replace(/,/g, ' ')
             .split(' ');
-          results[i].dataValues.keywords = results[i].dataValues.keywords.join(',');
+          _service.dataValues.keywords = _service.dataValues.keywords.join(',');
         }
 
-        results[i].dataValues.type = results[i].dataValues.type || 'realtime';
-        if (results[i].dataValues.customFields) {
-          results[i].dataValues.metadata = true;
+        _service.dataValues.type = _service.dataValues.type || 'realtime';
+        if (_service.dataValues.customFields) {
+          _service.dataValues.metadata = true;
         } else {
-          results[i].dataValues.metadata = false;
+          _service.dataValues.metadata = false;
         }
 
-        delete results[i].dataValues.customFields;
+        delete _service.dataValues.customFields;
+        delete _service.dataValues.service_i18n;
+        out.push(_service);
       }
-      results = util.removeNulls(results);
+      out = util.removeNulls(out);
       switch (format) {
         case 'json':
-          res.json(results);
+          res.json(out);
           break;
         default:
           var final = js2xmlparser.parse("services", {
-            "service": results
+            "service": out
           });
           res.set('Content-Type', 'text/xml');
           res.send(final);
@@ -203,7 +207,8 @@ var getServiceDefinition = function(req, res) {
     }
     models.service.findOne(options).then(function(results) {
       if (results && results.dataValues.attributes) {
-        var attributes = JSON.parse(results.dataValues.attributes);
+        var _service = results.get_i18n(req.i18n.language);
+        var attributes = JSON.parse(_service.dataValues.attributes);
         // format the values as "key" and "name"
         for (var j in attributes) {
           if (attributes[j].values) {
@@ -216,8 +221,9 @@ var getServiceDefinition = function(req, res) {
             }
           }
         }
-        results.dataValues.attributes = attributes;
-        results = util.removeNulls(results);
+        _service.dataValues.attributes = attributes;
+        delete _service.dataValues.service_i18n;
+        results = util.removeNulls(_service);
         switch (format) {
           case 'json':
             res.json(results);
@@ -229,8 +235,8 @@ var getServiceDefinition = function(req, res) {
                 attributes: "attribute"
               }
             });
-            res.set('Content-Type', 'text/xml');
-            res.send(final);
+          res.set('Content-Type', 'text/xml');
+          res.send(final);
         }
       } else {
         if (!results) {
@@ -247,6 +253,7 @@ var getServiceDefinition = function(req, res) {
       }
     }).catch(function(e) {
       //Catch any unexpected errors
+      console.log(e);
       errors.catchError(req, res, {
         "name": "ServiceCodeError",
         "message": "No service_code, or no valid service_code provided"
@@ -332,7 +339,7 @@ var getServiceRequests = function(req, res) {
     }
     if (req.query.service_code) {
       where = where || {};
-      where.category_id = {
+      where.service_id = {
         $in: util.StringToIntArray(req.query.service_code)
       };
     }
@@ -506,7 +513,7 @@ var getServiceRequests = function(req, res) {
 var postServiceRequest = function(req, res) {
   var format = req.params.format || 'xml';
   var ticket = {
-    "category_id": parseInt(req.body.service_code, 10),
+    "service_id": parseInt(req.body.service_code, 10),
     "enteredByPerson_id": req.body.person_id,
     "client_id": req.body.application,
     "assignedPerson_id": req.body.assignee
@@ -526,6 +533,7 @@ var postServiceRequest = function(req, res) {
 
   models.request.create(ticket).then(function(ticket) {
     //Update the corresponding issue
+    console.log("ticket created");
     var issue = {
       "ticket_id": ticket.id,
       "contacMethod_id": req.body.contactmethod,
@@ -533,6 +541,7 @@ var postServiceRequest = function(req, res) {
       "description": req.body.description
     };
     models.issue.create(issue).then(function(issue) {
+      console.log("issue created");
       var curtime = moment();
 
       var media = {
@@ -544,6 +553,7 @@ var postServiceRequest = function(req, res) {
       };
 
       if (req.file) {
+        console.log("file present");
         var path = require('path');
         var ext = path.extname(req.file.originalname);
         var targetPath = './media/' + curtime.format('YYYY/M/D') + "/";
@@ -558,6 +568,7 @@ var postServiceRequest = function(req, res) {
             errors.catchError(req, res, err);
           } else {
             models.media.create(media).then(function(media) {
+              console.log("media created");
               sendMail(req, res, issue);
             }); //models.media.create
           }

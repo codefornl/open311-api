@@ -28,7 +28,9 @@ i18next
   .use(Backend)
   .use(middleware.LanguageDetector)
   .init({
-    lng: 'nl',
+    detection:{
+      lookupQuerystring: 'lang'
+    },
     debug: false,
     "fallbackLng": "en",
     backend: {

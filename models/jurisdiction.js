@@ -18,7 +18,7 @@
     }, {
       classMethods: {
         associate: function(models) {
-          jurisdiction.hasMany(models.service);
+          jurisdiction.hasMany(models.service, {foreignKey: 'jurisdiction_id'});
         }
       }
     });

@@ -3,7 +3,7 @@
   module.exports = {
     up: function(queryInterface, Sequelize) {
       return queryInterface.addColumn({
-        tableName: 'categories'
+        tableName: 'services'
       },
       'jurisdiction_id',
       {
@@ -14,7 +14,7 @@
     },
     down: function(queryInterface, Sequelize) {
       return queryInterface.removeColumn({
-        tableName: 'categories'
+        tableName: 'services'
       },  'parent_external_id');
     }
   };

@@ -3,7 +3,7 @@
   module.exports = {
     up: function(queryInterface, Sequelize) {
       return queryInterface.addColumn({
-        tableName: 'categories'
+        tableName: 'services'
       },
       'type',
       {
@@ -16,7 +16,7 @@
     },
     down: function(queryInterface, Sequelize) {
       return queryInterface.removeColumn({
-        tableName: 'categories'
+        tableName: 'services'
       },  'type');
     }
   };

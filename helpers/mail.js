@@ -15,7 +15,7 @@ exports.newRequest = function(req, id){
     },
     attributes: [
       ['id', 'service_request_id'],
-      ['category_id', 'service_code'],
+      ['service_id', 'service_code'],
       'status',
       ['location', 'address'],
       ['latitude', 'lat'],
@@ -24,8 +24,7 @@ exports.newRequest = function(req, id){
       ['lastModified', 'updated_datetime']
     ],
     include: [{
-      model: models.service,
-      attributes: ['service_name']
+      model: models.service
     },{
       model: models.issue,
       attributes: ['description'],
@@ -49,10 +48,11 @@ exports.newRequest = function(req, id){
     var env = process.env.NODE_ENV || "development";
     var templateDir = path.join(__dirname, '../templates/mail', 'request');
     var template = new EmailTemplate(templateDir);
+    var _service = result.service.get_i18n(req.i18n.language);
     var request = {
       title: req.i18n.t("mail.request.title",
         {
-          "service": result.service.service_name
+          "service": _service.service_name
         }
       ),
       description: result.issues[0].description,
@@ -63,7 +63,7 @@ exports.newRequest = function(req, id){
       to: req.to_open311.email,
       subject: req.i18n.t('mail.request.subject',
         {
-          "service": result.service.service_name
+          "service": _service.service_name
         }
       )
     };

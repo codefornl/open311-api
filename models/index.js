@@ -3,6 +3,14 @@
   var fs = require("fs");
   var path = require("path");
   var Sequelize = require("sequelize");
+  var SequelizeI18N = require('sequelize-i18n');
+
+  var languages = {
+    list : ["en" , "nl", "fr" , "es"] ,
+    default : "en"
+  };
+
+
   var env = process.env.NODE_ENV || "development";
   var config;
   if (!fs.existsSync(__dirname + '/../config.json')) {
@@ -13,6 +21,8 @@
       config = require(__dirname + '/../config.json')[env];
   }
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
+  var i18n = new SequelizeI18N( sequelize, { languages: languages.list, default_language: languages.default } );
+  i18n.init();
   var db = {};
   fs
     .readdirSync(__dirname)

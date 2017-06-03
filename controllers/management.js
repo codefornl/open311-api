@@ -53,7 +53,7 @@ var postService = function(req, res) {
     };
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
-    req.body.jurisdictionId = jurisdiction.id;
+    req.body.jurisdiction_id = jurisdiction.id;
     models.service.create(req.body).then(function(service) {
       res.json({
         created: service.id

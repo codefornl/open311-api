@@ -9,7 +9,7 @@
           primaryKey: true,
           type: Sequelize.INTEGER.UNSIGNED
         },
-        category_id: Sequelize.INTEGER.UNSIGNED,
+        service_id: Sequelize.INTEGER.UNSIGNED,
         client_id: Sequelize.INTEGER.UNSIGNED,
         enteredByPerson_id: Sequelize.INTEGER.UNSIGNED,
         assignedPerson_id: Sequelize.INTEGER.UNSIGNED,
