@@ -4,7 +4,18 @@
     up: function(queryInterface, Sequelize) {
       return queryInterface.bulkInsert('departments', [{
         id: 1,
-        name: 'Systeem'
+        name: 'Systeem',
+        jurisdiction_id: 9999
+      },
+      {
+        id: 2,
+        name: 'Breda',
+        jurisdiction_id: 758
+      },
+      {
+        id: 3,
+        name: 'Amsterdam',
+        jurisdiction_id: 363
       },
       {
         id: 23,

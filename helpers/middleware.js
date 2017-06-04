@@ -1,6 +1,33 @@
 var models = require('../models');
 var multer  = require('multer');
 var errors = require('./errors');
+
+exports.validJurisdiction = function(req, res, next){
+  var whereClause = {
+    where: {
+      is_default: true
+    }
+  };
+  if (req.query.jurisdiction_id) {
+    whereClause = {
+      where: {
+        jurisdiction_id: req.query.jurisdiction_id
+      }
+    };
+  }
+  if (req.body.jurisdiction_id) {
+    whereClause = {
+      where: {
+        jurisdiction_id: req.body.jurisdiction_id
+      }
+    };
+  }
+  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
+    req.jurisdiction = jurisdiction;
+    next();
+  });
+};
+
 exports.validServiceCode = function(req,res,next){
   if(req.body.service_code || parseInt(req.body.service_code, 10) >= 0) {
     models.service.findOne(

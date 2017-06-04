@@ -5,6 +5,11 @@
   'use strict';
   module.exports = function(sequelize, DataTypes) {
     var jurisdiction = sequelize.define("jurisdiction", {
+      id : {
+        type: DataTypes.INTEGER.UNSIGNED,
+        primaryKey: true,
+        autoIncrement: true
+      },
       jurisdiction_id: DataTypes.STRING,
       name: DataTypes.STRING,
       external_id: DataTypes.STRING,
@@ -19,7 +24,12 @@
       timestamps: false,
       classMethods: {
         associate: function(models) {
-          jurisdiction.hasMany(models.service, {foreignKey: 'jurisdiction_id'});
+          jurisdiction.belongsToMany(models.service, {
+            through: 'jurisdiction_service',
+            foreignKey: 'jurisdiction_id',
+            otherKey: 'service_id',
+            timestamps: false
+          });
           jurisdiction.hasMany(models.department, {foreignKey: 'jurisdiction_id'});
         }
       }

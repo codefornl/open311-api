@@ -13,13 +13,15 @@
           id: 2,
           name: 'Admin User',
           username: 'admin_user',
-          role: 'fd603012-705a-4ad5-b335-3ef3869015c1'
+          role: 'admin',
+          token: 'fd603012-705a-4ad5-b335-3ef3869015c1'
         }, {
           id: 3,
           name: 'Eindhoven Behandelaar',
           username: 'eindhoven_behandelaar',
           role: 'user',
-          department_id: 23
+          department_id: 23,
+          token: '2b4ca649-0407-4088-a203-0fbbf48563be'
         }, {
           id: 4,
           name: 'Wooninc Behandelaar',
@@ -49,7 +51,23 @@
           name: 'TESTCORP1 User',
           role: 'user',
           username: 'testcorp1_user',
-          department_id: 28
+          department_id: 28,
+          token: 'cadcd183-e586-4e64-91a5-b34915ec7b09'
+        }, {
+          id: 9,
+          name: 'Amsterdam Behandelaar',
+          role: 'user',
+          username: 'amsterdam_behandelaar',
+          department_id: 3,
+          token: '3b561c98-e41e-478c-bd5b-9bf16d670070'
+        }, {
+          id: 10,
+          name: 'Breda Behandelaar',
+          role: 'user',
+          username: 'breda_behandelaar',
+          department_id: 2,
+          token: '1dc8b5ca-239f-4eed-8ab8-033b62e67e5a'
+
         }
       ], {});
     },

@@ -87,87 +87,79 @@ var getResponsible = function(req, res, next) {
  */
 var getServiceList = function(req, res) {
   var format = req.params.format || 'xml';
-  var whereClause = {
-    where: {
-      is_default: true
-    }
-  };
+  var whereClause = { "$jurisdictions.is_default$": true };
+
   if (req.query.jurisdiction_id) {
     whereClause = {
-      where: {
-        jurisdiction_id: req.query.jurisdiction_id
-      }
+        "$jurisdictions.jurisdiction_id$": req.query.jurisdiction_id
     };
   }
-  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
-    var options = {
-      attributes: [
-        ['id', 'service_code'],
-        'customFields'
-      ],
-      include: [{
+
+  var options = {
+    where: whereClause,
+    attributes: [
+      ['id', 'service_code'],
+      'customFields'
+    ],
+    include: [
+      {
         model: models.service_group
-      }],
-      order: [
-        ['sequence', 'ASC']
-      ]
-    };
-    if (jurisdiction) {
-      options.where = {
-        jurisdiction_id: jurisdiction.id
-      };
-    } else {
-      // Only get services without jurisdiction
-      options.where = {
-        jurisdiction_id: null
-      };
+      },
+      {
+        model: models.jurisdiction,
+        through: {
+          attributes: ['id','jurisdiction_id']
+        }
+      }
+    ],
+    order: [
+      ['sequence', 'ASC']
+    ]
+  };
+
+  models.service.findAll(options).then(function(results) {
+    var out = [];
+    for (var i in results) {
+      var _service = results[i].get_i18n(req.i18n.language);
+      if (_service.dataValues.service_group) {
+        var _group = _service.dataValues.service_group.get_i18n(req.i18n.language);
+        _service.dataValues.group = _group.group_name;
+        delete _service.dataValues.service_group;
+      }
+
+      if (_service.dataValues.keywords) {
+        _service.dataValues.keywords = _service.dataValues.keywords
+          .replace(/, /g, ',')
+          .replace(/,/g, ' ')
+          .split(' ');
+        _service.dataValues.keywords = _service.dataValues.keywords.join(',');
+      }
+
+      _service.dataValues.type = _service.dataValues.type || 'realtime';
+      if (_service.dataValues.customFields) {
+        _service.dataValues.metadata = true;
+      } else {
+        _service.dataValues.metadata = false;
+      }
+      delete _service.dataValues.jurisdictions;
+      delete _service.dataValues.customFields;
+      delete _service.dataValues.service_i18n;
+      out.push(_service);
     }
-
-    models.service.findAll(options).then(function(results) {
-      var out = [];
-      for (var i in results) {
-        var _service = results[i].get_i18n(req.i18n.language);
-        if (_service.dataValues.service_group) {
-          var _group = _service.dataValues.service_group.get_i18n(req.i18n.language);
-          _service.dataValues.group = _group.group_name;
-          delete _service.dataValues.service_group;
-        }
-
-        if (_service.dataValues.keywords) {
-          _service.dataValues.keywords = _service.dataValues.keywords
-            .replace(/, /g, ',')
-            .replace(/,/g, ' ')
-            .split(' ');
-          _service.dataValues.keywords = _service.dataValues.keywords.join(',');
-        }
-
-        _service.dataValues.type = _service.dataValues.type || 'realtime';
-        if (_service.dataValues.customFields) {
-          _service.dataValues.metadata = true;
-        } else {
-          _service.dataValues.metadata = false;
-        }
-
-        delete _service.dataValues.customFields;
-        delete _service.dataValues.service_i18n;
-        out.push(_service);
-      }
-      out = util.removeNulls(out);
-      switch (format) {
-        case 'json':
-          res.json(out);
-          break;
-        default:
-          var final = js2xmlparser.parse("services", {
-            "service": out
-          });
-          res.set('Content-Type', 'text/xml');
-          res.send(final);
-      }
-    });
+    out = util.removeNulls(out);
+    switch (format) {
+      case 'json':
+        res.json(out);
+        break;
+      default:
+        var final = js2xmlparser.parse("services", {
+          "service": out
+        });
+        res.set('Content-Type', 'text/xml');
+        res.send(final);
+    }
   }).catch(function(e) {
-    //Catch any unexpected errors
-    errors.catchError(req, res, e);
+    console.error(e);
   });
 };
 
@@ -177,92 +169,82 @@ var getServiceList = function(req, res) {
  */
 var getServiceDefinition = function(req, res) {
   var format = req.params.format || 'xml';
-  var whereClause = {
-    where: {
-      is_default: true
-    }
-  };
+  var whereClause = { "$jurisdictions.is_default$": true, id: req.params.service_code };
+
   if (req.query.jurisdiction_id) {
     whereClause = {
-      where: {
-        jurisdiction_id: req.query.jurisdiction_id
-      }
+        "$jurisdictions.jurisdiction_id$": req.query.jurisdiction_id,
+        id: req.params.service_code
     };
   }
-  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
-    var options = {
-      where: {
-        id: req.params.service_code
-      },
-      attributes: [
-        ['id', 'service_code'],
-        ['customFields', 'attributes']
-      ]
-    };
-    if (jurisdiction) {
-      options.where.jurisdiction_id = jurisdiction.id;
-    } else {
-      // Only get services without jurisdiction
-      options.where.jurisdiction_id = null;
-    }
-    models.service.findOne(options).then(function(results) {
-      if (results && results.dataValues.attributes) {
-        var _service = results.get_i18n(req.i18n.language);
-        var attributes = JSON.parse(_service.dataValues.attributes);
-        // format the values as "key" and "name"
-        for (var j in attributes) {
-          if (attributes[j].values) {
-            for (var val in attributes[j].values) {
-              var tempval = attributes[j].values[val];
-              attributes[j].values[val] = {
-                "key": tempval,
-                "name": tempval
-              };
-            }
-          }
-        }
-        _service.dataValues.attributes = attributes;
-        delete _service.dataValues.service_i18n;
-        results = util.removeNulls(_service);
-        switch (format) {
-          case 'json':
-            res.json(results);
-            break;
-          default:
-            var final = js2xmlparser.parse("service_definition", results, {
-              arrayMap: {
-                values: "value",
-                attributes: "attribute"
-              }
-            });
-          res.set('Content-Type', 'text/xml');
-          res.send(final);
-        }
-      } else {
-        if (!results) {
-          errors.catchError(req, res, {
-            "name": "ServiceError",
-            "message": "The requested service doesn't exist"
-          }, 404);
-        } else {
-          errors.catchError(req, res, {
-            "name": "ServiceAttributesError",
-            "message": "There requested service has no attributes"
-          }, 400);
+
+  var options = {
+    where: whereClause,
+    attributes: [
+      ['id', 'service_code'],
+      ['customFields', 'attributes']
+    ],
+    include: [
+      {
+        model: models.jurisdiction,
+        through: {
+          attributes: ['id','jurisdiction_id']
         }
       }
-    }).catch(function(e) {
-      //Catch any unexpected errors
-      errors.catchError(req, res, {
-        "name": "ServiceCodeError",
-        "message": "No service_code, or no valid service_code provided"
-      }, 400);
-    });
+    ]
+  };
+  models.service.findOne(options).then(function(results) {
+    if (results && results.dataValues.attributes) {
+      var _service = results.get_i18n(req.i18n.language);
+      var attributes = JSON.parse(_service.dataValues.attributes);
+      // format the values as "key" and "name"
+      for (var j in attributes) {
+        if (attributes[j].values) {
+          for (var val in attributes[j].values) {
+            var tempval = attributes[j].values[val];
+            attributes[j].values[val] = {
+              "key": tempval,
+              "name": tempval
+            };
+          }
+        }
+      }
+      _service.dataValues.attributes = attributes;
+      delete _service.dataValues.jurisdictions;
+      delete _service.dataValues.service_i18n;
+      results = util.removeNulls(_service);
+      switch (format) {
+        case 'json':
+          res.json(results);
+          break;
+        default:
+          var final = js2xmlparser.parse("service_definition", results, {
+            arrayMap: {
+              values: "value",
+              attributes: "attribute"
+            }
+          });
+        res.set('Content-Type', 'text/xml');
+        res.send(final);
+      }
+    } else {
+      if (!results) {
+        errors.catchError(req, res, {
+          "name": "ServiceError",
+          "message": "The requested service isn't available"
+        }, 404);
+      } else {
+        errors.catchError(req, res, {
+          "name": "ServiceAttributesError",
+          "message": "There requested service has no attributes"
+        }, 400);
+      }
+    }
   }).catch(function(e) {
     //Catch any unexpected errors
     errors.catchError(req, res, {
-      "name": "JurisdictionError",
-      "message": "No jurisdiction_id, or no valid jurisdiction_id provided"
+      "name": "ServiceCodeError",
+      "message": "No service_code, or no valid service_code provided"
     }, 400);
   });
 };
@@ -275,238 +257,207 @@ var getServiceRequests = function(req, res) {
   //read the header "open311-deviceid" that needs to be set by client applications and should be unique per user.
   var deviceid = req.get('open311-deviceid');
   var format = req.params.format || 'xml';
-  var whereClause = {
-    where: {
-      is_default: true
+  var service_where = {
+    displayPermissionLevel:{
+      $in: ['public', 'anonymous']
     }
   };
-  if (req.query.jurisdiction_id) {
-    whereClause = {
-      where: {
-        jurisdiction_id: req.query.jurisdiction_id
-      }
+  var options = {
+    include: [{
+      model: models.service,
+      where: service_where,
+      attributes: ['service_name'],
+    }, {
+      model: models.issue,
+      attributes: ['description'],
+      include: [{
+        model: models.media
+      }]
+    }, {
+      model: models.person,
+      attributes: ['name'],
+      include: [{
+        model: models.department,
+        attributes: ['name']
+      }]
+    }],
+    order: [
+      ['enteredDate', 'DESC'],
+      ['id', 'DESC']
+    ]
+  };
+  var where = {
+    jurisdiction_id: req.jurisdiction.dataValues.id
+  };
+  if (req.query.service_request_id) {
+    where.id = {
+      $in: util.StringToIntArray(req.query.service_request_id)
     };
   }
-  models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
-    var service_where = {
-      jurisdiction_id: null,
-      displayPermissionLevel:{
-        $in: ['public', 'anonymous']
-      }
+  if (req.query.service_code) {
+    where = where || {};
+    where.service_id = {
+      $in: util.StringToIntArray(req.query.service_code)
     };
-    if (jurisdiction) {
-      service_where = {
-        jurisdiction_id: jurisdiction.id,
-        displayPermissionLevel:{
-          $in: ['public', 'anonymous']
-        }
-      };
-    }
-    var options = {
-      include: [{
-        model: models.service,
-        where: service_where,
-        attributes: ['service_name'],
-        // include: [{
-        //   model: models.service_group
-        // }]
-      }, {
-        model: models.issue,
-        attributes: ['description'],
-        include: [{
-          model: models.media
-        }]
-      }, {
-        model: models.person,
-        attributes: ['name'],
-        include: [{
-          model: models.department,
-          attributes: ['name']
-        }]
-      }],
-      order: [
-        ['enteredDate', 'DESC'],
-        ['id', 'DESC']
-      ]
+  }
+
+  var datewindow;
+  if (req.query.start_date) {
+    datewindow = {
+      $lt: req.query.start_date
     };
-    var where;
-    if (req.query.service_request_id) {
-      where = where || {};
-      where.id = {
-        $in: util.StringToIntArray(req.query.service_request_id)
-      };
-    }
-    if (req.query.service_code) {
-      where = where || {};
-      where.service_id = {
-        $in: util.StringToIntArray(req.query.service_code)
-      };
-    }
+  }
+  if (req.query.end_date) {
+    datewindow = datewindow || {};
+    datewindow.$gt = req.query.end_date;
+  }
+  if (datewindow) {
+    where = where || {};
+    where.enteredDate = datewindow;
+  }
 
-    var datewindow;
-    if (req.query.start_date) {
-      datewindow = {
-        $lt: req.query.start_date
-      };
+  if (req.query.status) {
+    where = where || {};
+    where.status = req.query.status;
+  }
+  if (req.query.page) {
+    //default page size = 10
+    var page_size = parseInt(req.query.page_size) || 10;
+    options.limit = page_size;
+    if (parseInt(req.query.page) > 0) {
+      options.offset = (parseInt(req.query.page) - 1) * page_size || 0;
     }
-    if (req.query.end_date) {
-      datewindow = datewindow || {};
-      datewindow.$gt = req.query.end_date;
-    }
-    if (datewindow) {
-      where = where || {};
-      where.enteredDate = datewindow;
-    }
+  }
+  if (where) {
+    options.where = where;
+  }
+  models.request.findAll(options).then(function(results) {
+    var catcher = [];
+    var geojson = {
+      type: "FeatureCollection",
+      "features": []
+    };
+    for (var i in results) {
+      var request = {};
+      request.service_request_id = results[i].id;
+      request.status = results[i].status;
+      request.status_notes = null; //todo not implemented!
 
-    if (req.query.status) {
-      where = where || {};
-      where.status = req.query.status;
-    }
-    if (req.query.page) {
-      //default page size = 10
-      var page_size = parseInt(req.query.page_size) || 10;
-      options.limit = page_size;
-      if (parseInt(req.query.page) > 0) {
-        options.offset = (parseInt(req.query.page) - 1) * page_size || 0;
+      if (results[i].service) {
+        request.service_name = results[i].service.service_name;
       }
-    }
-    if (where) {
-      options.where = where;
-    }
-    models.request.findAll(options).then(function(results) {
-      var catcher = [];
-      var geojson = {
-        type: "FeatureCollection",
-        "features": []
-      };
-      for (var i in results) {
-        var request = {};
-        request.service_request_id = results[i].id;
-        request.status = results[i].status;
-        request.status_notes = null; //todo not implemented!
 
-        if (results[i].service) {
-          request.service_name = results[i].service.service_name;
-          // if (results[i].service.service_group) {
-          //   request.group = results[i].service.service_group.name;
-          // }
+      request.service_code = results[i].category_id;
+      request.description = results[i].description || null;
+      if (results[i].person) {
+        if (results[i].person.department) {
+          request.agency_responsible = results[i].person.department.name;
         }
+      }
 
-        request.service_code = results[i].category_id;
-        request.description = results[i].description || null;
-        if (results[i].person) {
-          if (results[i].person.department) {
-            request.agency_responsible = results[i].person.department.name;
-          }
-        }
+      request.service_notice = null; //todo not implemented!
+      request.requested_datetime = moment(results[i].enteredDate).format('YYYY-MM-DDTHH:mm:ssZ');
+      request.updated_datetime = moment(results[i].lastModified).format('YYYY-MM-DDTHH:mm:ssZ');
+      request.expected_datetime = null; //todo not implemented!
+      request.address = results[i].location || null;
+      request.address_id = results[i].addressId || null;
+      request.zipcode = results[i].zip || null;
+      request.lat = results[i].latitude;
+      request.long = results[i].longitude;
 
-        request.service_notice = null; //todo not implemented!
-
-        request.requested_datetime = moment(results[i].enteredDate).format('YYYY-MM-DDTHH:mm:ssZ');
-        request.updated_datetime = moment(results[i].lastModified).format('YYYY-MM-DDTHH:mm:ssZ');
-
-        request.expected_datetime = null; //todo not implemented!
-        request.address = results[i].location || null;
-        request.address_id = results[i].addressId || null;
-        request.zipcode = results[i].zip || null;
-
-        request.lat = results[i].latitude;
-        request.long = results[i].longitude;
-
-        //Media and description
-        var first = true;
-        var extras = [];
-        for (var l in results[i].issues) {
-          request.description = request.description || "";
-          request.description = results[i].issues[l].description;
-          for (var m in results[i].issues[l].media) {
-            var port = util.getConfig('remote_port') || req.app.settings.port;
-            var callingUrl = req.protocol +
-              '://' +
-              req.hostname +
-              (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
-            // Need to grab first image and store it in the media_url property
-            var mime_type = results[i].issues[l].media[m].mime_type || '';
-            if (first && mime_type.substring(0,5) === 'image') {
-              if (results[i].issues[l].media[m].media_type === 'url' ) {
-                request.media_url = results[i].issues[l].media[m].filename;
-              } else {
-                request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                  "/" + results[i].issues[l].media[m].internalFilename;
-              }
-              first = false;
+      //Media and description
+      var first = true;
+      var extras = [];
+      for (var l in results[i].issues) {
+        request.description = request.description || "";
+        request.description = results[i].issues[l].description;
+        for (var m in results[i].issues[l].media) {
+          var port = util.getConfig('remote_port') || req.app.settings.port;
+          var callingUrl = req.protocol +
+            '://' +
+            req.hostname +
+            (port == 80 || port == 443 ? '' : ':' + port) + '/media/';
+          // Need to grab first image and store it in the media_url property
+          var mime_type = results[i].issues[l].media[m].mime_type || '';
+          if (first && mime_type.substring(0,5) === 'image') {
+            if (results[i].issues[l].media[m].media_type === 'url' ) {
+              request.media_url = results[i].issues[l].media[m].filename;
             } else {
-              if (results[i].issues[l].media[m].media_type === 'url') {
-                extras.push({
-                  "url": results[i].issues[l].media[m].filename,
-                  "mimetype": results[i].issues[l].media[m].mime_type,
-                  "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
-                });
-              } else {
-                extras.push({
-                  " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
-                    "/" + results[i].issues[l].media[m].internalFilename,
-                  "mimetype": results[i].issues[l].media[m].mime_type,
-                  "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
-                });
-              }
+              request.media_url = callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                "/" + results[i].issues[l].media[m].internalFilename;
+            }
+            first = false;
+          } else {
+            if (results[i].issues[l].media[m].media_type === 'url') {
+              extras.push({
+                "url": results[i].issues[l].media[m].filename,
+                "mimetype": results[i].issues[l].media[m].mime_type,
+                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+              });
+            } else {
+              extras.push({
+                " url": callingUrl + moment(results[i].issues[l].media[m].uploaded).format('YYYY/M/D') +
+                  "/" + results[i].issues[l].media[m].internalFilename,
+                "mimetype": results[i].issues[l].media[m].mime_type,
+                "uploaded": moment(results[i].issues[l].media[m].uploaded).format('YYYY-MM-DDTHH:mm:ssZ')
+              });
             }
           }
         }
-        if (extras.length > 0) {
-          request.extended_attributes = {
-            "attachments": extras
+      }
+      if (extras.length > 0) {
+        request.extended_attributes = {
+          "attachments": extras
+        };
+      }
+      if (request.description === "") {
+        request.description = null;
+      }
+      if (format === 'geojson') {
+        if (request.lat && request.long) {
+          var feature = {
+            "type": "Feature",
+            "id": request.service_request_id,
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                request.long,
+                request.lat
+              ]
+            },
           };
+          delete request.lat;
+          delete request.long;
+          feature.properties = util.removeNulls(request);
+          geojson.features.push(feature);
         }
-        if (request.description === "") {
-          request.description = null;
-        }
-        if (format === 'geojson') {
-          if (request.lat && request.long) {
-            var feature = {
-              "type": "Feature",
-              "id": request.service_request_id,
-              "geometry": {
-                "type": "Point",
-                "coordinates": [
-                  request.long,
-                  request.lat
-                ]
-              },
-            };
-            delete request.lat;
-            delete request.long;
-            feature.properties = util.removeNulls(request);
-            geojson.features.push(feature);
-          }
-        } else {
-          catcher.push(request);
-        }
+      } else {
+        catcher.push(request);
       }
-      catcher = util.removeNulls(catcher);
-      switch (format) {
-        case 'geojson':
-          res.json(geojson);
-          break;
-        case 'json':
-          res.json(catcher);
-          break;
-        default:
-          var final = js2xmlparser.parse("service_requests", {
-            "service_request": catcher
-          });
-          res.set('Content-Type', 'text/xml');
-          res.send(final);
-      }
-    }).catch(function(e) {
-      //Catch any unexpected errors
-      errors.catchError(req, res, e);
-    });
+    }
+    catcher = util.removeNulls(catcher);
+    switch (format) {
+      case 'geojson':
+        res.json(geojson);
+        break;
+      case 'json':
+        res.json(catcher);
+        break;
+      default:
+        var final = js2xmlparser.parse("service_requests", {
+          "service_request": catcher
+        });
+        res.set('Content-Type', 'text/xml');
+        res.send(final);
+    }
+  }).catch(function(e) {
+    //Catch any unexpected errors
+    errors.catchError(req, res, e);
   });
 };
 
 /**
- * Open311 - POST Service Request
+ * Open311 - Post Service Request
  * @see http://wiki.open311.org/GeoReport_v2/#post-service-request
  */
 var postServiceRequest = function(req, res) {
@@ -514,8 +465,9 @@ var postServiceRequest = function(req, res) {
   var ticket = {
     "service_id": parseInt(req.body.service_code, 10),
     "enteredByPerson_id": req.body.person_id,
-    "client_id": req.body.application,
-    "assignedPerson_id": req.body.assignee
+    "application_id": req.body.application,
+    "assignedPerson_id": req.body.assignee,
+    "jurisdiction_id": req.jurisdiction.id
   };
   if (req.body.lat) {
     ticket.latitude = parseFloat(req.body.lat);
@@ -671,17 +623,19 @@ var sendMail = function(req, res, issue) {
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
-router.route('/api/v2/requests.:format').get(getServiceRequests);
+router.route('/api/v2/requests.:format').get(middleware.validJurisdiction, getServiceRequests);
 router.route('/api/v2/requests.:format').post(
   middleware.processMedia,
   middleware.ensureApiKey,
   middleware.validServiceCode,
+  middleware.validJurisdiction,
   middleware.ensureIdentified,
   postServiceRequest);
 router.route('/api/v2/request.:format').post(
   middleware.processMedia,
   middleware.ensureApiKey,
   middleware.validServiceCode,
+  middleware.validJurisdiction,
   middleware.ensureIdentified,
   postServiceRequest);
 

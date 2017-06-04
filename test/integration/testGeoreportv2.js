@@ -107,6 +107,7 @@ describe('testing Georeport v2', function() {
     // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('description', 'Test Anonymous with address_string')
@@ -126,6 +127,7 @@ describe('testing Georeport v2', function() {
     // See that we get a status 200 on retrieving the Index
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('first_name', 'Test User')
@@ -145,6 +147,7 @@ describe('testing Georeport v2', function() {
   it('Post Request by user without email should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('first_name', 'Test User')
@@ -164,6 +167,7 @@ describe('testing Georeport v2', function() {
   it('Post Request lat, long should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 2)
       .field('first_name', 'Test User')
@@ -184,6 +188,7 @@ describe('testing Georeport v2', function() {
   it('Post Request with base64 media should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('first_name', 'Test User')
@@ -205,6 +210,7 @@ describe('testing Georeport v2', function() {
   it('Post Request with media url should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('first_name', 'Test User')
@@ -225,6 +231,7 @@ describe('testing Georeport v2', function() {
   it('Post Request with sound file should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('first_name', 'Test User')
@@ -246,6 +253,7 @@ describe('testing Georeport v2', function() {
   it('Comma seperated media upload should pass', function(done) {
     request(server.app).post('/api/upload')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .attach('up_1', 'test/assets/treefrog.jpg')
       .attach('up_2', 'test/assets/test.mp3')
@@ -256,6 +264,7 @@ describe('testing Georeport v2', function() {
         } else {
           request(server.app).post('/api/v2/requests.json')
             .type('form')
+            .field('jurisdiction_id','example.com')
             .field('api_key', '56b074c9495b1')
             .field('service_code', 3)
             .field('first_name', 'Test User')
@@ -278,6 +287,7 @@ describe('testing Georeport v2', function() {
   it('Upload with multiple files should pass', function(done) {
     request(server.app).post('/api/upload')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .attach('up_1', 'test/assets/treefrog.jpg')
       .attach('up_2', 'test/assets/test.mp3')
@@ -288,6 +298,7 @@ describe('testing Georeport v2', function() {
         } else {
           request(server.app).post('/api/v2/requests.json')
             .type('form')
+            .field('jurisdiction_id','example.com')
             .field('api_key', '56b074c9495b1')
             .field('service_code', 3)
             .field('first_name', 'Test User')
@@ -312,6 +323,7 @@ describe('testing Georeport v2', function() {
   it('Post Request with multiple media urls should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
+      .field('jurisdiction_id','example.com')
       .field('api_key', '56b074c9495b1')
       .field('service_code', 3)
       .field('first_name', 'Test User')
@@ -344,7 +356,7 @@ describe('testing Georeport v2', function() {
 
   it('Get ServiceRequests with single id should pass', function(done) {
     request(server.app).get('/api/v2/requests.json')
-      .query({ 'service_request_id' : service_request_id[0] })
+      .query({'jurisdiction_id': 'example.com', 'service_request_id' : service_request_id[0] })
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(function(res) {
         res.body.length = 1;
@@ -359,7 +371,7 @@ describe('testing Georeport v2', function() {
 
   it('Get ServiceRequests with all 3 new ids should pass', function(done) {
     request(server.app).get('/api/v2/requests.json')
-      .query({ 'service_request_id' : service_request_id.join(',') })
+      .query({'jurisdiction_id': 'example.com', 'service_request_id' : service_request_id.join(',') })
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(function(res) {
         res.body.length = 3;

@@ -10,7 +10,8 @@
           type: Sequelize.INTEGER.UNSIGNED
         },
         service_id: Sequelize.INTEGER.UNSIGNED,
-        client_id: Sequelize.INTEGER.UNSIGNED,
+        application_id: Sequelize.INTEGER.UNSIGNED,
+        jurisdiction_id: Sequelize.INTEGER.UNSIGNED,
         enteredByPerson_id: Sequelize.INTEGER.UNSIGNED,
         assignedPerson_id: Sequelize.INTEGER.UNSIGNED,
         referredPerson_id: Sequelize.INTEGER.UNSIGNED,
