@@ -29,7 +29,7 @@
     "seed": "node_modules/.bin/sequelize --config config.json db:seed",
     "seed:test": "node_modules/.bin/sequelize --config config.default.json --env test db:seed:all",
     "seed:test:undo": "node_modules/.bin/sequelize --config config.default.json --env test db:seed:undo:all",
-    "seed:all": "node_modules/.bin/sequelize --config config.json db:seed:all",
+    "seed:all": "node_modules/.bin/sequelize --config config.json db:seed:all"
   },
   "repository": {
     "type": "git",
