@@ -23,13 +23,13 @@ exports.validJurisdiction = function(req, res, next){
     };
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
-    req.jurisdiction = jurisdiction;
-    if(!result){
+    if(!jurisdiction){
       errors.catchError(req, res, {
           "name": req.i18n.t('error.type.JurisdictionError'),
           "message": req.i18n.t('error.message.invalid_jurisdiction_id')
       }, 400);
     } else {
+      req.jurisdiction = jurisdiction;
       next();
     }
   });
