@@ -240,13 +240,16 @@
     },
     "error": {
       "type":{
+        "JurisdictionError": "jurisdictionError",
+        "ServiceCodeError": "ServiceCodeError",
         "general": "Fout",
         "forbidden": "niet toegestaan"
       },
       "message": {
         "missing_api_key": "Geen sleutel ontvangen, neem contact op met de leverancier",
         "invalid_api_key": "Ongeldige sleutel, neem contact op met de leverancier",
-        "invalid_service_code": "Ongeldige service, de melding kan niet worden verwerkt"
+        "invalid_service_code": "Ongeldige service, de melding kan niet worden verwerkt",
+        "invalid_jurisdiction_id": "Ongeldige jurisdiction_id"
       }
     },
     "endpoint": "eindpunt",

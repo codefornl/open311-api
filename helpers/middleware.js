@@ -24,7 +24,14 @@ exports.validJurisdiction = function(req, res, next){
   }
   models.jurisdiction.findOne(whereClause).then(function(jurisdiction) {
     req.jurisdiction = jurisdiction;
-    next();
+    if(!result){
+      errors.catchError(req, res, {
+          "name": req.i18n.t('error.type.JurisdictionError'),
+          "message": req.i18n.t('error.message.invalid_jurisdiction_id')
+      }, 400);
+    } else {
+      next();
+    }
   });
 };
 
@@ -40,7 +47,7 @@ exports.validServiceCode = function(req,res,next){
     ).then(function(result){
       if(!result){
         errors.catchError(req, res, {
-            "name": req.i18n.t('error.type.general'),
+            "name": req.i18n.t('error.type.ServiceCodeError'),
             "message": req.i18n.t('error.message.invalid_service_code')
         }, 403);
       } else {
@@ -49,7 +56,7 @@ exports.validServiceCode = function(req,res,next){
     });
   } else {
     errors.catchError(req, res, {
-      "name": req.i18n.t('error.type.general'),
+      "name": req.i18n.t('error.type.ServiceCodeError'),
       "message": req.i18n.t('error.message.invalid_service_code')
     }, 403);
   }
