@@ -18,14 +18,23 @@ var getDiscovery = function(req, res) {
     '://' +
     req.hostname +
     ( port == 80 || port == 443 ? '' : ':' + port ) + '/key.html';
+
   var discovery = {
     "changeset": moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-    "contact": "You can email " + util.getConfig('email') + " for assistance",
-    "key_service": "You can request a key at: " + keyservice,
+    "contact": req.i18n.t('discovery.email', {"email": util.getConfig('email'), interpolation: {escapeValue: false}}),
+    "key_service": req.i18n.t('discovery.keyservice', {
+      "keyservice": keyservice,
+      interpolation: {escapeValue: false}
+    }),
     "endpoints":[{
       "specification": "http://wiki.open311.org/GeoReport_v2",
       "url": url,
       "type": env,
+      "changeset": moment().format('YYYY-MM-DDTHH:mm:ssZ')
+    },{
+      "specification": "http://wiki.open311.org/GeoReport_v2",
+      "url": url + '?jurisdiction_id=example.com',
+      "type": 'test',
       "changeset": moment().format('YYYY-MM-DDTHH:mm:ssZ')
     }]
   };

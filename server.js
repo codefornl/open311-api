@@ -43,6 +43,14 @@ app.use(middleware.handle(i18next, {
   removeLngFromUrl: false
 }));
 
+// Convert language to ISO alpha-2
+app.use(function(req, res, next){
+  if(req.i18n.language && req.i18n.language.length > 2){
+    var temp = req.i18n.language.substr(0,2).toLowerCase();
+    req.i18n.language = temp;
+  }
+  next();
+});
 app.enable('trust proxy');
 app.use('/media', express.static(__dirname + '/media'));
 app.set('port', process.env.PORT || 3000);

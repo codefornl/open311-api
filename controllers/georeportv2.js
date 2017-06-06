@@ -46,7 +46,9 @@ var getResponsible = function(req, res, next) {
         res.on('data', function(_data) {
           var data = JSON.parse(_data);
           models.department.findOne({
-            where: models.sequelize.where(models.sequelize.fn('lower',models.sequelize.col('service_name')), models.sequelize.fn('lower', data.jurisdiction)),
+            where: models.sequelize.where(
+              models.sequelize.fn('lower',models.sequelize.col('service_name')),
+              models.sequelize.fn('lower', data.jurisdiction)),
             include: [{ model: models.person, include:{model: models.personEmail} }]
           }).then(function(result) {
             var gov_prefix = "";
@@ -294,6 +296,11 @@ var getServiceRequests = function(req, res) {
       $in: util.StringToIntArray(req.query.service_request_id)
     };
   }
+  // id in url will prevail over query parameter.
+  if(req.params.service_request_id){
+    where.id = req.params.service_request_id;
+  }
+
   if (req.query.service_code) {
     where = where || {};
     where.service_id = {
@@ -623,6 +630,8 @@ var sendMail = function(req, res, issue) {
 router.route('/api/v2/services').get(getServiceList);
 router.route('/api/v2/services.:format').get(getServiceList);
 router.route('/api/v2/services/:service_code.:format').get(getServiceDefinition);
+router.route('/api/v2/requests/:service_request_id.:format').get(middleware.validJurisdiction, getServiceRequests);
+router.route('/api/v2/request/:service_request_id.:format').get(middleware.validJurisdiction, getServiceRequests);
 router.route('/api/v2/requests.:format').get(middleware.validJurisdiction, getServiceRequests);
 router.route('/api/v2/requests.:format').post(
   middleware.processMedia,

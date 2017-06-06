@@ -232,6 +232,10 @@
         "volume": "Volume",
         "zip": "Zip"
     },
+    "discovery":{
+      "email":"Stuur een email naar {{email}} voor ondersteuning",
+      "keyservice": "Toegang voor applicaties kan worden aangevraagd via {{keyservice}}"
+    },
     "service": {
       "notice-anonymous": "Je melding is verzonden aan {{responsible}}.",
       "notice": "Je melding is verzonden aan {{responsible}}. Indien nodig nemen we contact met je op.",

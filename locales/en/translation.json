@@ -232,6 +232,10 @@
         "volume": "Volume",
         "zip": "Zip"
     },
+    "discovery":{
+      "email":"You can email {{email}} for assistance",
+      "keyservice": "You can request an application key at: {{keyservice}}"
+    },
     "service": {
       "notice-anonymous": "Your request is sent to {{responsible}}.",
       "notice": "Your request is sent to {{responsible}}, they can contact you.",
