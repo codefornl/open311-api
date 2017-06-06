@@ -589,6 +589,7 @@ var sendMail = function(req, res, issue) {
         "name": responsible.name,
         "email": responsible.email
       };
+      send_to = responsible.name;
       translate_string = 'service.notice';
     }
 

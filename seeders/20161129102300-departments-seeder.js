@@ -29,7 +29,7 @@
       },
       {
         id: 25,
-        name: 'St. Trudo',
+        name: 'Sint Trudo',
         jurisdiction_id: 772
       },
       {
@@ -39,7 +39,7 @@
       },
       {
         id: 27,
-        name: 'Thuis',
+        name: '`thuis',
         jurisdiction_id: 772
       },
       {

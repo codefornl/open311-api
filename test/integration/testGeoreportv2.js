@@ -185,6 +185,403 @@ describe('testing Georeport v2', function() {
       });
   });
 
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.458816382413765)
+      .field('long', 5.452042389324555)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.453390031848123)
+      .field('long', 5.450831550768585)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.449981745542431)
+      .field('long', 5.460069800491911)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.454645716276538)
+      .field('long', 5.473030257628031)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.454645716276538)
+      .field('long', 5.473030257628031)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.455408096108073)
+      .field('long', 5.475541626484858)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.440608958201778)
+      .field('long', 5.474330787928888)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.438994506793819)
+      .field('long', 5.471326114475185)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.44650080784146)
+      .field('long', 5.407136794513102)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.447648515959379)
+      .field('long', 5.409270354475908)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.448089942158582)
+      .field('long', 5.408711214623586)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.445485527583294)
+      .field('long', 5.411065487685992)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.439393846034321)
+      .field('long', 5.41022677790751)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.4396439875472)
+      .field('long', 5.414964752445601)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.447207089760177)
+      .field('long', 5.414817610379201)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.447346794851214)
+      .field('long', 5.414635644098772)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.44745062851689)
+      .field('long', 5.414642033862814)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+  it('Post Request lat, long should pass', function(done) {
+    request(server.app).post('/api/v2/requests.json')
+      .type('form')
+      .field('jurisdiction_id','example.com')
+      .field('api_key', '56b074c9495b1')
+      .field('service_code', 2)
+      .field('first_name', 'Test User')
+      .field('description', 'Test with lat and long')
+      .field('email', 'test@test.nl')
+      .field('lat', 51.447080022202478)
+      .field('long', 5.415490275039327)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200).end(function(err, res) {
+        if(err){
+          return done(err);
+        }
+        //check response text
+        console.log(res.text);
+        done();
+      });
+  });
+
+
   it('Post Request with base64 media should pass', function(done) {
     request(server.app).post('/api/v2/requests.json')
       .type('form')
