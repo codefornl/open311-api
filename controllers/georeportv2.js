@@ -47,7 +47,7 @@ var getResponsible = function(req, res, next) {
           var data = JSON.parse(_data);
           models.department.findOne({
             where: models.sequelize.where(
-              models.sequelize.fn('lower',models.sequelize.col('service_name')),
+              models.sequelize.fn('lower',models.sequelize.col('name')),
               models.sequelize.fn('lower', data.jurisdiction)),
             include: [{ model: models.person, include:{model: models.personEmail} }]
           }).then(function(result) {
